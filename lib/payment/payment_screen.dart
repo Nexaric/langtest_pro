@@ -1,117 +1,292 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:glassmorphism/glassmorphism.dart';
-import 'payment_successful.dart';
+import 'package:langtest_pro/payment/loading_screen.dart';
 
-class PaymentScreen extends StatelessWidget {
-  const PaymentScreen({super.key});
+class PaymentScreen extends StatefulWidget {
+  final String price; // Add price parameter to receive subscription amount
+  const PaymentScreen({super.key, required this.price});
+
+  @override
+  State<PaymentScreen> createState() => _PaymentScreenState();
+}
+
+class _PaymentScreenState extends State<PaymentScreen> {
+  final TextEditingController _upiIdController = TextEditingController(
+    text: 'gauravkumar@okhdfcbank',
+  );
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF6A5AE0),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          "Payment",
-          style: GoogleFonts.poppins(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: GlassmorphicContainer(
-          width: MediaQuery.of(context).size.width * 0.9,
-          height: 400,
-          borderRadius: 20,
-          blur: 15,
-          border: 2,
-          linearGradient: LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.2),
-              Colors.white.withOpacity(0.05),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderGradient: LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.5),
-              Colors.white.withOpacity(0.1),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Select Payment Method",
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+      backgroundColor: Colors.white, // Full white screen as requested
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'UPI',
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                _buildPaymentOption("Credit / Debit Card", Icons.credit_card),
-                _buildPaymentOption(
-                  "UPI / Wallet",
-                  Icons.account_balance_wallet,
-                ),
-                _buildPaymentOption("PayPal", Icons.paypal),
-                const SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PaymentSuccessfulScreen(),
-                        ),
+                  const SizedBox(height: 30),
+                  Text(
+                    'UPI Apps',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final itemWidth = (constraints.maxWidth / 2) - 10;
+                      return Wrap(
+                        spacing: 20,
+                        runSpacing: 10,
+                        children: [
+                          _buildUpiAppButton(
+                            'Google Pay',
+                            'assets/google_pay_logo.png',
+                            itemWidth,
+                          ),
+                          _buildUpiAppButton(
+                            'PhonePe',
+                            'assets/phonepe_logo.png',
+                            itemWidth,
+                          ),
+                          _buildUpiAppButton(
+                            'PayTM',
+                            'assets/paytm_logo.png',
+                            itemWidth,
+                          ),
+                          _buildUpiAppButton(
+                            'BHIM',
+                            'assets/bhim_logo.png',
+                            itemWidth,
+                          ),
+                        ],
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      "Proceed to Pay",
-                      style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    'UPI ID / Number',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextField(
+                      controller: _upiIdController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        suffixIcon: Icon(Icons.copy, color: Colors.grey),
+                      ),
+                      style: GoogleFonts.poppins(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
+          _buildBottomBar(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUpiAppButton(String title, String imagePath, double itemWidth) {
+    return SizedBox(
+      width: itemWidth,
+      child: OutlinedButton(
+        onPressed: () {
+          debugPrint('$title clicked!');
+        },
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          side: const BorderSide(color: Colors.grey),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(imagePath, height: 24, width: 24),
+            const SizedBox(width: 8),
+            Text(title, style: GoogleFonts.poppins(color: Colors.black)),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildPaymentOption(String title, IconData icon) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.blueAccent),
-        title: Text(title, style: GoogleFonts.poppins(fontSize: 16)),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-        onTap: () {},
+  Widget _buildBottomBar(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, -3),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.price == 'FREE'
+                    ? '₹0'
+                    : widget.price, // Display passed amount
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Row(
+                  children: [
+                    Text(
+                      'View Details',
+                      style: GoogleFonts.poppins(
+                        color: Colors.grey,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const Icon(
+                      Icons.keyboard_arrow_up,
+                      color: Colors.grey,
+                      size: 16,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          ElevatedButton(
+            onPressed:
+                _isLoading
+                    ? null
+                    : () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await Future.delayed(const Duration(seconds: 2));
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoadingScreen(),
+                          ),
+                        );
+                      }
+                    },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0D47A1),
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.15,
+                vertical: 15,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child:
+                _isLoading
+                    ? const SizedBox(
+                      width: 40,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [_Dot(), _Dot(), _Dot()],
+                        ),
+                      ),
+                    )
+                    : Text(
+                      'Continue',
+                      style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+          ),
+        ],
       ),
     );
   }
-}*/
+}
+
+class _Dot extends StatefulWidget {
+  const _Dot();
+
+  @override
+  State<_Dot> createState() => _DotState();
+}
+
+class _DotState extends State<_Dot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _animation.value,
+          child: Container(
+            width: 8.0,
+            height: 8.0,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

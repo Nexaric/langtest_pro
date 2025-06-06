@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:langtest_pro/loading/under_maintenance.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,6 @@ import 'package:langtest_pro/exams/ielts/writing/writing_progress_provider.dart'
 import 'ielts_listening.dart';
 import 'ielts_reading.dart';
 import 'ielts_writing.dart';
-import 'ielts_speaking.dart';
 
 class IeltsScreen extends StatelessWidget {
   const IeltsScreen({super.key});
@@ -234,7 +234,7 @@ class IeltsScreen extends StatelessWidget {
                     "🗣 Speaking",
                     "Fluency practice",
                     Colors.purple,
-                    const IeltsSpeakingScreen(),
+                    const UnderMaintenanceScreen(),
                   ),
                 ],
               ),

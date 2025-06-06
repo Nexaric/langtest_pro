@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:langtest_pro/home/side_menu/menu_screen.dart';
-import 'package:langtest_pro/home/quick_access/tutor.dart';
 import 'package:langtest_pro/home/quick_access/practice_test.dart';
 import 'package:langtest_pro/home/quick_access/speaking_practice.dart';
 import 'package:langtest_pro/home/quick_access/vocabulary.dart';
+import 'package:langtest_pro/loading/404.dart';
 import 'package:langtest_pro/profile/profile_screen.dart';
 import 'package:langtest_pro/home/notification_screen.dart';
 import 'package:langtest_pro/exams/ielts/ielts_screen.dart';
@@ -16,6 +16,8 @@ import 'package:langtest_pro/exams/pte/pte_screen.dart';
 import 'package:langtest_pro/exams/toefl/toefl_screen.dart';
 import 'package:langtest_pro/subscriptions/subscription_screen.dart';
 import '../services/firebase_service.dart';
+
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,22 +45,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _loadPurchasedCourses() async {
     List<String> courses = await FirebaseService().getUserPurchasedCourses();
-    setState(() {
-      purchasedCourses = courses;
-    });
+    if (mounted) {
+      setState(() {
+        purchasedCourses = courses;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF523EDD),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 71, 30, 124),
-              Color.fromARGB(255, 84, 65, 228),
-            ],
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -124,6 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: PageView(
                   controller: _pageController,
                   physics: const NeverScrollableScrollPhysics(),
+                  onPageChanged: (index) {
+                    setState(() {
+                      _controller.index = index; // Sync bottom bar with page
+                    });
+                  },
                   children: _pages,
                 ),
               ),
@@ -156,7 +167,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         onTap: (index) {
-          _pageController.jumpToPage(index);
+          setState(() {
+            _controller.index = index; // Update controller
+            _pageController.jumpToPage(index); // Jump to page
+          });
         },
         kIconSize: 24.0,
         kBottomRadius: 0,
@@ -347,7 +361,7 @@ class HomeContent extends StatelessWidget {
                         "AI Tutor",
                         Icons.smart_toy_rounded,
                         const Color(0xFF4CAF50),
-                        const AiTutorScreen(),
+                        const Error404Screen(),
                       ),
                       _buildQuickAccessTile(
                         context,

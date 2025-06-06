@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -31,16 +31,6 @@ class ProfileScreen extends StatelessWidget {
               backgroundColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF3E1E68),
-                        Color.fromARGB(255, 84, 65, 228),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
                   child: SafeArea(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -122,15 +112,15 @@ class ProfileScreen extends StatelessWidget {
                               label: "Edit",
                               color: Colors.white,
                               iconColor: const Color(0xFF3E1E68),
-                              onTap:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const EditProfileScreen(),
-                                    ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const EditProfileScreen(),
                                   ),
+                                );
+                              },
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -140,15 +130,16 @@ class ProfileScreen extends StatelessWidget {
                               label: "Settings",
                               color: Colors.white,
                               iconColor: const Color(0xFF3E1E68),
-                              onTap:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const NotificationSettingsScreen(),
-                                    ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) =>
+                                            const NotificationSettingsScreen(),
                                   ),
+                                );
+                              },
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -158,14 +149,15 @@ class ProfileScreen extends StatelessWidget {
                               label: "Courses",
                               color: Colors.white,
                               iconColor: const Color(0xFF3E1E68),
-                              onTap:
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => const MyCoursesScreen(),
-                                    ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => const MyCoursesScreen(),
                                   ),
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -183,45 +175,48 @@ class ProfileScreen extends StatelessWidget {
                                 title: "Help Center",
                                 subtitle: "Get assistance",
                                 color: const Color(0xFF9C27B0),
-                                onTap:
-                                    () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) =>
-                                                const HelpSupportScreen(),
-                                      ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const HelpSupportScreen(),
                                     ),
+                                  );
+                                },
                               ),
                               _buildListTile(
                                 icon: Icons.privacy_tip,
                                 title: "Privacy Policy",
                                 subtitle: "Read our terms",
                                 color: const Color(0xFF3F51B5),
-                                onTap:
-                                    () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) =>
-                                                const TermsPoliciesScreen(),
-                                      ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const TermsPoliciesScreen(),
                                     ),
+                                  );
+                                },
                               ),
                               _buildListTile(
                                 icon: Icons.report,
                                 title: "Report Issue",
                                 subtitle: "Found a problem?",
                                 color: const Color(0xFFF44336),
-                                onTap:
-                                    () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) =>
-                                                const ReportProblemScreen(),
-                                      ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const ReportProblemScreen(),
                                     ),
+                                  );
+                                },
                               ),
                             ],
                           ),
