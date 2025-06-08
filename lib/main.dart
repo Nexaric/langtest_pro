@@ -3,19 +3,20 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:langtest_pro/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:langtest_pro/auth/login_screen.dart';
 import 'package:langtest_pro/exams/ielts/listening/listening_progress_provider.dart';
 import 'package:langtest_pro/exams/ielts/reading/reading_progress_provider.dart';
 import 'package:langtest_pro/exams/ielts/writing/writing_progress_provider.dart';
 import 'package:langtest_pro/exams/ielts/speaking/speaking_progress_provider.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
 
   // Initialize Hive for Flutter
   await Hive.initFlutter();

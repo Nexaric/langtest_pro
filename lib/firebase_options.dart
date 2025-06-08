@@ -17,15 +17,24 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,39 +52,11 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCuGI4SxBlOsXembqOWquYEN0pUQsfnIeA',
-    appId: '1:914970438031:web:0596372b5eef16d69043fa',
-    messagingSenderId: '914970438031',
-    projectId: 'lang-test-pro',
-    authDomain: 'lang-test-pro.firebaseapp.com',
-    storageBucket: 'lang-test-pro.firebasestorage.app',
-    measurementId: 'G-C1D3R2EYEY',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDUnZ3s9HTMM_8yZnasSc9aVFJ83O2Xh68',
-    appId: '1:914970438031:android:6e35acaccab7967d9043fa',
+    appId: '1:914970438031:android:be6cb127d71104ac9043fa',
     messagingSenderId: '914970438031',
     projectId: 'lang-test-pro',
     storageBucket: 'lang-test-pro.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAUWTWtomzwkb6zXqYqJQxZWoW8kM4GPJ0',
-    appId: '1:914970438031:ios:9c45a535ee822e0a9043fa',
-    messagingSenderId: '914970438031',
-    projectId: 'lang-test-pro',
-    storageBucket: 'lang-test-pro.firebasestorage.app',
-    iosBundleId: 'com.nexaric.langtestpro.langtestPro',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAUWTWtomzwkb6zXqYqJQxZWoW8kM4GPJ0',
-    appId: '1:914970438031:ios:9c45a535ee822e0a9043fa',
-    messagingSenderId: '914970438031',
-    projectId: 'lang-test-pro',
-    storageBucket: 'lang-test-pro.firebasestorage.app',
-    iosBundleId: 'com.nexaric.langtestpro.langtestPro',
   );
 }
