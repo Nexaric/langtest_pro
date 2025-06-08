@@ -64,13 +64,6 @@ class _AudioScreenState extends State<AudioScreen> {
     _loadAudio();
   }
 
-  Future<void> _loadAudio() async {
-    await fetchAudioFromFirebase(
-      'audio/lesson${widget.lesson["lessonId"]}.mp3',
-    );
-    _initAudio();
-    _loadQuestions();
-  }
 
   void _loadQuestions() {
     final lessonId = widget.lesson["lessonId"];
@@ -78,6 +71,15 @@ class _AudioScreenState extends State<AudioScreen> {
       _currentQuestions = QuestionManager.getQuestionsForLesson(lessonId);
       _userAnswers = List<String?>.filled(_currentQuestions.length, null);
     });
+  }
+
+
+  Future<void> _loadAudio() async {
+    await fetchAudioFromFirebase(
+      'audio/lesson${widget.lesson["lessonId"]}.mp3',
+    );
+    _initAudio();
+    _loadQuestions();
   }
 
   Future<void> fetchAudioFromFirebase(String firebasePath) async {

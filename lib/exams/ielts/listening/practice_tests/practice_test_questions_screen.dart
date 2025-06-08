@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:langtest_pro/loading/internet_signel_low.dart';
 import 'package:langtest_pro/loading/loader_screen.dart';
+import 'package:path_provider/path_provider.dart';
 import 'practice_test_result.dart';
 import 'practice_test_timer.dart';
 import 'questions/part_1.dart' as part1;
@@ -110,7 +113,7 @@ class _PracticeTestQuestionsScreenState
 
   Future<void> _initializeTest() async {
     try {
-      _audioPath = _getAudioPathForPart(widget.part);
+      _audioPath =await _getAudioPathForPart(widget.part);
       _currentQuestions = _getRandomQuestionsForPart(widget.part);
 
       await _setupAudioPlayer();
@@ -146,16 +149,42 @@ class _PracticeTestQuestionsScreenState
     );
   }
 
-  String _getAudioPathForPart(String part) {
-    const audioPaths = {
-      'Part 1': 'audio/practice_test/part1.mp3',
-      'Part 2': 'audio/practice_test/part2.mp3',
-      'Part 3': 'audio/practice_test/part3.mp3',
-      'Part 4': 'audio/practice_test/part4.mp3',
+  Future<String> _getAudioPathForPart(String part) async{
+    final String Part_1 = await fetchAudioFromFirebase('audio/practice_test/part1.mp3');
+    final String Part_2 = await fetchAudioFromFirebase('audio/practice_test/part2.mp3');
+    final String Part_3 = await fetchAudioFromFirebase('audio/practice_test/part3.mp3');
+    final String Part_4 = await fetchAudioFromFirebase('audio/practice_test/part4.mp3');
+
+  Map<String, String>   audioPaths = {
+      'Part 1': Part_1,
+      'Part 2': Part_2,
+      'Part 3': Part_3,
+      'Part 4': Part_4,
     };
     return audioPaths[part] ??
         'assets/audio/practice_test/${part.toLowerCase().replaceAll(' ', '')}.mp3';
   }
+
+
+
+ 
+
+  Future<String> fetchAudioFromFirebase(String firebasePath) async {
+    try {
+      final ref = FirebaseStorage.instance.ref(firebasePath);
+      final url = await ref.getDownloadURL();
+      debugPrint("hello $url");
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${ref.name}');
+      await ref.writeToFile(file);
+      debugPrint("audio path is ${file.path}");
+      return file.path;
+    } catch (e) {
+      print('Error fetching audio: $e');
+      rethrow;
+    }
+  }
+
 
   List<Map<String, dynamic>> _getRandomQuestionsForPart(String part) {
     final allQuestions = {
@@ -219,7 +248,7 @@ class _PracticeTestQuestionsScreenState
       }
     });
 
-    await _audioPlayer.setSource(AssetSource(_audioPath));
+    await _audioPlayer.setSource(DeviceFileSource(_audioPath));
   }
 
   Future<void> _reloadAudio() async {
@@ -228,7 +257,7 @@ class _PracticeTestQuestionsScreenState
     setState(() => _isReloading = true);
     try {
       await _audioPlayer.stop();
-      await _audioPlayer.setSource(AssetSource(_audioPath));
+      await _audioPlayer.setSource(DeviceFileSource(_audioPath));
       await _audioPlayer.seek(Duration.zero);
       setState(() {
         _position = Duration.zero;

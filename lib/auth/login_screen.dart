@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:langtest_pro/auth/providers/auth_provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:langtest_pro/home/home_screen.dart';
 import 'package:langtest_pro/profile/user_info_screen.dart';
-import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -51,81 +52,59 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  Future<void> _handleGoogleSignIn() async {
-    if (_isLoading) return;
+ Future<void> _handleGoogleSignIn() async {
+  if (_isLoading) return;
 
-    setState(() => _isLoading = true);
-    _controller.forward();
+  setState(() => _isLoading = true);
+  
+  try {
+    final googleSignIn = GoogleSignIn();
+    
+ 
 
-    try {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final user = await authProvider.signInWithGoogle();
-
-      if (user == null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Google Sign-In cancelled.'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          );
+    final googleUser = await googleSignIn.signIn().catchError((error) {
+      debugPrint('Google Sign-In Error: $error');
+      if (error is PlatformException) {
+        if (error.code == 'sign_in_canceled') {
+          throw Exception('Sign-in cancelled by user');
+        } else {
+          throw Exception('Sign-in failed: ${error.message}');
         }
-        return;
       }
+      throw error;
+    });
 
-      // Navigate to UserInfoScreen after successful login
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder:
-                (context, animation, secondaryAnimation) =>
-                    const UserInfoScreen(),
-            transitionsBuilder: (
-              context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeInOutQuad;
-              var tween = Tween(
-                begin: begin,
-                end: end,
-              ).chain(CurveTween(curve: curve));
-              return SlideTransition(
-                position: animation.drive(tween),
-                child: child,
-              );
-            },
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Sign-in failed: ${e.toString()}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _controller.reverse();
-      }
+    if (googleUser == null) {
+      throw Exception('Sign-in cancelled by user');
+    }
+
+    final googleAuth = await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    
+    if (userCredential.user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const UserInfoScreen()),
+      );
+    }
+  } on Exception catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(e.toString()),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  } finally {
+    if (mounted) {
+      setState(() => _isLoading = false);
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -296,6 +275,7 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                               child: ElevatedButton(
                                 onPressed: _handleGoogleSignIn,
+                                // (){Navigator.push(context, MaterialPageRoute(builder: (ctx)=>HomeScreen()));},
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
                                   foregroundColor:

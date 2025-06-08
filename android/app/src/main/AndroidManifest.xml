@@ -42,6 +42,14 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+            <meta-data
+    android:name="com.google.android.gms.auth.api.signin.GoogleSignInOptions"
+    android:value="@string/default_web_client_id" />
+
+<meta-data
+    android:name="com.google.android.gms.version"
+    android:value="@integer/google_play_services_version" />
     </application>
 
     <queries>
