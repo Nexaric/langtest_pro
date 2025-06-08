@@ -1,8 +1,7 @@
-// lib/main.dart
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:langtest_pro/auth/providers/auth_provider.dart';
 import 'package:langtest_pro/firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:langtest_pro/auth/login_screen.dart';
@@ -14,14 +13,11 @@ import 'package:langtest_pro/exams/ielts/speaking/speaking_progress_provider.dar
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-);
+  // Initialize Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize Hive for Flutter
+  // Initialize Hive
   await Hive.initFlutter();
-
-  // Optionally open Hive boxes used by providers
   await Hive.openBox('listening_progress');
   await Hive.openBox('reading_progress');
   await Hive.openBox('writing_progress');
@@ -30,13 +26,11 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        // IELTS Progress Providers
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ListeningProgressProvider()),
         ChangeNotifierProvider(create: (_) => ReadingProgressProvider()),
         ChangeNotifierProvider(create: (_) => WritingProgressProvider()),
         ChangeNotifierProvider(create: (_) => SpeakingProgressProvider()),
-        // Add authentication provider if needed
-        // ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MyApp(),
     ),
@@ -52,9 +46,80 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'LangTest Pro',
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        fontFamily: 'Poppins', // Consistent with other screens
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6A5AE0),
+          brightness: Brightness.light,
+          primary: const Color(0xFF6A5AE0),
+          onPrimary: Colors.white,
+          secondary: const Color(0xFF3E1E68),
+          onSecondary: Colors.white,
+          surface: Colors.white,
+          onSurface: const Color(0xFF1A1D21),
+          background: Colors.white,
+          onBackground: const Color(0xFF1A1D21),
+          error: const Color(0xFFEF4444),
+          onError: Colors.white,
+        ),
+        scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'Inter',
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            color: Color(0xFF1A1D21),
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1.2,
+          ),
+          displayMedium: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 16,
+            color: Color(0xFFE2E8F0),
+            height: 1.5,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+            foregroundColor: const Color(0xFF3E1E68),
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            elevation: 4,
+            shadowColor: Colors.black.withOpacity(0.1),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white.withOpacity(0.8),
+            textStyle: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              decoration: TextDecoration.underline,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
       ),
       home: const LoginScreen(),
     );

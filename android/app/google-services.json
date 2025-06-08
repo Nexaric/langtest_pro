@@ -12,7 +12,20 @@
           "package_name": "com.example.langtest_pro"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "914970438031-pf4t1v3uckikq2tom9e9c9rer9vfc7vp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.langtest_pro",
+            "certificate_hash": "852ef7bb89ddf310faeea0f9790e157d50ece7fc"
+          }
+        },
+        {
+          "client_id": "914970438031-1hf99tm8arsl3hdionj5k6kn469m76lp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDUnZ3s9HTMM_8yZnasSc9aVFJ83O2Xh68"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "914970438031-1hf99tm8arsl3hdionj5k6kn469m76lp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "914970438031-cdfokodtlan6lfnih71phpg59ldj4t3i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.langtestPro"
+              }
+            }
+          ]
         }
       }
     }
