@@ -614,6 +614,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
               isLocked
                   ? null
                   : () {
+                    debugPrint(lesson.toString());
                     Navigator.push(
                       context,
                       MaterialPageRoute(

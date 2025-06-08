@@ -31,7 +31,7 @@ dependencies:
   image_picker: ^1.1.2
   google_sign_in: ^6.3.0
   firebase_auth: ^5.5.1
-  firebase_storage: ^12.4.4
+  firebase_storage: ^12.4.6
   cloud_firestore: ^5.6.5
   intl: ^0.20.2
   shared_preferences: ^2.5.2
@@ -72,15 +72,9 @@ flutter:
   uses-material-design: true
 
   assets:
-
-    - assets/audio/
     - assets/animations/confetti.json
     - assets/animations/success.json
     - assets/animations/try_again.json
-    - assets/audio/practice_test/part1.mp3
-    - assets/audio/practice_test/part2.mp3
-    - assets/audio/practice_test/part3.mp3
-    - assets/audio/practice_test/part4.mp3
     - assets/profile/avatar.png
   
 
