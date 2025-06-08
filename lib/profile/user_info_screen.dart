@@ -1,4 +1,6 @@
-/*import 'package:flutter/material.dart';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:langtest_pro/home/home_screen.dart';
 
@@ -10,7 +12,8 @@ class UserInfoScreen extends StatefulWidget {
 }
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   DateTime? _selectedDate;
   String? _selectedGender;
 
@@ -24,13 +27,13 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: Color(0xFF3E1E68),
+              primary: Color(0xFF6C4DF6),
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
             textButtonTheme: TextButtonThemeData(
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF3E1E68),
+                foregroundColor: const Color(0xFF6C4DF6),
               ),
             ),
           ),
@@ -46,12 +49,10 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   }
 
   void _saveUserInfo() {
-    if (_nameController.text.isNotEmpty &&
+    if (_firstNameController.text.isNotEmpty &&
+        _lastNameController.text.isNotEmpty &&
         _selectedDate != null &&
         _selectedGender != null) {
-      print(
-        "Saved user info: Name: ${_nameController.text}, DOB: $_selectedDate, Gender: $_selectedGender",
-      );
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -60,14 +61,14 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           transitionsBuilder:
               (context, animation, secondaryAnimation, child) =>
                   FadeTransition(opacity: animation, child: child),
-          transitionDuration: const Duration(milliseconds: 300),
+          transitionDuration: const Duration(milliseconds: 500),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Please fill all fields", style: GoogleFonts.poppins()),
-          backgroundColor: const Color(0xFF3E1E68),
+          backgroundColor: const Color(0xFF6C4DF6),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -79,215 +80,328 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Text(
-                    "Tell Us About You",
-                    style: GoogleFonts.poppins(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+      body: SizedBox(
+        width: screenWidth,
+        height: screenHeight,
+        child: Stack(
+          children: [
+            // Background Gradient
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF1A0938),
+                    Color(0xFF3E1E68),
+                    Color(0xFF6C4DF6),
+                  ],
+                  stops: [0.1, 0.5, 0.9],
                 ),
-                const SizedBox(height: 30),
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 8,
-                  color: Colors.white.withOpacity(0.95),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Full Name",
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF2D3748),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        TextField(
-                          controller: _nameController,
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF2D3748),
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "Enter your full name",
-                            hintStyle: GoogleFonts.poppins(
-                              color: const Color(0xFF718096),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                color: Colors.white.withOpacity(0.3),
-                              ),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
+              ),
+            ),
+
+            // Content
+            SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: SizedBox(
+                height: screenHeight,
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Header
+                      Column(
+                        children: [
+                          Text(
+                            "Create Your Profile",
+                            style: GoogleFonts.poppins(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              height: 1.3,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Date of Birth",
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF2D3748),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        GestureDetector(
-                          onTap: () => _selectDate(context),
-                          child: AbsorbPointer(
-                            child: TextField(
-                              style: GoogleFonts.poppins(
-                                color: const Color(0xFF2D3748),
-                              ),
-                              decoration: InputDecoration(
-                                hintText:
-                                    _selectedDate == null
-                                        ? "Select your birth date"
-                                        : "${_selectedDate!.toLocal()}".split(
-                                          ' ',
-                                        )[0],
-                                hintStyle: GoogleFonts.poppins(
-                                  color: const Color(0xFF718096),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.white.withOpacity(0.3),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.white.withOpacity(0.3),
-                                  ),
-                                ),
-                                suffixIcon: const Icon(
-                                  Icons.calendar_today,
-                                  color: Color(0xFF3E1E68),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Let's personalize your experience",
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.white.withOpacity(0.8),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Gender",
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFF2D3748),
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: RadioListTile<String>(
-                                title: Text(
-                                  "Male",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: const Color(0xFF2D3748),
-                                  ),
-                                ),
-                                value: "Male",
-                                groupValue: _selectedGender,
-                                onChanged:
-                                    (value) =>
-                                        setState(() => _selectedGender = value),
-                                activeColor: const Color(0xFF3E1E68),
-                              ),
-                            ),
-                            Expanded(
-                              child: RadioListTile<String>(
-                                title: Text(
-                                  "Female",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: const Color(0xFF2D3748),
-                                  ),
-                                ),
-                                value: "Female",
-                                groupValue: _selectedGender,
-                                onChanged:
-                                    (value) =>
-                                        setState(() => _selectedGender = value),
-                                activeColor: const Color(0xFF3E1E68),
-                              ),
+                        ],
+                      ),
+                      const SizedBox(height: 40),
+
+                      // Glass Card
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 30,
+                              spreadRadius: 5,
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                            child: Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.25),
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  // First Name
+                                  _buildGlassTextField(
+                                    label: "First Name",
+                                    hint: "Enter your first name",
+                                    controller: _firstNameController,
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  // Last Name
+                                  _buildGlassTextField(
+                                    label: "Last Name",
+                                    hint: "Enter your last name",
+                                    controller: _lastNameController,
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  // Date of Birth
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Date of Birth",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white.withOpacity(0.9),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      GestureDetector(
+                                        onTap: () => _selectDate(context),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 14,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(
+                                              0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.white.withOpacity(
+                                                0.25,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.calendar_today,
+                                                size: 20,
+                                                color: Colors.white.withOpacity(
+                                                  0.7,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Text(
+                                                _selectedDate == null
+                                                    ? "Select your birth date"
+                                                    : "${_selectedDate!.toLocal()}"
+                                                        .split(' ')[0],
+                                                style: GoogleFonts.poppins(
+                                                  color:
+                                                      _selectedDate == null
+                                                          ? Colors.white
+                                                              .withOpacity(0.5)
+                                                          : Colors.white,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 20),
+
+                                  // Gender
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Gender",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white.withOpacity(0.9),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: _buildGenderOption(
+                                              "Male",
+                                              Icons.male,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: _buildGenderOption(
+                                              "Female",
+                                              Icons.female,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+
+                      // Continue Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _saveUserInfo,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                          ),
+                          child: Text(
+                            "Continue",
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF6C4DF6),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 30),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: _saveUserInfo,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.95),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 40,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 8,
-                      shadowColor: Colors.black.withOpacity(0.1),
-                    ),
-                    child: Text(
-                      "Continue",
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3E1E68),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGlassTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: GoogleFonts.poppins(
+              color: Colors.white.withOpacity(0.5),
+            ),
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.1),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderOption(String gender, IconData icon) {
+    return GestureDetector(
+      onTap: () => setState(() => _selectedGender = gender),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color:
+              _selectedGender == gender
+                  ? Colors.white.withOpacity(0.2)
+                  : Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color:
+                _selectedGender == gender
+                    ? Colors.white
+                    : Colors.white.withOpacity(0.25),
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.white, size: 24),
+            const SizedBox(height: 8),
+            Text(
+              gender,
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
-*/

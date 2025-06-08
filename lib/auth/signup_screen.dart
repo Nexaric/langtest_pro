@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:langtest_pro/utils/validators.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -11,9 +11,17 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   bool _agreeToTerms = false;
   bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   String? _passwordError;
+
+  // Email validation regex
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,22 +82,21 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               TextFormField(
                                 decoration: InputDecoration(
-                                  labelText: 'Full Name',
-                                  prefixIcon: const Icon(Icons.person),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                decoration: InputDecoration(
                                   labelText: 'Email',
                                   prefixIcon: const Icon(Icons.email),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter your email';
+                                  }
+                                  if (!_isValidEmail(value)) {
+                                    return 'Please enter a valid email';
+                                  }
+                                  return null;
+                                },
                               ),
                               const SizedBox(height: 16),
                               TextFormField(
@@ -115,10 +122,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ),
                                 ),
                                 validator: (value) {
-                                  setState(() {
-                                    _passwordError =
-                                        Validators.validatePassword(value);
-                                  });
+                                  _passwordError = Validators.validatePassword(
+                                    value,
+                                  );
                                   return _passwordError;
                                 },
                               ),
@@ -126,13 +132,44 @@ class _SignupScreenState extends State<SignupScreen> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: Text(
-                                    'Example: Abcd@1234',
+                                    'Password must contain at least 8 characters, 1 uppercase, 1 number, and 1 special character',
                                     style: TextStyle(
                                       color: Colors.red.shade300,
                                       fontSize: 12,
                                     ),
                                   ),
                                 ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _confirmPasswordController,
+                                obscureText: _obscureConfirmPassword,
+                                decoration: InputDecoration(
+                                  labelText: 'Confirm Password',
+                                  prefixIcon: const Icon(Icons.lock),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _obscureConfirmPassword
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _obscureConfirmPassword =
+                                            !_obscureConfirmPassword;
+                                      });
+                                    },
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value != _passwordController.text) {
+                                    return 'Passwords do not match';
+                                  }
+                                  return null;
+                                },
+                              ),
                               const SizedBox(height: 10),
                               Row(
                                 children: [
@@ -185,6 +222,63 @@ class _SignupScreenState extends State<SignupScreen> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 20),
+                              Row(
+                                children: const [
+                                  Expanded(
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                    ),
+                                    child: Text(
+                                      'OR',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      thickness: 1,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton.icon(
+                                  icon: Image.asset(
+                                    'assets/images/google_logo.png',
+                                    height: 24,
+                                    width: 24,
+                                  ),
+                                  label: const Text(
+                                    'Sign up with Google',
+                                    style: TextStyle(
+                                      color: Colors.black87,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // Handle Google Sign-In
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    side: const BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -219,3 +313,4 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 }
+*/
