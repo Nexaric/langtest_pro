@@ -72,15 +72,9 @@ flutter:
   uses-material-design: true
 
   assets:
-
-    - assets/audio/
     - assets/animations/confetti.json
     - assets/animations/success.json
     - assets/animations/try_again.json
-    - assets/audio/practice_test/part1.mp3
-    - assets/audio/practice_test/part2.mp3
-    - assets/audio/practice_test/part3.mp3
-    - assets/audio/practice_test/part4.mp3
     - assets/profile/avatar.png
     - assets/images/google_logo.png
   
