@@ -1,16 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:langtest_pro/auth/providers/auth_provider.dart';
 import 'package:langtest_pro/firebase_options.dart';
+import 'package:langtest_pro/res/routes/routes.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:provider/provider.dart';
-import 'package:langtest_pro/auth/login_screen.dart';
-import 'package:langtest_pro/exams/ielts/listening/listening_progress_provider.dart';
-import 'package:langtest_pro/exams/ielts/reading/reading_progress_provider.dart';
-import 'package:langtest_pro/exams/ielts/writing/writing_progress_provider.dart';
-import 'package:langtest_pro/exams/ielts/speaking/speaking_progress_provider.dart';
+import 'package:langtest_pro/view/auth/login_screen.dart';
+import 'package:langtest_pro/controller/listening_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/controller/speaking_progress_provider.dart';
 
 void main() async {
+debugDisableShadows = false;
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
@@ -26,8 +29,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => ListeningProgressProvider()),
+        
+        // ChangeNotifierProvider(create: (_) => ListeningProgressProvider()),
         ChangeNotifierProvider(create: (_) => ReadingProgressProvider()),
         ChangeNotifierProvider(create: (_) => WritingProgressProvider()),
         ChangeNotifierProvider(create: (_) => SpeakingProgressProvider()),
@@ -42,7 +45,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'LangTest Pro',
       theme: ThemeData(
@@ -121,7 +124,9 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const LoginScreen(),
+getPages: AppRoutes.appRoutes(),
+initialRoute: RoutesName.loginScreen,
+     
     );
   }
 }
