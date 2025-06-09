@@ -7,7 +7,7 @@ import 'package:langtest_pro/view/home/side_menu/menu_screen.dart';
 import 'package:langtest_pro/view/home/quick_access/practice_test.dart';
 import 'package:langtest_pro/view/home/quick_access/speaking_practice.dart';
 import 'package:langtest_pro/view/home/quick_access/vocabulary.dart';
-import 'package:langtest_pro/loading/404.dart';
+import 'package:langtest_pro/core/loading/404.dart';
 import 'package:langtest_pro/view/profile/profile_screen.dart';
 import 'package:langtest_pro/view/home/notification_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_screen.dart';
