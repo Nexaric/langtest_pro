@@ -2,11 +2,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/writing_result.dart';
 
 class InformalLetterLesson7 extends StatefulWidget {
@@ -31,6 +31,11 @@ class _InformalLetterLesson7State extends State<InformalLetterLesson7>
   bool _showSaveIndicator = false;
   late String _storagePath;
   late File _letterFile;
+
+  // Initialize GetX controller
+  final WritingProgressController _progressController = Get.put(
+    WritingProgressController(),
+  );
 
   final Map<String, dynamic> _task = {
     'title': 'Catch-up Letter',
@@ -221,42 +226,21 @@ Chloe
     try {
       await _saveResponse();
       final score = _calculateScore(_letterController.text);
-      Provider.of<WritingProgressProvider>(
-        context,
-        listen: false,
-      ).completeLesson(_parseLessonId(widget.lessonData['id']));
+      _progressController.completeLesson(
+        _parseLessonId(widget.lessonData['id']),
+      );
       await Future.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 600),
-          pageBuilder:
-              (_, __, ___) => WritingResultScreen(
-                score: score,
-                feedback: _generateFeedback(score),
-                taskType: widget.lessonData['title'],
-                wordCount: _wordCount,
-                lessonData: widget.lessonData,
-              ),
-          transitionsBuilder: (_, animation, __, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0.3),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutQuart,
-                  ),
-                ),
-                child: child,
-              ),
-            );
-          },
+      Get.off(
+        () => WritingResultScreen(
+          score: score,
+          feedback: _generateFeedback(score),
+          taskType: widget.lessonData['title'],
+          wordCount: _wordCount,
+          lessonData: widget.lessonData,
         ),
+        transition: Transition.fadeIn,
+        duration: const Duration(milliseconds: 600),
       );
     } catch (e) {
       if (!mounted) return;

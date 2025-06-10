@@ -5,7 +5,7 @@ import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_less
 import 'package:langtest_pro/view/exams/ielts/listening/feedback.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/practice_tests/practice_test_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/strategies_tips.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
 
 class IeltsListeningScreen extends StatelessWidget {
@@ -162,8 +162,8 @@ class IeltsListeningScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final progressProvider = Provider.of<ListeningProgressProvider>(context);
-    final progress = progressProvider.completedLessons / 50.0;
+    final progressController = Get.find<ListeningProgressController>();
+    final progress = progressController.completedLessons / 50.0;
 
     return Container(
       padding: const EdgeInsets.all(20),

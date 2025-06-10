@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:provider/provider.dart';
-import 'package:langtest_pro/view/exams/ielts/reading/general/general_result.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/general/general_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/general/general_lessons.dart';
 import 'lessons/general_lesson_1.dart' as lesson1;
 
@@ -99,6 +99,9 @@ class _GeneralScreenState extends State<GeneralScreen> {
   @override
   void initState() {
     super.initState();
+    if (!Get.isRegistered<ReadingProgressController>()) {
+      Get.put(ReadingProgressController());
+    }
     lessonData = _getLessonData();
     selectedQuestions = _getRandomQuestions();
     _scrollController.addListener(() {
@@ -106,10 +109,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
       final currentScroll = _scrollController.position.pixels;
       if (maxScroll > 0) {
         final progress = (currentScroll / maxScroll).clamp(0.0, 1.0) * 0.5;
-        Provider.of<ReadingProgressProvider>(
-          context,
-          listen: false,
-        ).updateProgress(progress);
+        Get.find<ReadingProgressController>().updateProgress(progress);
       }
     });
   }
@@ -288,7 +288,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                   gradient: LinearGradient(
                     colors: [
                       colors['cardAccent']!.withOpacity(0.8),
-                      colors['card']!.withOpacity(0.9),
+                      colors['card']!.withOpacity(0.0),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -344,7 +344,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                       ),
                     ),
                     Text(
-                      'Font: ${_fontSizes[_fontSizeIndex].toInt()}',
+                      'Font Size: ${_fontSizes[_fontSizeIndex].toInt()}',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -410,9 +410,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     transform: Matrix4.identity()..scale(1.0),
-                    onEnd: () {
-                      setState(() {});
-                    },
+                    onEnd: () => setState(() {}),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,
                       vertical: 16,
@@ -688,10 +686,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                               selectedQuestions
                                   .where((q) => q['selectedIndex'] != -1)
                                   .length;
-                          Provider.of<ReadingProgressProvider>(
-                            context,
-                            listen: false,
-                          ).updateProgress(
+                          Get.find<ReadingProgressController>().updateProgress(
                             0.5 + (answered / selectedQuestions.length) * 0.5,
                           );
                         });
@@ -784,10 +779,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
             ? 5
             : 6);
     if (correctAnswers >= requiredCorrect) {
-      Provider.of<ReadingProgressProvider>(
-        context,
-        listen: false,
-      ).completeGeneralLesson(
+      Get.find<ReadingProgressController>().completeGeneralLesson(
         lessonId: widget.lessonId,
         score: '$correctAnswers/$totalQuestions',
       );

@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/core/loading/internet_signel_low.dart';
 import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'audio_result.dart';
@@ -64,7 +64,6 @@ class _AudioScreenState extends State<AudioScreen> {
     _loadAudio();
   }
 
-
   void _loadQuestions() {
     final lessonId = widget.lesson["lessonId"];
     setState(() {
@@ -72,7 +71,6 @@ class _AudioScreenState extends State<AudioScreen> {
       _userAnswers = List<String?>.filled(_currentQuestions.length, null);
     });
   }
-
 
   Future<void> _loadAudio() async {
     await fetchAudioFromFirebase(
@@ -115,11 +113,7 @@ class _AudioScreenState extends State<AudioScreen> {
       await _audioPlayer.setReleaseMode(ReleaseMode.stop);
       _setupAudioListeners();
 
-      await _audioPlayer.setSource(
-        DeviceFileSource(
-          audioPath,
-        ),
-      );
+      await _audioPlayer.setSource(DeviceFileSource(audioPath));
 
       setState(() {
         _isLoading = false;
@@ -186,11 +180,9 @@ class _AudioScreenState extends State<AudioScreen> {
               _isPlaying = false;
               _isTransitioning = false;
               if (widget.lesson["lessonId"] == 1) {
-                final progressProvider = Provider.of<ListeningProgressProvider>(
-                  context,
-                  listen: false,
-                );
-                progressProvider.completeLesson();
+                final progressController =
+                    Get.find<ListeningProgressController>();
+                progressController.completeLesson();
                 widget.onComplete();
                 Navigator.pop(context);
               }
@@ -316,12 +308,9 @@ class _AudioScreenState extends State<AudioScreen> {
                   lessonId: lessonId,
                   onComplete: () {
                     if (QuestionManager.isLessonPassed(_score, lessonId)) {
-                      final progressProvider =
-                          Provider.of<ListeningProgressProvider>(
-                            context,
-                            listen: false,
-                          );
-                      progressProvider.completeLesson();
+                      final progressController =
+                          Get.find<ListeningProgressController>();
+                      progressController.completeLesson();
                       widget.onComplete();
                     }
                   },
@@ -723,7 +712,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                                   style: GoogleFonts.poppins(
                                                     fontSize: 12,
                                                     color: Colors.white
-                                                        .withOpacity(0.8),
+                                                        .withOpacity(0.7),
                                                   ),
                                                 ),
                                                 Text(
@@ -731,285 +720,207 @@ class _AudioScreenState extends State<AudioScreen> {
                                                   style: GoogleFonts.poppins(
                                                     fontSize: 12,
                                                     color: Colors.white
-                                                        .withOpacity(0.8),
+                                                        .withOpacity(0.7),
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
                                           const SizedBox(height: 8),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
+                                          SliderTheme(
+                                            data: SliderTheme.of(
+                                              context,
+                                            ).copyWith(
+                                              activeTrackColor: Colors.white,
+                                              inactiveTrackColor: Colors.white
+                                                  .withOpacity(0.3),
+                                              thumbColor: Colors.white,
+                                              overlayColor: Colors.white
+                                                  .withOpacity(0.2),
+                                              thumbShape:
+                                                  const RoundSliderThumbShape(
+                                                    enabledThumbRadius: 6,
+                                                  ),
+                                              overlayShape:
+                                                  const RoundSliderOverlayShape(
+                                                    overlayRadius: 12,
+                                                  ),
                                             ),
-                                            child: SliderTheme(
-                                              data: SliderTheme.of(
-                                                context,
-                                              ).copyWith(
-                                                activeTrackColor: Colors.white,
-                                                inactiveTrackColor: Colors.white
-                                                    .withOpacity(0.3),
-                                                thumbColor: Colors.white,
-                                                overlayColor: Colors.white
-                                                    .withOpacity(0.2),
-                                                thumbShape:
-                                                    const RoundSliderThumbShape(
-                                                      enabledThumbRadius: 6,
-                                                    ),
-                                                overlayShape:
-                                                    const RoundSliderOverlayShape(
-                                                      overlayRadius: 12,
-                                                    ),
-                                              ),
-                                              child: Slider(
-                                                value: _position.inSeconds
-                                                    .toDouble()
-                                                    .clamp(
-                                                      0.0,
-                                                      _duration.inSeconds
-                                                          .toDouble(),
-                                                    ),
-                                                min: 0.0,
-                                                max:
-                                                    _duration.inSeconds > 0
-                                                        ? _duration.inSeconds
-                                                            .toDouble()
-                                                        : 1.0,
-                                                onChangeStart:
-                                                    (value) => setState(
-                                                      () => _isSeeking = true,
-                                                    ),
-                                                onChangeEnd:
-                                                    (value) =>
-                                                        _seekAudio(value),
-                                                onChanged: (value) {
-                                                  setState(
-                                                    () =>
-                                                        _position = Duration(
-                                                          seconds:
-                                                              value.toInt(),
-                                                        ),
-                                                  );
-                                                },
-                                              ),
+                                            child: Slider(
+                                              value: _position.inSeconds
+                                                  .toDouble()
+                                                  .clamp(
+                                                    0.0,
+                                                    _duration.inSeconds
+                                                        .toDouble(),
+                                                  ),
+                                              min: 0.0,
+                                              max:
+                                                  _duration.inSeconds > 0
+                                                      ? _duration.inSeconds
+                                                          .toDouble()
+                                                      : 1.0,
+                                              onChangeStart:
+                                                  (value) => setState(
+                                                    () => _isSeeking = true,
+                                                  ),
+                                              onChangeEnd:
+                                                  (value) => _seekAudio(value),
+                                              onChanged: (value) {
+                                                setState(
+                                                  () =>
+                                                      _position = Duration(
+                                                        seconds: value.toInt(),
+                                                      ),
+                                                );
+                                              },
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
+                                    const SizedBox(height: 20),
                                     Container(
-                                      margin: const EdgeInsets.all(16),
+                                      width: double.infinity,
                                       padding: const EdgeInsets.all(20),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.2),
+                                        ),
                                       ),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                "Question ${_currentQuestionIndex + 1} of ${_currentQuestions.length}",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              if (_currentQuestionIndex > 0)
-                                                IconButton(
-                                                  icon: const Icon(
-                                                    Icons.arrow_back,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _currentQuestionIndex--;
-                                                      _selectedAnswer = null;
-                                                    });
-                                                  },
-                                                ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 16),
                                           Text(
-                                            currentQuestion?["question"] ?? "",
+                                            "Question ${_currentQuestionIndex + 1} of ${_currentQuestions.length}",
                                             style: GoogleFonts.poppins(
                                               fontSize: 16,
+                                              fontWeight: FontWeight.bold,
                                               color: Colors.white,
                                             ),
                                           ),
+                                          const SizedBox(height: 12),
+                                          Text(
+                                            currentQuestion?["question"] ??
+                                                "Loading question...",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: Colors.white.withOpacity(
+                                                0.9,
+                                              ),
+                                              height: 1.5,
+                                            ),
+                                          ),
                                           const SizedBox(height: 20),
-                                          ...(currentQuestion?["options"] ?? []).map((
-                                            option,
+                                          ...?currentQuestion?["options"].asMap().entries.map((
+                                            entry,
                                           ) {
-                                            return GestureDetector(
-                                              onTap:
-                                                  () =>
-                                                      _onAnswerSelected(option),
-                                              child: AnimatedContainer(
-                                                duration: const Duration(
-                                                  milliseconds: 200,
-                                                ),
-                                                margin: const EdgeInsets.only(
-                                                  bottom: 12,
-                                                ),
-                                                padding: const EdgeInsets.all(
-                                                  16,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                    color: Colors.white
-                                                        .withOpacity(
-                                                          _selectedAnswer ==
-                                                                  option
-                                                              ? 0.5
-                                                              : 0.2,
+                                            final int index = entry.key;
+                                            final option = entry.value;
+                                            final isSelected =
+                                                _selectedAnswer == option;
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                  ),
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      isSelected
+                                                          ? Colors.amber
+                                                              .withOpacity(0.8)
+                                                          : Colors.white
+                                                              .withOpacity(0.1),
+                                                  foregroundColor: Colors.white,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 12,
+                                                      ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          10,
                                                         ),
+                                                    side: BorderSide(
+                                                      color:
+                                                          isSelected
+                                                              ? Colors.amber
+                                                              : Colors.white
+                                                                  .withOpacity(
+                                                                    0.3,
+                                                                  ),
+                                                    ),
+                                                  ),
+                                                  minimumSize: const Size(
+                                                    double.infinity,
+                                                    50,
                                                   ),
                                                 ),
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      width: 20,
-                                                      height: 20,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                          color: Colors.white
-                                                              .withOpacity(0.7),
-                                                        ),
-                                                      ),
-                                                      child:
-                                                          _selectedAnswer ==
-                                                                  option
-                                                              ? Center(
-                                                                child: Container(
-                                                                  width: 10,
-                                                                  height: 10,
-                                                                  decoration: const BoxDecoration(
-                                                                    shape:
-                                                                        BoxShape
-                                                                            .circle,
-                                                                    color:
-                                                                        Colors
-                                                                            .white,
-                                                                  ),
+                                                onPressed:
+                                                    () => _onAnswerSelected(
+                                                      option,
+                                                    ),
+                                                child: Text(
+                                                  "${String.fromCharCode(65 + index)}. $option",
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        isSelected
+                                                            ? FontWeight.w600
+                                                            : FontWeight.normal,
+                                                    color:
+                                                        isSelected
+                                                            ? Colors.black87
+                                                            : Colors.white
+                                                                .withOpacity(
+                                                                  0.9,
                                                                 ),
-                                                              )
-                                                              : null,
-                                                    ),
-                                                    const SizedBox(width: 12),
-                                                    Expanded(
-                                                      child: Text(
-                                                        option,
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
                                               ),
                                             );
-                                          }),
-                                          const SizedBox(height: 24),
-                                          Row(
-                                            children: [
-                                              if (_currentQuestionIndex > 0)
-                                                Expanded(
-                                                  child: ElevatedButton(
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _currentQuestionIndex--;
-                                                        _selectedAnswer = null;
-                                                      });
-                                                    },
-                                                    style: ElevatedButton.styleFrom(
-                                                      backgroundColor: Colors
-                                                          .white
-                                                          .withOpacity(0.2),
-                                                      padding:
-                                                          const EdgeInsets.symmetric(
-                                                            horizontal: 16,
-                                                            vertical: 16,
-                                                          ),
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              12,
-                                                            ),
-                                                        side: BorderSide(
-                                                          color: Colors.white
-                                                              .withOpacity(0.5),
-                                                        ),
-                                                      ),
-                                                      elevation: 0,
+                                          }).toList(),
+                                          const SizedBox(height: 20),
+                                          Align(
+                                            alignment: Alignment.centerRight,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    _selectedAnswer != null
+                                                        ? Colors.amber
+                                                        : Colors.grey,
+                                                foregroundColor: Colors.black87,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 24,
+                                                      vertical: 12,
                                                     ),
-                                                    child: Text(
-                                                      "Back",
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                            fontSize: 14,
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              if (_currentQuestionIndex > 0)
-                                                const SizedBox(width: 12),
-                                              Expanded(
-                                                child: ElevatedButton(
-                                                  onPressed:
-                                                      _selectedAnswer != null
-                                                          ? _nextQuestion
-                                                          : null,
-                                                  style: ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    padding:
-                                                        const EdgeInsets.symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 16,
-                                                        ),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                    ),
-                                                    elevation: 5,
-                                                  ),
-                                                  child: Text(
-                                                    _currentQuestionIndex <
-                                                            _currentQuestions
-                                                                    .length -
-                                                                1
-                                                        ? "Next"
-                                                        : "Finish",
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: const Color(
-                                                        0xFF6A5AE0,
-                                                      ),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
                                               ),
-                                            ],
+                                              onPressed:
+                                                  _selectedAnswer != null
+                                                      ? _nextQuestion
+                                                      : null,
+                                              child: Text(
+                                                _currentQuestionIndex <
+                                                        _currentQuestions
+                                                                .length -
+                                                            1
+                                                    ? "Next"
+                                                    : "Submit",
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -1022,5 +933,12 @@ class _AudioScreenState extends State<AudioScreen> {
                 ),
               ),
     );
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.stop();
+    _audioPlayer.dispose();
+    super.dispose();
   }
 }

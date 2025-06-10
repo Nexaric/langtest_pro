@@ -3,30 +3,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
+import 'package:get/get.dart';
 
-class ListeningProgressProvider extends ChangeNotifier {
+class ListeningProgressController extends GetxController {
   // Lesson progress constants
   static const int totalLessons = 50;
   int _completedLessons = 0;
   double _currentLessonProgress = 0.0;
 
   // Practice test progress tracking
-  final Map<String, bool> _practiceTestCompletion = {
-    'Part 1': false,
-    'Part 2': false,
-    'Part 3': false,
-    'Part 4': false,
-  };
+  final Map<String, bool> _practiceTestCompletion =
+      {'Part 1': false, 'Part 2': false, 'Part 3': false, 'Part 4': false}.obs;
 
   // Loading and error states
-  bool _isLoading = false;
-  bool _hasError = false;
-  String? _errorMessage;
+  var _isLoading = false.obs;
+  var _hasError = false.obs;
+  var _errorMessage = Rx<String?>(null);
 
   // Hive box for local storage
   Box? _progressBox;
 
-  ListeningProgressProvider() {
+  ListeningProgressController() {
     _initialize();
   }
 
@@ -45,10 +42,10 @@ class ListeningProgressProvider extends ChangeNotifier {
         _progressBox = Hive.box('listening_progress');
       }
     } catch (e) {
-      _hasError = true;
-      _errorMessage = 'Failed to initialize Hive: $e';
+      _hasError.value = true;
+      _errorMessage.value = 'Failed to initialize Hive: $e';
       if (kDebugMode) print('Hive initialization error: $e');
-      notifyListeners();
+      update();
     }
   }
 
@@ -58,9 +55,9 @@ class ListeningProgressProvider extends ChangeNotifier {
   double get lessonProgressPercentage =>
       (_completedLessons / totalLessons) * 100;
   double get progress => _completedLessons / totalLessons; // For compatibility
-  bool get isLoading => _isLoading;
-  bool get hasError => _hasError;
-  String? get errorMessage => _errorMessage;
+  bool get isLoading => _isLoading.value;
+  bool get hasError => _hasError.value;
+  String? get errorMessage => _errorMessage.value;
 
   bool isPracticeTestComplete(String part) =>
       _practiceTestCompletion[part] ?? false;
@@ -80,12 +77,12 @@ class ListeningProgressProvider extends ChangeNotifier {
 
   // Load progress from local storage and sync with Firestore
   Future<void> _loadProgress() async {
-    if (_isLoading) return;
+    if (_isLoading.value) return;
 
-    _isLoading = true;
-    _hasError = false;
-    _errorMessage = null;
-    notifyListeners();
+    _isLoading.value = true;
+    _hasError.value = false;
+    _errorMessage.value = null;
+    update();
 
     try {
       // Load from Hive if available
@@ -129,12 +126,12 @@ class ListeningProgressProvider extends ChangeNotifier {
         await _syncFromFirestore();
       }
     } catch (e) {
-      _hasError = true;
-      _errorMessage = 'Failed to load progress: $e';
+      _hasError.value = true;
+      _errorMessage.value = 'Failed to load progress: $e';
       if (kDebugMode) print('Progress loading error: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _isLoading.value = false;
+      update();
     }
   }
 
@@ -147,10 +144,10 @@ class ListeningProgressProvider extends ChangeNotifier {
       _currentLessonProgress = 1.0;
       await _saveProgress();
     } catch (e) {
-      _hasError = true;
-      _errorMessage = 'Failed to complete lesson: $e';
+      _hasError.value = true;
+      _errorMessage.value = 'Failed to complete lesson: $e';
       if (kDebugMode) print('Lesson completion error: $e');
-      notifyListeners();
+      update();
     }
   }
 
@@ -161,7 +158,7 @@ class ListeningProgressProvider extends ChangeNotifier {
     try {
       _currentLessonProgress = progress.clamp(0.0, 1.0);
       _saveProgressSilently();
-      notifyListeners();
+      update();
     } catch (e) {
       if (kDebugMode) print('Progress update error: $e');
     }
@@ -178,10 +175,10 @@ class ListeningProgressProvider extends ChangeNotifier {
       _practiceTestCompletion[part] = true;
       await _saveProgress();
     } catch (e) {
-      _hasError = true;
-      _errorMessage = 'Failed to complete practice test: $e';
+      _hasError.value = true;
+      _errorMessage.value = 'Failed to complete practice test: $e';
       if (kDebugMode) print('Practice test completion error: $e');
-      notifyListeners();
+      update();
     }
   }
 
@@ -240,8 +237,8 @@ class ListeningProgressProvider extends ChangeNotifier {
         await _syncToFirestore();
       }
     } catch (e) {
-      _hasError = true;
-      _errorMessage = 'Failed to save progress: $e';
+      _hasError.value = true;
+      _errorMessage.value = 'Failed to save progress: $e';
       if (kDebugMode) print('Progress saving error: $e');
       throw Exception('Failed to save progress: $e');
     }
@@ -343,20 +340,20 @@ class ListeningProgressProvider extends ChangeNotifier {
 
   // Restore progress from Firestore
   Future<void> restoreFromCloud() async {
-    _isLoading = true;
-    _hasError = false;
-    _errorMessage = null;
-    notifyListeners();
+    _isLoading.value = true;
+    _hasError.value = false;
+    _errorMessage.value = null;
+    update();
 
     try {
       await _syncFromFirestore();
     } catch (e) {
-      _hasError = true;
-      _errorMessage = 'Failed to restore from cloud: $e';
+      _hasError.value = true;
+      _errorMessage.value = 'Failed to restore from cloud: $e';
       if (kDebugMode) print('Cloud restore error: $e');
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      _isLoading.value = false;
+      update();
     }
   }
 
@@ -368,10 +365,10 @@ class ListeningProgressProvider extends ChangeNotifier {
       _practiceTestCompletion.updateAll((_, __) => false);
       await _saveProgress();
     } catch (e) {
-      _hasError = true;
-      _errorMessage = 'Failed to reset progress: $e';
+      _hasError.value = true;
+      _errorMessage.value = 'Failed to reset progress: $e';
       if (kDebugMode) print('Progress reset error: $e');
-      notifyListeners();
+      update();
     }
   }
 }

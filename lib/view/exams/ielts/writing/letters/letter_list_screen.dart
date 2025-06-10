@@ -16,7 +16,7 @@ import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/in
 import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_6.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_7.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
 
@@ -25,9 +25,8 @@ class LetterListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressProvider = Provider.of<WritingProgressProvider>(context);
     final theme = Theme.of(context);
-    final completedLetterLessons = progressProvider.completedLetterLessons;
+    final progressController = Get.find<WritingProgressController>();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -46,145 +45,152 @@ class LetterListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Iconsax.medal, color: theme.colorScheme.primary),
-            onPressed: () => _showAchievements(context, progressProvider),
+            onPressed: () => _showAchievements(context, progressController),
             tooltip: 'View Achievements',
           ),
         ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FadeInDown(
-                    duration: const Duration(milliseconds: 600),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Your Letter Writing Journey",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                            Chip(
-                              backgroundColor: theme.colorScheme.primary
-                                  .withOpacity(0.2),
-                              label: Text(
-                                "${(completedLetterLessons / 14 * 100).round()}% Complete",
+      body: Obx(() {
+        final completedLetterLessons =
+            progressController.completedLetterLessons;
+        return CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FadeInDown(
+                      duration: const Duration(milliseconds: 600),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Your Letter Writing Journey",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: theme.colorScheme.primary,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Stack(
-                          children: [
-                            Container(
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 800),
-                              curve: Curves.easeOutQuart,
-                              height: 10,
-                              width:
-                                  MediaQuery.of(context).size.width *
-                                  0.9 *
-                                  (completedLetterLessons / 14),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    theme.colorScheme.primary,
-                                    theme.colorScheme.primaryContainer,
-                                  ],
+                              Chip(
+                                backgroundColor: theme.colorScheme.primary
+                                    .withOpacity(0.2),
+                                label: Text(
+                                  "${(completedLetterLessons / 14 * 100).round()}% Complete",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: theme.colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Stack(
+                            children: [
+                              Container(
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutQuart,
+                                height: 10,
+                                width:
+                                    MediaQuery.of(context).size.width *
+                                    0.9 *
+                                    (completedLetterLessons / 14),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      theme.colorScheme.primary,
+                                      theme.colorScheme.primaryContainer,
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 100),
-                    duration: const Duration(milliseconds: 600),
-                    child: Row(
-                      children: [
-                        _buildStatCard(
-                          context,
-                          "Completed",
-                          "$completedLetterLessons",
-                          Iconsax.tick_circle,
-                          theme.colorScheme.primaryContainer,
-                        ),
-                        const SizedBox(width: 12),
-                        _buildStatCard(
-                          context,
-                          "Next Letter",
-                          completedLetterLessons < 14
-                              ? "Letter ${completedLetterLessons + 1}"
-                              : "All Done!",
-                          Iconsax.arrow_up,
-                          theme.colorScheme.tertiaryContainer,
-                        ),
-                      ],
+                    const SizedBox(height: 20),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 600),
+                      child: Row(
+                        children: [
+                          _buildStatCard(
+                            context,
+                            "Completed",
+                            "$completedLetterLessons",
+                            Iconsax.tick_circle,
+                            theme.colorScheme.primaryContainer,
+                          ),
+                          const SizedBox(width: 12),
+                          _buildStatCard(
+                            context,
+                            "Next Letter",
+                            completedLetterLessons < 14
+                                ? "Letter ${completedLetterLessons + 1}"
+                                : "All Done!",
+                            Iconsax.arrow_up,
+                            theme.colorScheme.tertiaryContainer,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildSectionHeader(
-                  context,
-                  "✍️ Letter Writing Lessons",
-                  "7 Formal + 7 Informal Letters",
-                ),
-                ...List.generate(14, (index) {
-                  final letterId = index + 1;
-                  return FadeInUp(
-                    delay: Duration(milliseconds: 100 * index),
-                    child: _buildLetterCard(
-                      context,
-                      letterId,
-                      _getLetterTitle(letterId),
-                      _getLetterSubtitle(letterId),
-                      letterId <=
-                          completedLetterLessons + 1, // Sequential unlocking
-                      progressProvider.isLetterLessonCompleted(letterId),
-                      _getLetterIcon(letterId),
-                      progressProvider,
-                    ),
-                  );
-                }),
-              ]),
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  _buildSectionHeader(
+                    context,
+                    "✍️ Letter Writing Lessons",
+                    "7 Formal + 7 Informal Letters",
+                  ),
+                  ...List.generate(14, (index) {
+                    final letterId = index + 1;
+                    return FadeInUp(
+                      delay: Duration(milliseconds: 100 * index),
+                      child: _buildLetterCard(
+                        context,
+                        letterId,
+                        _getLetterTitle(letterId),
+                        _getLetterSubtitle(letterId),
+                        letterId <=
+                            completedLetterLessons + 1, // Sequential unlocking
+                        progressController.isLetterLessonCompleted(letterId),
+                        _getLetterIcon(letterId),
+                        progressController,
+                      ),
+                    );
+                  }),
+                ]),
+              ),
             ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
-        ],
-      ),
+            const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          ],
+        );
+      }),
     );
   }
 
@@ -284,7 +290,7 @@ class LetterListScreen extends StatelessWidget {
     bool isUnlocked,
     bool isCompleted,
     IconData icon,
-    WritingProgressProvider progressProvider,
+    WritingProgressController progressController,
   ) {
     final theme = Theme.of(context);
 
@@ -307,7 +313,7 @@ class LetterListScreen extends StatelessWidget {
                     _openLetter(
                       context,
                       letterId,
-                      progressProvider,
+                      progressController,
                       isCompleted,
                     );
                   }
@@ -446,14 +452,14 @@ class LetterListScreen extends StatelessWidget {
   void _openLetter(
     BuildContext context,
     int letterId,
-    WritingProgressProvider provider,
+    WritingProgressController controller,
     bool isCompleted,
   ) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => _getLetterScreen(letterId)),
     ).then((_) {
-      if (provider.isLetterLessonCompleted(letterId) && !isCompleted) {
+      if (controller.isLetterLessonCompleted(letterId) && !isCompleted) {
         _showLetterCompleteDialog(context, letterId);
       }
     });
@@ -503,7 +509,7 @@ class LetterListScreen extends StatelessWidget {
 
   void _showAchievements(
     BuildContext context,
-    WritingProgressProvider provider,
+    WritingProgressController controller,
   ) {
     showDialog(
       context: context,
@@ -514,39 +520,43 @@ class LetterListScreen extends StatelessWidget {
               style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
             ),
             content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildAchievementItem(
-                    context,
-                    "Letter Beginner",
-                    "Complete Letter 1: Formal Complaint",
-                    provider.completedLetterLessons >= 1,
-                    Iconsax.edit_2,
-                  ),
-                  _buildAchievementItem(
-                    context,
-                    "Formal Letter Expert",
-                    "Complete all 7 formal letters",
-                    provider.completedLetterLessons >= 7,
-                    Iconsax.chart_success,
-                  ),
-                  _buildAchievementItem(
-                    context,
-                    "Informal Letter Starter",
-                    "Complete Letter 8: Informal Invitation",
-                    provider.completedLetterLessons >= 8,
-                    Iconsax.star,
-                  ),
-                  _buildAchievementItem(
-                    context,
-                    "Letter Master",
-                    "Complete all 14 letters",
-                    provider.completedLetterLessons >= 14,
-                    Iconsax.award,
-                  ),
-                ],
-              ),
+              child: Obx(() {
+                final completedLetterLessons =
+                    controller.completedLetterLessons;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildAchievementItem(
+                      context,
+                      "Letter Beginner",
+                      "Complete Letter 1: Formal Complaint",
+                      completedLetterLessons >= 1,
+                      Iconsax.edit_2,
+                    ),
+                    _buildAchievementItem(
+                      context,
+                      "Formal Letter Expert",
+                      "Complete all 7 formal letters",
+                      completedLetterLessons >= 7,
+                      Iconsax.chart_success,
+                    ),
+                    _buildAchievementItem(
+                      context,
+                      "Informal Letter Starter",
+                      "Complete Letter 8: Informal Invitation",
+                      completedLetterLessons >= 8,
+                      Iconsax.star,
+                    ),
+                    _buildAchievementItem(
+                      context,
+                      "Letter Master",
+                      "Complete all 14 letters",
+                      completedLetterLessons >= 14,
+                      Iconsax.award,
+                    ),
+                  ],
+                );
+              }),
             ),
             actions: [
               TextButton(

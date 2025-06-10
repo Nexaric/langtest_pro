@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:langtest_pro/controller/listening_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/speaking_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import '../../core/widgets/progress_bar.dart';
-import '../../controller/listening_progress_provider.dart';
-import '../../controller/reading_progress_provider.dart';
-import '../../controller/writing_progress_provider.dart';
-import '../../controller/speaking_progress_provider.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final listeningProgress = Provider.of<ListeningProgressProvider>(context);
-    final readingProgress = Provider.of<ReadingProgressProvider>(context);
-    final writingProgress = Provider.of<WritingProgressProvider>(context);
-    final speakingProgress = Provider.of<SpeakingProgressProvider>(context);
+    final listeningProgress = Get.find<ListeningProgressController>();
+    final readingProgress = Get.find<ReadingProgressController>();
+    final writingProgress = Get.find<WritingProgressController>();
+    final speakingProgress = Get.find<SpeakingProgressController>();
 
     return Scaffold(
       body: Container(
@@ -57,11 +57,13 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      _buildSkillProgress(
-                        listeningProgress: listeningProgress,
-                        readingProgress: readingProgress,
-                        writingProgress: writingProgress,
-                        speakingProgress: speakingProgress,
+                      Obx(
+                        () => _buildSkillProgress(
+                          listeningProgress: listeningProgress,
+                          readingProgress: readingProgress,
+                          writingProgress: writingProgress,
+                          speakingProgress: speakingProgress,
+                        ),
                       ),
                     ],
                   ),
@@ -75,17 +77,17 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildSkillProgress({
-    required ListeningProgressProvider listeningProgress,
-    required ReadingProgressProvider readingProgress,
-    required WritingProgressProvider writingProgress,
-    required SpeakingProgressProvider speakingProgress,
+    required ListeningProgressController listeningProgress,
+    required ReadingProgressController readingProgress,
+    required WritingProgressController writingProgress,
+    required SpeakingProgressController speakingProgress,
   }) {
     final completedReadingLessons =
         readingProgress.completedAcademicLessons +
         readingProgress.completedGeneralLessons;
     final totalReadingLessons =
-        ReadingProgressProvider.totalAcademicLessons +
-        ReadingProgressProvider.totalGeneralLessons;
+        ReadingProgressController.totalAcademicLessons +
+        ReadingProgressController.totalGeneralLessons;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -94,7 +96,7 @@ class DashboardScreen extends StatelessWidget {
           child: ProgressCard(
             title: "Listening",
             completed: listeningProgress.completedLessons,
-            total: ListeningProgressProvider.totalLessons,
+            total: ListeningProgressController.totalLessons,
           ),
         ),
         const SizedBox(width: 8),
@@ -110,7 +112,7 @@ class DashboardScreen extends StatelessWidget {
           child: ProgressCard(
             title: "Writing",
             completed: writingProgress.completedLessons,
-            total: WritingProgressProvider.totalLessons,
+            total: WritingProgressController.totalLessons,
           ),
         ),
         const SizedBox(width: 8),
@@ -118,7 +120,7 @@ class DashboardScreen extends StatelessWidget {
           child: ProgressCard(
             title: "Speaking",
             completed: speakingProgress.completedLessons,
-            total: SpeakingProgressProvider.totalLessons,
+            total: SpeakingProgressController.totalLessons,
           ),
         ),
       ],
