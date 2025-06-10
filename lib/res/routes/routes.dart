@@ -1,7 +1,6 @@
 
 
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/auth/login_screen.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
@@ -9,6 +8,7 @@ import 'package:langtest_pro/view/profile/user_info_screen.dart';
 
 class AppRoutes {
   static appRoutes() => [
+
 // GetPage(
 //           name: RoutesName.splashScreen,
 //           page: () => const HomeScreen(),

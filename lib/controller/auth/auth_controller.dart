@@ -42,3 +42,4 @@ class AuthController extends GetxController {
     });
   }
 }
+//i made login page

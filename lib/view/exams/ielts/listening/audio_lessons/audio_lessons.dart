@@ -627,9 +627,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                               },
                               onComplete: () async {
                                 await progressController.completeLesson();
-                                setState(
-                                  () {},
-                                ); // Trigger UI rebuild to update isLocked states
+                               // Trigger UI rebuild to update isLocked states
                               },
                               onProgressUpdate: (progress) {
                                 progressController.updateProgress(progress);
