@@ -5,9 +5,22 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
-import 'package:langtest_pro/view/exams/ielts/reading/general/general_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/general/general_lessons.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/general/general_result.dart';
 import 'lessons/general_lesson_1.dart' as lesson1;
+import 'lessons/general_lesson_2.dart' as lesson2;
+import 'lessons/general_lesson_3.dart' as lesson3;
+import 'lessons/general_lesson_4.dart' as lesson4;
+import 'lessons/general_lesson_5.dart' as lesson5;
+import 'lessons/general_lesson_6.dart' as lesson6;
+import 'lessons/general_lesson_7.dart' as lesson7;
+import 'lessons/general_lesson_8.dart' as lesson8;
+import 'lessons/general_lesson_9.dart' as lesson9;
+import 'lessons/general_lesson_10.dart' as lesson10;
+import 'lessons/general_lesson_11.dart' as lesson11;
+import 'lessons/general_lesson_12.dart' as lesson12;
+import 'lessons/general_lesson_13.dart' as lesson13;
+import 'lessons/general_lesson_14.dart' as lesson14;
 
 class CustomBeveledBorder extends ShapeBorder {
   @override
@@ -77,7 +90,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
 
   final Map<String, Color> _darkColors = {
     'gradientStart': const Color(0xFF2A2878),
-    'gradientEnd': const Color(0xFF3F3A8C),
+    'gradientEnd': const Color(0xFF3F3A8A),
     'accent': const Color(0xFF00BFA6),
     'background': Colors.black,
     'textPrimary': Colors.white,
@@ -119,6 +132,32 @@ class _GeneralScreenState extends State<GeneralScreen> {
       switch (widget.lessonId) {
         case 1:
           return lesson1.GeneralSection1.data['lesson_1']!;
+        case 2:
+          return lesson2.GeneralSection2.data['lesson_2']!;
+        case 3:
+          return lesson3.GeneralSection3.data['lesson_3']!;
+        case 4:
+          return lesson4.GeneralSection4.data['lesson_4']!;
+        case 5:
+          return lesson5.GeneralSection5.data['lesson_5']!;
+        case 6:
+          return lesson6.GeneralSection6.data['lesson_6']!;
+        case 7:
+          return lesson7.GeneralSection7.data['lesson_7']!;
+        case 8:
+          return lesson8.GeneralSection8.data['lesson_8']!;
+        case 9:
+          return lesson9.GeneralSection9.data['lesson_9']!;
+        case 10:
+          return lesson10.GeneralSection10.data['lesson_10']!;
+        case 11:
+          return lesson11.GeneralSection11.data['lesson_11']!;
+        case 12:
+          return lesson12.GeneralSection12.data['lesson_12']!;
+        case 13:
+          return lesson13.GeneralSection13.data['lesson_13']!;
+        case 14:
+          return lesson14.GeneralSection14.data['lesson_14']!;
         default:
           return _getPlaceholderLessonData();
       }

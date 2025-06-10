@@ -1,218 +1,374 @@
 class AcademicLesson29Data {
   static final Map<String, dynamic> data = {
     'lessonId': 29,
-    'title': 'Lesson 29: The Role of Citizen Science',
+    'title': 'Lesson 29: The World of Microorganisms',
     'passage': '''
-Citizen science, engaging the public in scientific research, democratizes knowledge and accelerates discovery. Since the 1990s, projects like Galaxy Zoo, classifying 1 million galaxies, have involved 500,000 volunteers globally. Participants collect data, from bird counts to air quality, contributing 30% of environmental research. In 2023, 2 million citizens participated, with apps like iNaturalist logging 50 million observations. Citizen science aids conservation, with 20% of protected areas relying on volunteer data. In Australia, frog monitoring by 10,000 citizens informs wetland policies. Health research benefits, with 15% of COVID-19 studies using public input on symptoms. Urban planning uses crowd-sourced data, improving 25% of city traffic systems. Educationally, 70% of participants gain STEM skills, inspiring careers. Low-cost tools, like 50 air sensors, enable participation, though 40% of projects lack funding. Accessibility issues exclude 30% of rural communities, with internet gaps. Data quality, questioned by 20% of scientists, requires validation, with AI improving accuracy by 35%. Ethical concerns, like privacy, affect 10% of health projects, necessitating consent protocols. Citizen science bridges science and society, with 80% of volunteers feeling empowered. Policy integration, like the EU’s citizen science framework, supports 200 projects, but global coordination lags. Climate research, with 50% of data from citizens, tracks warming impacts. Challenges include sustaining engagement, with 25% of volunteers dropping out, and ensuring inclusivity. Technology, like drones, enhances data collection, but costs limit use to 5% of projects. Citizen science’s impact, from biodiversity to public health, underscores its value, requiring investment, training, and ethical standards to maximize contributions and foster global scientific collaboration.
+Microorganisms, the most abundant and diverse life forms on Earth, thrive in every environment, from deep ocean trenches to scalding hot springs, playing vital roles in ecosystems, human health, and biotechnology. These microscopic entities include bacteria, archaea, fungi, protists, and viruses, each with unique structures and functions.
+
+The discovery of microorganisms transformed biology. In the 17th century, Antonie van Leeuwenhoek’s microscopes revealed “animalcules,” unveiling a hidden world. Advances in microscopy, from simple lenses to electron microscopes, have deepened our understanding of microbial diversity.
+
+Bacteria, single-celled prokaryotes, exhibit remarkable metabolic versatility, thriving in extreme conditions. They drive biogeochemical cycles, such as nitrogen fixation and carbon cycling, supporting global ecosystems.
+
+Archaea, distinct from bacteria, flourish in extreme environments like acidic pools or oxygen-free zones. Their unique biochemistry offers clues about early life and potential extraterrestrial life.
+
+Fungi, including yeasts and molds, decompose organic matter and form symbiotic relationships, like mycorrhizal fungi aiding plant nutrient uptake. Fungal antibiotics, such as penicillin, have revolutionized medicine.
+
+Protists, diverse eukaryotes, include photosynthetic algae and parasitic species like malaria-causing organisms. They form the base of aquatic food webs, supporting higher life forms.
+
+Viruses, straddling the line between living and non-living, replicate within hosts, impacting ecosystems and evolution through genetic transfer and disease.
+
+Microbial ecology studies complex microbial communities, or microbiomes, in soil, water, and the human body. The human microbiome, with trillions of microbes, supports digestion and immunity.
+
+Microorganisms drive global biogeochemical cycles, recycling nitrogen, carbon, and sulfur, essential for life. They also enable fermentation, creating foods like yogurt and wine.
+
+Microorganisms have dual medical roles. Pathogens cause diseases like COVID-19, but beneficial microbes produce drugs and maintain health. Biotechnology uses microbes for insulin production and bioremediation.
+
+Recent advances, like metagenomics, reveal microbial diversity in unexplored environments. Extremophiles, thriving in extreme conditions, inform astrobiology and biotechnology.
+
+Antimicrobial resistance, driven by antibiotic misuse, threatens global health. Climate change also impacts microbial communities, potentially accelerating carbon release from permafrost.
+
+Future microbiology will explore undiscovered microbes, engineer synthetic microbes, and address health and environmental challenges, deepening our appreciation of these essential organisms.
 ''',
     'questions': [
       {
-        "question": "How many volunteers did Galaxy Zoo involve?",
-        "options": ["300,000", "500,000", "700,000"],
-        "correctAnswer": "500,000",
+        "question": "Where do microorganisms thrive?",
+        "options": [
+          "Only in soil",
+          "Every environment",
+          "Only in water",
+          "In laboratories",
+        ],
+        "correctAnswer": "Every environment",
       },
       {
-        "question":
-            "What percentage of environmental research comes from citizens?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
+        "question": "Which groups are considered microorganisms?",
+        "options": [
+          "Plants, animals, fungi",
+          "Bacteria, archaea, viruses",
+          "Insects, algae, protists",
+          "Mammals, fungi, bacteria",
+        ],
+        "correctAnswer": "Bacteria, archaea, viruses",
       },
       {
-        "question": "How many citizens participated in 2023?",
-        "options": ["1 million", "2 million", "3 million"],
-        "correctAnswer": "2 million",
+        "question": "Who first observed microorganisms?",
+        "options": [
+          "Robert Hooke",
+          "Antonie van Leeuwenhoek",
+          "Louis Pasteur",
+          "Alexander Fleming",
+        ],
+        "correctAnswer": "Antonie van Leeuwenhoek",
       },
       {
-        "question": "How many observations did iNaturalist log?",
-        "options": ["30 million", "50 million", "70 million"],
-        "correctAnswer": "50 million",
+        "question": "What tool advanced microbial observation?",
+        "options": [
+          "Telescope",
+          "Electron microscope",
+          "Spectroscope",
+          "Centrifuge",
+        ],
+        "correctAnswer": "Electron microscope",
       },
       {
-        "question": "What percentage of protected areas use volunteer data?",
-        "options": ["10%", "20%", "30%"],
-        "correctAnswer": "20%",
+        "question": "What is a key feature of bacteria?",
+        "options": [
+          "Membrane-bound nuclei",
+          "Metabolic versatility",
+          "Multicellular structure",
+          "Photosynthesis only",
+        ],
+        "correctAnswer": "Metabolic versatility",
       },
       {
-        "question": "How many citizens monitor frogs in Australia?",
-        "options": ["5,000", "10,000", "15,000"],
-        "correctAnswer": "10,000",
+        "question": "Where do archaea typically thrive?",
+        "options": [
+          "Temperate forests",
+          "Extreme environments",
+          "Urban areas",
+          "Freshwater lakes",
+        ],
+        "correctAnswer": "Extreme environments",
       },
       {
-        "question": "What percentage of COVID-19 studies used public input?",
-        "options": ["5%", "15%", "25%"],
-        "correctAnswer": "15%",
+        "question": "What do mycorrhizal fungi aid in plants?",
+        "options": [
+          "Photosynthesis",
+          "Nutrient uptake",
+          "Seed dispersal",
+          "Leaf growth",
+        ],
+        "correctAnswer": "Nutrient uptake",
       },
       {
-        "question": "What improves 25% of city traffic systems?",
-        "options": ["Crowd-sourced data", "AI validation", "Drones"],
-        "correctAnswer": "Crowd-sourced data",
+        "question": "What is a famous fungal product?",
+        "options": ["Insulin", "Penicillin", "Aspirin", "Vaccine"],
+        "correctAnswer": "Penicillin",
       },
       {
-        "question": "What percentage gain STEM skills?",
-        "options": ["50%", "70%", "90%"],
-        "correctAnswer": "70%",
+        "question": "What role do protists play in aquatic ecosystems?",
+        "options": [
+          "Top predators",
+          "Base of food webs",
+          "Decomposers",
+          "Parasites only",
+        ],
+        "correctAnswer": "Base of food webs",
       },
       {
-        "question": "What costs 50 for participation?",
-        "options": ["Air sensors", "Drones", "Apps"],
-        "correctAnswer": "Air sensors",
+        "question": "How do viruses replicate?",
+        "options": [
+          "Independently",
+          "Within host cells",
+          "Through photosynthesis",
+          "By binary fission",
+        ],
+        "correctAnswer": "Within host cells",
       },
       {
-        "question": "TRUE, FALSE, or NOT GIVEN: All data is high quality.",
+        "question": "What is the human microbiome?",
+        "options": [
+          "A type of virus",
+          "Trillions of microbes",
+          "A single bacterium",
+          "A fungal infection",
+        ],
+        "correctAnswer": "Trillions of microbes",
+      },
+      {
+        "question": "What cycle do bacteria drive?",
+        "options": [
+          "Water cycle",
+          "Nitrogen cycle",
+          "Oxygen cycle",
+          "Rock cycle",
+        ],
+        "correctAnswer": "Nitrogen cycle",
+      },
+      {
+        "question": "What process creates yogurt?",
+        "options": [
+          "Photosynthesis",
+          "Fermentation",
+          "Respiration",
+          "Decomposition",
+        ],
+        "correctAnswer": "Fermentation",
+      },
+      {
+        "question": "What have pathogens historically caused?",
+        "options": [
+          "Climate change",
+          "Infectious diseases",
+          "Food preservation",
+          "Bioremediation",
+        ],
+        "correctAnswer": "Infectious diseases",
+      },
+      {
+        "question": "What do genetically modified bacteria produce?",
+        "options": ["Penicillin", "Insulin", "Aspirin", "Antibodies"],
+        "correctAnswer": "Insulin",
+      },
+      {
+        "question": "What is bioremediation?",
+        "options": [
+          "Drug discovery",
+          "Pollutant breakdown",
+          "Food production",
+          "Vaccine development",
+        ],
+        "correctAnswer": "Pollutant breakdown",
+      },
+      {
+        "question": "What reveals microbial diversity?",
+        "options": [
+          "Metagenomics",
+          "Microscopy",
+          "Fermentation",
+          "Antibiotics",
+        ],
+        "correctAnswer": "Metagenomics",
+      },
+      {
+        "question": "What are extremophiles?",
+        "options": [
+          "Microbes in mild conditions",
+          "Microbes in extreme conditions",
+          "Large organisms",
+          "Plant-based microbes",
+        ],
+        "correctAnswer": "Microbes in extreme conditions",
+      },
+      {
+        "question": "What threatens global health?",
+        "options": [
+          "Antimicrobial resistance",
+          "Climate change",
+          "Fermentation",
+          "Microbiomes",
+        ],
+        "correctAnswer": "Antimicrobial resistance",
+      },
+      {
+        "question": "What may permafrost microbes release?",
+        "options": ["Oxygen", "Carbon", "Nitrogen", "Sulfur"],
+        "correctAnswer": "Carbon",
+      },
+      {
+        "question": "TRUE, FALSE, or NOT GIVEN: All microbes are harmful.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: Citizen science only aids conservation.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph mentions health research?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 3",
-      },
-      {
-        "question": "Which paragraph discusses challenges?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 4",
-      },
-      {
-        "question": "What is NOT a citizen science benefit?",
-        "options": ["Conservation", "Education", "Urbanization"],
-        "correctAnswer": "Urbanization",
-      },
-      {
-        "question": "What percentage of volunteers feel empowered?",
-        "options": ["60%", "80%", "100%"],
-        "correctAnswer": "80%",
-      },
-      {
-        "question": "How many projects does the EU support?",
-        "options": ["100", "200", "300"],
-        "correctAnswer": "200",
-      },
-      {
-        "question": "What percentage of volunteers drop out?",
-        "options": ["15%", "25%", "35%"],
-        "correctAnswer": "25%",
-      },
-      {
-        "question": "What enhances data collection?",
-        "options": ["Drones", "Air sensors", "Apps"],
-        "correctAnswer": "Drones",
-      },
-      {
-        "question": "What percentage of climate data is from citizens?",
-        "options": ["30%", "50%", "70%"],
-        "correctAnswer": "50%",
-      },
-      {
-        "question": "How many people participate in global social movements?",
-        "options": ["400 million", "500 million", "600 million"],
-        "correctAnswer": "500 million",
-      },
-      {
-        "question": "What is a key tool for social movement activism?",
-        "options": ["Digital platforms", "Print media", "Radio"],
-        "correctAnswer": "Digital platforms",
-      },
-      {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: All social movements are nonviolent.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph mentions feminist movements?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 3",
-      },
-      {
-        "question": "What supports 10% of social movements financially?",
-        "options": ["Crowdfunding", "Government aid", "Corporate sponsors"],
-        "correctAnswer": "Crowdfunding",
-      },
-      {
-        "question": "How many workers are involved in labor movements?",
-        "options": ["80 million", "100 million", "120 million"],
-        "correctAnswer": "100 million",
-      },
-      {
-        "question": "What is NOT a social movement challenge?",
-        "options": ["Repression", "Polarization", "Funding"],
-        "correctAnswer": "Funding",
-      },
-      {
-        "question": "What percentage of social movements influence policy?",
-        "options": ["40%", "50%", "60%"],
-        "correctAnswer": "50%",
-      },
-      {
-        "question": "What technology protects 30% of activists?",
-        "options": ["Encrypted apps", "AI analytics", "Satellites"],
-        "correctAnswer": "Encrypted apps",
-      },
-      {
-        "question": "What percentage of activists face repression?",
-        "options": ["15%", "25%", "35%"],
-        "correctAnswer": "25%",
-      },
-      {
-        "question": "TRUE, FALSE, or NOT GIVEN: Social movements succeed.",
+        "question": "TRUE, FALSE, or NOT GIVEN: Viruses are living organisms.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "NOT GIVEN",
       },
       {
-        "question": "Which paragraph mentions discusses grassroots campaigns?",
+        "question": "Which paragraph mentions archaea?",
         "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
         "correctAnswer": "Paragraph 4",
       },
       {
-        "question": "How many social media posts support movements annually?",
-        "options": ["0.8 billion", "1 billion", "1.2 billion"],
-        "correctAnswer": "1 billion",
+        "question": "Which paragraph discusses biotechnology?",
+        "options": ["Paragraph 8", "Paragraph 10", "Paragraph 12"],
+        "correctAnswer": "Paragraph 10",
       },
       {
-        "question": "What boosts movement success by 25%?",
+        "question": "What is NOT a microbial role?",
         "options": [
-          "Community organizing",
-          "Digital platforms",
-          "Violent tactics",
+          "Cycling nutrients",
+          "Causing diseases",
+          "Building structures",
+          "Producing drugs",
         ],
-        "correctAnswer": "Community organizing",
+        "correctAnswer": "Building structures",
       },
       {
-        "question": "What is a major issue for 30% of social movements?",
-        "options": ["Misinformation", "Funding", "Polarization"],
-        "correctAnswer": "Misinformation",
+        "question": "What percentage of microbes remain undiscovered?",
+        "options": ["50%", "70%", "Vast majority"],
+        "correctAnswer": "Vast majority",
       },
       {
-        "question":
-            "What percentage of people oppose radical movement tactics?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
+        "question": "What field studies extremophiles for astrobiology?",
+        "options": [
+          "Microbial ecology",
+          "Metagenomics",
+          "Synthetic biology",
+          "Microbiology",
+        ],
+        "correctAnswer": "Microbiology",
       },
       {
-        "question": "What supports 10 million activists globally?",
-        "options": ["Global networks", "Local governments", "Corporate NGOs"],
-        "correctAnswer": "Global networks",
+        "question": "What enhances food flavor?",
+        "options": [
+          "Fermentation",
+          "Photosynthesis",
+          "Bioremediation",
+          "Nitrogen fixation",
+        ],
+        "correctAnswer": "Fermentation",
       },
       {
-        "question": "What reduces prejudice by 20%?",
-        "options": ["Education", "Policy", "Media"],
-        "correctAnswer": "Education",
+        "question": "What technology studies microbial communities?",
+        "options": [
+          "DNA sequencing",
+          "Microscopy",
+          "Fermentation",
+          "Antibiotics",
+        ],
+        "correctAnswer": "DNA sequencing",
       },
       {
-        "question": "What is NOT a social movement benefit?",
-        "options": ["Equity", "Justice", "Repression"],
-        "correctAnswer": "Repression",
+        "question": "What is a challenge in microbiology?",
+        "options": [
+          "Antimicrobial resistance",
+          "Food production",
+          "Microbiome health",
+          "Fermentation",
+        ],
+        "correctAnswer": "Antimicrobial resistance",
       },
       {
-        "question": "How many people are trained in community organizing?",
-        "options": ["30 million", "50 million", "70 million"],
-        "correctAnswer": "50 million",
+        "question": "TRUE, FALSE, or NOT GIVEN: Microbes only live in soil.",
+        "options": ["TRUE", "FALSE", "NOT GIVEN"],
+        "correctAnswer": "FALSE",
+      },
+      {
+        "question": "What supports digestion?",
+        "options": ["Pathogens", "Human microbiome", "Viruses", "Protists"],
+        "correctAnswer": "Human microbiome",
+      },
+      {
+        "question": "What do fungi produce?",
+        "options": ["Insulin", "Antibiotics", "Vaccines", "Enzymes"],
+        "correctAnswer": "Antibiotics",
+      },
+      {
+        "question": "What is NOT a protist characteristic?",
+        "options": [
+          "Photosynthesis",
+          "Parasitism",
+          "Multicellularity",
+          "Movement",
+        ],
+        "correctAnswer": "Multicellularity",
+      },
+      {
+        "question": "What cycle involves carbon dioxide release?",
+        "options": [
+          "Nitrogen cycle",
+          "Carbon cycle",
+          "Sulfur cycle",
+          "Water cycle",
+        ],
+        "correctAnswer": "Carbon cycle",
+      },
+      {
+        "question": "What field engineers microbes?",
+        "options": [
+          "Microbial ecology",
+          "Synthetic biology",
+          "Metagenomics",
+          "Bioremediation",
+        ],
+        "correctAnswer": "Synthetic biology",
+      },
+      {
+        "question": "What impacts marine microbial communities?",
+        "options": [
+          "Ocean acidification",
+          "Nitrogen fixation",
+          "Fermentation",
+          "Antibiotics",
+        ],
+        "correctAnswer": "Ocean acidification",
+      },
+      {
+        "question": "What is a benefit of microorganisms?",
+        "options": [
+          "Climate change",
+          "Drug production",
+          "Soil erosion",
+          "Pollution",
+        ],
+        "correctAnswer": "Drug production",
+      },
+      {
+        "question": "What is the role of algae in aquatic systems?",
+        "options": ["Decomposers", "Predators", "Food web base", "Pathogens"],
+        "correctAnswer": "Food web base",
+      },
+      {
+        "question": "What is a future microbiology goal?",
+        "options": [
+          "Ignoring microbes",
+          "Exploring diversity",
+          "Reducing biotech",
+          "Limiting research",
+        ],
+        "correctAnswer": "Exploring diversity",
       },
     ],
     'questionsToAsk': 20,

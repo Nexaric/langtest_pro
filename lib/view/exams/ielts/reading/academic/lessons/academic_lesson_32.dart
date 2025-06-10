@@ -1,60 +1,194 @@
 class AcademicLesson32Data {
   static final Map<String, dynamic> data = {
     'lessonId': 32,
-    'title': 'Lesson 32: The Rise of Renewable Energy',
+    'title': 'Lesson 32: Renewable vs Non-renewable Energy',
     'passage': '''
-Renewable energy, harnessing natural resources like solar, wind, and hydro, is reshaping global energy systems. By 2024, renewables accounted for 30% of electricity, with solar and wind growing 15% annually. Solar panels, now 80% cheaper than in 2010, produce 1,000 gigawatts globally, powering 500 million homes. Wind farms, generating 900 gigawatts, thrive offshore, with Europe leading at 50% of global capacity. Hydropower, supplying 16% of electricity, supports 1 billion people, though dam construction disrupts 20% of river ecosystems. Geothermal and biomass contribute 5% of renewables, with Iceland sourcing 70% of energy from geothermal. Renewables cut emissions by 7 gigatons yearly, mitigating climate change. Jobs in the sector reached 12 million, with China employing 40% of workers. Energy storage, like lithium-ion batteries, stores 10% of renewable output, addressing intermittency. Green hydrogen, produced via electrolysis, fuels 5% of heavy industry, reducing emissions by 20%. However, challenges persist. Renewables require 15% of global critical minerals, like cobalt, causing supply chain issues. Land use conflicts affect 10% of projects, with wind farms impacting bird migration. High initial costs, averaging 2 million per megawatt, deter investment in Africa, where 600 million lack electricity. Grid upgrades, needed for 50% of renewable integration, cost 500 billion globally. Policy support, like the US’s Inflation Reduction Act, offers 370 billion in subsidies, but 30% of nations lack renewable targets. Technological advances, like perovskite solar cells, boost efficiency by 25%, while floating wind farms access 80% more wind resources. Community projects, like India’s 1,000 solar villages, empower 5 million people. Public support, with 70% favoring renewables, drives adoption, though 20% oppose local projects due to aesthetics. International cooperation, like the Paris Agreement, aligns 90% of nations on net-zero goals, but enforcement varies. Developing nations, with 40% of renewable potential, need 100 billion yearly to scale up. Renewables’ growth signals a sustainable future, but overcoming barriers—cost, infrastructure, and equity—requires innovation, investment, and global commitment to balance energy access with environmental protection.
+The global energy landscape stands at a critical juncture, with the distinction between renewable and non-renewable energy sources becoming increasingly important for environmental sustainability, economic stability, and energy security. Understanding the fundamental differences, advantages, and challenges associated with each type of energy source is essential for informed decision-making about our energy future and the transition toward a more sustainable global energy system.
+Non-renewable energy sources, including fossil fuels such as coal, oil, and natural gas, along with nuclear fuel, have dominated global energy production for over a century. These energy sources are characterized by their finite nature, meaning they cannot be replenished within human timescales once consumed. Coal, formed from ancient plant matter over millions of years, has been the backbone of industrial development since the 18th century. Oil and natural gas, similarly formed from ancient organic matter under specific geological conditions, have become the primary sources of energy for transportation and heating systems worldwide.
+The advantages of non-renewable energy sources include their high energy density, reliability, and established infrastructure. Coal-fired power plants can generate electricity consistently regardless of weather conditions, while oil and natural gas provide concentrated energy sources that are easily transportable and stored. The existing infrastructure for extracting, processing, and distributing these fuels represents trillions of dollars of investment and supports millions of jobs worldwide.
+However, the environmental and economic costs of non-renewable energy sources have become increasingly apparent. The combustion of fossil fuels releases greenhouse gases, particularly carbon dioxide, into the atmosphere, contributing significantly to climate change. Coal burning also produces air pollutants including sulfur dioxide, nitrogen oxides, and particulate matter, which pose serious health risks to human populations. The extraction of these fuels often involves environmentally destructive practices such as mountaintop removal mining, hydraulic fracturing, and offshore drilling, which can contaminate water supplies and destroy ecosystems.
+Renewable energy sources derive their energy from naturally replenishing processes that occur within human timescales. Solar energy harnesses the power of sunlight through photovoltaic cells or concentrated solar power systems. Wind energy captures the kinetic energy of moving air masses through wind turbines. Hydroelectric power utilizes the gravitational potential energy of flowing water. Geothermal energy taps into the heat stored within the Earth's crust. Biomass energy converts organic matter into usable energy through various processes.
+The advantages of renewable energy sources are numerous and increasingly compelling. They produce little to no greenhouse gas emissions during operation, helping to mitigate climate change. Renewable energy sources are essentially inexhaustible on human timescales, providing long-term energy security. The costs of renewable energy technologies have declined dramatically over the past decade, making them increasingly competitive with fossil fuels. Solar and wind power have become the cheapest sources of electricity in many regions of the world.
+Renewable energy also offers significant economic benefits beyond cost competitiveness. The renewable energy sector has become a major source of job creation, employing millions of people worldwide in manufacturing, installation, maintenance, and research and development. Unlike fossil fuel industries, which are often geographically concentrated, renewable energy resources are distributed more widely, allowing for greater energy independence and economic development in diverse regions.
+However, renewable energy sources also face important challenges that must be addressed for widespread adoption. The intermittent nature of solar and wind power presents challenges for grid stability and reliability. Solar panels generate electricity only when the sun is shining, while wind turbines produce power only when wind conditions are favorable. This intermittency requires backup power sources or energy storage systems to ensure consistent electricity supply.
+Energy storage technology has emerged as a critical component of renewable energy systems. Battery storage systems, particularly lithium-ion batteries, have seen dramatic cost reductions and performance improvements in recent years. Other storage technologies, including pumped hydro storage, compressed air energy storage, and emerging technologies like hydrogen fuel cells, offer additional options for balancing supply and demand in renewable energy systems.
+The integration of renewable energy into existing electrical grids requires significant infrastructure modifications and investment. Smart grid technologies, which use digital communication and control systems to optimize electricity distribution, are essential for managing the variable output of renewable energy sources. Grid modernization efforts must also address the challenge of transmitting electricity from areas with abundant renewable resources to population centers with high energy demand.
+Government policies play a crucial role in the transition from non-renewable to renewable energy sources. Renewable energy standards, feed-in tariffs, tax incentives, and carbon pricing mechanisms can accelerate the adoption of clean energy technologies. Many countries have established ambitious renewable energy targets, with some committing to achieve net-zero emissions by mid-century.
+The economic transformation associated with the energy transition presents both opportunities and challenges. While renewable energy industries create new jobs and economic opportunities, the decline of fossil fuel industries affects communities that have depended on these sectors for employment and economic activity. Just transition policies aim to support workers and communities affected by the shift away from fossil fuels while ensuring that the benefits of clean energy are distributed equitably.
+International cooperation is essential for addressing the global challenge of transitioning to renewable energy. Technology transfer, financial assistance for developing countries, and coordination of research and development efforts can accelerate the worldwide adoption of clean energy technologies. The Paris Agreement and other international frameworks provide mechanisms for countries to work together toward common energy and climate goals.
+The future of energy will likely involve a mix of renewable technologies, with different regions utilizing their most abundant renewable resources. Continued technological innovation, policy support, and investment in infrastructure will be crucial for realizing the full potential of renewable energy sources and achieving a sustainable energy future.
 ''',
     'questions': [
       {
-        "question": "What percentage of electricity comes from renewables?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
+        "question": "What characterizes non-renewable energy sources?",
+        "options": [
+          "Infinite supply",
+          "Finite nature",
+          "Zero emissions",
+          "Low energy density",
+        ],
+        "correctAnswer": "Finite nature",
       },
       {
-        "question": "How much cheaper are solar panels since 2010?",
-        "options": ["60%", "80%", "100%"],
-        "correctAnswer": "80%",
+        "question": "Which is a non-renewable energy source?",
+        "options": ["Solar", "Coal", "Wind", "Geothermal"],
+        "correctAnswer": "Coal",
       },
       {
-        "question": "How many homes do solar panels power?",
-        "options": ["300 million", "500 million", "700 million"],
-        "correctAnswer": "500 million",
+        "question": "What formed coal over millions of years?",
+        "options": [
+          "Ancient plant matter",
+          "Ocean sediments",
+          "Volcanic ash",
+          "Animal remains",
+        ],
+        "correctAnswer": "Ancient plant matter",
       },
       {
-        "question": "What generates 900 gigawatts?",
-        "options": ["Wind farms", "Solar panels", "Hydropower"],
-        "correctAnswer": "Wind farms",
+        "question": "What is an advantage of non-renewable energy?",
+        "options": [
+          "Low cost",
+          "High energy density",
+          "No emissions",
+          "Wide availability",
+        ],
+        "correctAnswer": "High energy density",
       },
       {
-        "question": "What percentage of hydropower disrupts ecosystems?",
-        "options": ["10%", "20%", "30%"],
-        "correctAnswer": "20%",
+        "question": "What do fossil fuels release into the atmosphere?",
+        "options": ["Oxygen", "Greenhouse gases", "Nitrogen", "Water vapor"],
+        "correctAnswer": "Greenhouse gases",
       },
       {
-        "question": "How much emissions do renewables cut yearly?",
-        "options": ["5 gigatons", "7 gigatons", "9 gigatons"],
-        "correctAnswer": "7 gigatons",
+        "question": "What pollutant does coal burning produce?",
+        "options": ["Sulfur dioxide", "Carbon monoxide", "Ozone", "Chlorine"],
+        "correctAnswer": "Sulfur dioxide",
       },
       {
-        "question": "How many jobs are in renewables?",
-        "options": ["8 million", "12 million", "16 million"],
-        "correctAnswer": "12 million",
+        "question": "What extraction method harms ecosystems?",
+        "options": [
+          "Wind farming",
+          "Mountaintop removal",
+          "Solar panel installation",
+          "Hydroelectric dams",
+        ],
+        "correctAnswer": "Mountaintop removal",
       },
       {
-        "question": "What stores 10% of renewable output?",
-        "options": ["Batteries", "Green hydrogen", "Grids"],
-        "correctAnswer": "Batteries",
+        "question": "What is a renewable energy source?",
+        "options": ["Natural gas", "Solar", "Nuclear", "Oil"],
+        "correctAnswer": "Solar",
       },
       {
-        "question": "What fuels 5% of heavy industry?",
-        "options": ["Green hydrogen", "Biomass", "Geothermal"],
-        "correctAnswer": "Green hydrogen",
+        "question": "How does solar energy harness sunlight?",
+        "options": [
+          "Wind turbines",
+          "Photovoltaic cells",
+          "Hydroelectric dams",
+          "Nuclear reactors",
+        ],
+        "correctAnswer": "Photovoltaic cells",
       },
       {
-        "question": "What percentage of minerals do renewables require?",
-        "options": ["10%", "15%", "20%"],
-        "correctAnswer": "15%",
+        "question": "What captures kinetic energy from air?",
+        "options": [
+          "Wind turbines",
+          "Solar panels",
+          "Geothermal plants",
+          "Biomass burners",
+        ],
+        "correctAnswer": "Wind turbines",
+      },
+      {
+        "question": "What produces minimal emissions?",
+        "options": ["Coal", "Renewable energy", "Oil", "Nuclear fuel"],
+        "correctAnswer": "Renewable energy",
+      },
+      {
+        "question": "What has become cost-competitive with fossil fuels?",
+        "options": ["Geothermal", "Solar and wind", "Biomass", "Hydroelectric"],
+        "correctAnswer": "Solar and wind",
+      },
+      {
+        "question": "What sector creates jobs in renewable energy?",
+        "options": [
+          "Manufacturing",
+          "Fossil fuel extraction",
+          "Retail",
+          "Healthcare",
+        ],
+        "correctAnswer": "Manufacturing",
+      },
+      {
+        "question": "What challenge does solar power face?",
+        "options": [
+          "High emissions",
+          "Intermittency",
+          "Finite supply",
+          "Low efficiency",
+        ],
+        "correctAnswer": "Intermittency",
+      },
+      {
+        "question": "What supports renewable energy reliability?",
+        "options": [
+          "Energy storage",
+          "Coal plants",
+          "Oil pipelines",
+          "Nuclear reactors",
+        ],
+        "correctAnswer": "Energy storage",
+      },
+      {
+        "question": "Which battery type supports renewable systems?",
+        "options": ["Lead-acid", "Lithium-ion", "Nickel-cadmium", "Alkaline"],
+        "correctAnswer": "Lithium-ion",
+      },
+      {
+        "question": "What technology optimizes electricity distribution?",
+        "options": [
+          "Smart grids",
+          "Fossil fuel plants",
+          "Manual switches",
+          "Steam turbines",
+        ],
+        "correctAnswer": "Smart grids",
+      },
+      {
+        "question": "What policy accelerates renewable adoption?",
+        "options": [
+          "Carbon pricing",
+          "Subsidizing coal",
+          "Banning wind",
+          "Oil exploration",
+        ],
+        "correctAnswer": "Carbon pricing",
+      },
+      {
+        "question": "What supports workers in the energy transition?",
+        "options": [
+          "Just transition policies",
+          "Fossil fuel subsidies",
+          "Export bans",
+          "Tax cuts",
+        ],
+        "correctAnswer": "Just transition policies",
+      },
+      {
+        "question": "What promotes global clean energy adoption?",
+        "options": [
+          "Paris Agreement",
+          "Oil cartels",
+          "Mining laws",
+          "Trade tariffs",
+        ],
+        "correctAnswer": "Paris Agreement",
+      },
+      {
+        "question":
+            "TRUE, FALSE, or NOT GIVEN: Non-renewables are inexhaustible.",
+        "options": ["TRUE", "FALSE", "NOT GIVEN"],
+        "correctAnswer": "FALSE",
       },
       {
         "question": "TRUE, FALSE, or NOT GIVEN: Renewables have no challenges.",
@@ -62,206 +196,260 @@ Renewable energy, harnessing natural resources like solar, wind, and hydro, is r
         "correctAnswer": "FALSE",
       },
       {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: All nations have renewable targets.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph mentions wind farms?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 2",
-      },
-      {
-        "question": "Which paragraph discusses challenges?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 4",
-      },
-      {
-        "question": "What is NOT a renewable source?",
-        "options": ["Solar", "Wind", "Coal"],
-        "correctAnswer": "Coal",
-      },
-      {
-        "question": "What boosts solar efficiency by 25%?",
-        "options": ["Perovskite cells", "Lithium batteries", "Floating farms"],
-        "correctAnswer": "Perovskite cells",
-      },
-      {
-        "question": "How many people do India’s solar villages empower?",
-        "options": ["3 million", "5 million", "7 million"],
-        "correctAnswer": "5 million",
-      },
-      {
-        "question": "What percentage favor renewables?",
-        "options": ["50%", "70%", "90%"],
-        "correctAnswer": "70%",
-      },
-      {
-        "question": "What aligns 90% of nations?",
-        "options": [
-          "Paris Agreement",
-          "Inflation Reduction Act",
-          "Community projects",
-        ],
-        "correctAnswer": "Paris Agreement",
-      },
-      {
-        "question": "How much do developing nations need yearly?",
-        "options": ["50 billion", "100 billion", "150 billion"],
-        "correctAnswer": "100 billion",
-      },
-      {
-        "question": "What percentage of internet users face data breaches?",
-        "options": ["30%", "40%", "50%"],
-        "correctAnswer": "40%",
-      },
-      {
-        "question": "What is the primary threat to digital privacy?",
-        "options": ["Hacking", "Data collection", "Misinformation"],
-        "correctAnswer": "Data collection",
-      },
-      {
-        "question": "TRUE, FALSE, or NOT GIVEN: All nations have privacy laws.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph discusses GDPR?",
+        "question": "Which paragraph mentions renewable energy advantages?",
         "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
         "correctAnswer": "Paragraph 3",
       },
       {
-        "question": "What reduces data misuse by 20%?",
-        "options": ["Encryption", "Cookies", "Cloud storage"],
-        "correctAnswer": "Encryption",
-      },
-      {
-        "question": "How many people are affected by cybercrime annually?",
-        "options": ["1 billion", "2 billion", "3 billion"],
-        "correctAnswer": "2 billion",
-      },
-      {
-        "question": "What is NOT a digital privacy concern?",
-        "options": ["Surveillance", "Data sharing", "Public Wi-Fi"],
-        "correctAnswer": "Public Wi-Fi",
-      },
-      {
-        "question": "What percentage of companies comply with privacy laws?",
-        "options": ["60%", "70%", "80%"],
-        "correctAnswer": "70%",
-      },
-      {
-        "question": "What technology protects 300 million users’ data?",
-        "options": ["Blockchain", "AI analytics", "VPNs"],
-        "correctAnswer": "Blockchain",
-      },
-      {
-        "question": "What percentage of users distrust tech companies?",
-        "options": ["50%", "60%", "70%"],
-        "correctAnswer": "60%",
-      },
-      {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: Data breaches only affect individuals.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph mentions user consent?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
+        "question": "Which paragraph discusses energy storage?",
+        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
         "correctAnswer": "Paragraph 4",
       },
       {
-        "question": "How many data breaches occur yearly?",
-        "options": ["1,000", "2,000", "3,000"],
-        "correctAnswer": "2,000",
+        "question": "What is NOT a non-renewable energy source?",
+        "options": ["Coal", "Oil", "Wind", "Natural gas"],
+        "correctAnswer": "Wind",
       },
       {
-        "question": "What improves privacy awareness by 15%?",
-        "options": ["Education campaigns", "Fines", "Regulations"],
-        "correctAnswer": "Education campaigns",
+        "question": "What is a renewable energy economic benefit?",
+        "options": [
+          "Job creation",
+          "Higher emissions",
+          "Finite supply",
+          "Health risks",
+        ],
+        "correctAnswer": "Job creation",
       },
       {
-        "question": "What is a major barrier to privacy enforcement?",
-        "options": ["Weak laws", "Public support", "Technology"],
-        "correctAnswer": "Weak laws",
+        "question": "What requires significant infrastructure investment?",
+        "options": [
+          "Coal mining",
+          "Renewable integration",
+          "Oil drilling",
+          "Gas pipelines",
+        ],
+        "correctAnswer": "Renewable integration",
       },
       {
-        "question": "What percentage of data is collected without consent?",
-        "options": ["30%", "40%", "50%"],
-        "correctAnswer": "40%",
+        "question": "What is a challenge for wind power?",
+        "options": [
+          "Finite resources",
+          "Weather dependency",
+          "High emissions",
+          "Low density",
+        ],
+        "correctAnswer": "Weather dependency",
       },
       {
-        "question": "What supports 100 million with secure browsing?",
-        "options": ["VPNs", "Cookies", "Ad blockers"],
-        "correctAnswer": "VPNs",
+        "question": "What does hydroelectric power utilize?",
+        "options": [
+          "Sunlight",
+          "Flowing water",
+          "Earth’s heat",
+          "Organic matter",
+        ],
+        "correctAnswer": "Flowing water",
       },
       {
-        "question": "What percentage of nations lack privacy regulations?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
+        "question": "What does biomass energy convert?",
+        "options": [
+          "Inorganic compounds",
+          "Organic matter",
+          "Fossil fuels",
+          "Nuclear isotopes",
+        ],
+        "correctAnswer": "Organic matter",
       },
       {
-        "question": "What is NOT a solution to privacy issues?",
-        "options": ["Transparency", "Regulation", "Surveillance"],
-        "correctAnswer": "Surveillance",
+        "question": "What health risks does coal burning pose?",
+        "options": [
+          "Air pollution",
+          "Water surplus",
+          "Soil fertility",
+          "Noise pollution",
+        ],
+        "correctAnswer": "Air pollution",
       },
       {
-        "question": "How many companies face privacy fines yearly?",
-        "options": ["500", "1,000", "1,500"],
-        "correctAnswer": "1,000",
+        "question": "What is a renewable energy source example?",
+        "options": ["Geothermal", "Nuclear", "Coal", "Oil"],
+        "correctAnswer": "Geothermal",
       },
       {
-        "question": "What reduces cybercrime by 10%?",
-        "options": ["AI detection", "Cloud storage", "Data sharing"],
-        "correctAnswer": "AI detection",
+        "question": "What drives renewable energy adoption?",
+        "options": [
+          "Oil prices",
+          "Government policies",
+          "Mining laws",
+          "Fossil fuel demand",
+        ],
+        "correctAnswer": "Government policies",
       },
       {
-        "question": "What percentage of users use two-factor authentication?",
-        "options": ["40%", "50%", "60%"],
-        "correctAnswer": "50%",
+        "question": "What affects fossil fuel communities?",
+        "options": [
+          "Renewable growth",
+          "Oil exports",
+          "Coal subsidies",
+          "Gas surplus",
+        ],
+        "correctAnswer": "Renewable growth",
       },
       {
-        "question": "Which technology tracks data misuse?",
-        "options": ["AI analytics", "Blockchain", "Cookies"],
-        "correctAnswer": "Blockchain",
+        "question": "What technology supports grid modernization?",
+        "options": [
+          "Smart grids",
+          "Steam engines",
+          "Coal burners",
+          "Oil refineries",
+        ],
+        "correctAnswer": "Smart grids",
       },
       {
-        "question": "What percentage of breaches involve personal data?",
-        "options": ["70%", "80%", "90%"],
-        "correctAnswer": "80%",
+        "question": "What is NOT a renewable energy challenge?",
+        "options": [
+          "Intermittency",
+          "Grid upgrades",
+          "Finite supply",
+          "Storage needs",
+        ],
+        "correctAnswer": "Finite supply",
+      },
+      {
+        "question": "What does the energy future involve?",
+        "options": [
+          "Only fossil fuels",
+          "Mixed renewables",
+          "Nuclear only",
+          "Coal dominance",
+        ],
+        "correctAnswer": "Mixed renewables",
+      },
+      {
+        "question": "What does oil primarily power?",
+        "options": [
+          "Transportation",
+          "Wind turbines",
+          "Solar panels",
+          "Hydro plants",
+        ],
+        "correctAnswer": "Transportation",
+      },
+      {
+        "question": "What is a fossil fuel extraction method?",
+        "options": [
+          "Hydraulic fracturing",
+          "Wind capture",
+          "Solar conversion",
+          "Geothermal tapping",
+        ],
+        "correctAnswer": "Hydraulic fracturing",
+      },
+      {
+        "question": "What supports renewable energy reliability?",
+        "options": [
+          "Pumped hydro storage",
+          "Coal reserves",
+          "Oil pipelines",
+          "Gas wells",
+        ],
+        "correctAnswer": "Pumped hydro storage",
+      },
+      {
+        "question": "What is a renewable energy policy example?",
+        "options": [
+          "Feed-in tariffs",
+          "Oil subsidies",
+          "Coal tax breaks",
+          "Gas exploration",
+        ],
+        "correctAnswer": "Feed-in tariffs",
+      },
+      {
+        "question": "What is a goal of international cooperation?",
+        "options": [
+          "Fossil fuel exports",
+          "Clean energy adoption",
+          "Mining expansion",
+          "Oil drilling",
+        ],
+        "correctAnswer": "Clean energy adoption",
+      },
+      {
+        "question": "What does renewable energy mitigate?",
+        "options": [
+          "Climate change",
+          "Economic growth",
+          "Population decline",
+          "Urban sprawl",
+        ],
+        "correctAnswer": "Climate change",
+      },
+      {
+        "question": "What is a renewable energy job sector?",
+        "options": [
+          "Installation",
+          "Oil refining",
+          "Coal mining",
+          "Gas extraction",
+        ],
+        "correctAnswer": "Installation",
+      },
+      {
+        "question": "What transmits electricity from renewable sources?",
+        "options": [
+          "Smart grids",
+          "Oil pipelines",
+          "Coal trains",
+          "Gas trucks",
+        ],
+        "correctAnswer": "Smart grids",
       },
       {
         "question":
-            "TRUE, FALSE, or NOT GIVEN: Privacy laws eliminate breaches.",
+            "TRUE, FALSE, or NOT GIVEN: Renewables are always reliable.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question": "Which paragraph discusses corporate responsibility?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 5",
+        "question": "Which paragraph mentions fossil fuel disadvantages?",
+        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
+        "correctAnswer": "Paragraph 2",
       },
       {
-        "question": "How many people use privacy-focused apps?",
-        "options": ["200 million", "300 million", "400 million"],
-        "correctAnswer": "300 million",
+        "question": "What is NOT a renewable energy source?",
+        "options": ["Nuclear", "Biomass", "Wind", "Solar"],
+        "correctAnswer": "Nuclear",
       },
       {
-        "question": "What percentage of firms invest in privacy tech?",
-        "options": ["50%", "60%", "70%"],
-        "correctAnswer": "60%",
+        "question": "What supports energy transition equity?",
+        "options": [
+          "Just transition policies",
+          "Fossil fuel expansion",
+          "Oil imports",
+          "Coal reliance",
+        ],
+        "correctAnswer": "Just transition policies",
       },
       {
-        "question": "What supports 20% of privacy advocacy?",
-        "options": ["NGOs", "Governments", "Tech firms"],
-        "correctAnswer": "NGOs",
+        "question": "What is a renewable energy storage option?",
+        "options": [
+          "Hydrogen fuel cells",
+          "Coal bunkers",
+          "Oil tanks",
+          "Gas cylinders",
+        ],
+        "correctAnswer": "Hydrogen fuel cells",
       },
       {
-        "question": "What percentage support stronger privacy laws?",
-        "options": ["70%", "80%", "90%"],
-        "correctAnswer": "80%",
+        "question": "What drives economic benefits in renewables?",
+        "options": [
+          "Job creation",
+          "Oil exports",
+          "Coal mining",
+          "Gas drilling",
+        ],
+        "correctAnswer": "Job creation",
       },
     ],
     'questionsToAsk': 25,

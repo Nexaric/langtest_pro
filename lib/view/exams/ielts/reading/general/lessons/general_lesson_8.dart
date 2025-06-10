@@ -1,4 +1,4 @@
-class GeneralLesson8 {
+class GeneralSection8 {
   static final Map<String, Map<String, dynamic>> data = {
     'lesson_8': {
       'title': 'Public Transport in Sydney: A Commuter’s Guide',

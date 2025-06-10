@@ -3,115 +3,217 @@ class AcademicLesson10Data {
     'lessonId': 10,
     'title': 'Lesson 10: The Rise of Artificial Intelligence',
     'passage': '''
-Artificial intelligence (AI) is reshaping society by harnessing machine learning and advanced computing to mimic human cognition. AI powers virtual assistants like Siri, processes vast datasets for autonomous vehicles, and enhances decision-making across industries. Deep learning, inspired by neural networks, excels in tasks like image recognition and language translation, achieving near-human accuracy. In healthcare, AI diagnostics detect diseases like cancer earlier, improving patient outcomes. Finance uses AI to identify fraud, analyzing transactions in real time. However, ethical challenges loom large—algorithmic bias can perpetuate inequality, as seen in biased hiring tools. Job displacement threatens workers in sectors like manufacturing, with automation replacing repetitive tasks. Privacy concerns arise from extensive data collection, raising questions about surveillance. AI’s potential is vast, driving innovations in smart cities, where traffic and energy systems optimize efficiency, and in education, personalizing learning through adaptive platforms. Responsible development, guided by regulations, ensures fairness and transparency. Collaborative efforts address risks, balancing AI’s transformative power with societal needs, shaping a future where technology enhances creativity, efficiency, and scientific discovery.
+Artificial Intelligence has emerged as one of the most transformative technologies of the modern era, evolving from theoretical concepts in academic laboratories to practical applications that influence virtually every aspect of human life. This remarkable journey from science fiction to reality represents decades of research, breakthrough discoveries, and technological innovations that continue to reshape industries, societies, and our understanding of intelligence itself.
+The foundations of AI trace back to ancient philosophical questions about the nature of thought and reasoning, but modern AI began taking shape in the 1950s with pioneers like Alan Turing, who proposed the famous Turing Test as a benchmark for machine intelligence. Early AI research focused on symbolic reasoning and rule-based systems, attempting to encode human knowledge into computer programs that could solve problems through logical deduction. These expert systems showed promise in specific domains but struggled with the complexity and ambiguity of real-world situations.
+Machine learning revolutionized AI by enabling computers to learn from data rather than requiring explicit programming for every possible scenario. This paradigm shift allowed systems to improve their performance automatically through experience, mimicking aspects of human learning. Traditional machine learning algorithms like decision trees, support vector machines, and neural networks laid the groundwork for more sophisticated approaches that would emerge decades later.
+Deep learning, inspired by the structure and function of the human brain, represents a major breakthrough that has driven much of AI's recent success. Deep neural networks with multiple layers can automatically discover complex patterns in data, enabling remarkable achievements in image recognition, natural language processing, and game playing. The availability of massive datasets, powerful computing hardware, and improved algorithms has made deep learning practical and effective across numerous applications.
+Natural Language Processing has advanced dramatically, enabling computers to understand, generate, and translate human language with increasing sophistication. Modern language models can engage in conversations, write articles, code software, and perform complex reasoning tasks using natural language. These systems demonstrate emergent capabilities that weren't explicitly programmed, suggesting that AI can develop sophisticated understanding through training on large amounts of text data.
+Computer vision has achieved superhuman performance in many tasks, from medical image diagnosis to autonomous vehicle navigation. AI systems can now identify objects, recognize faces, analyze emotions, and understand complex visual scenes with accuracy that often exceeds human capabilities. These advances have applications in healthcare, security, manufacturing, and entertainment, transforming how we interact with visual information.
+AI's impact on industries has been profound and accelerating. Healthcare applications include diagnostic imaging, drug discovery, personalized treatment recommendations, and robotic surgery assistance. Financial services use AI for fraud detection, algorithmic trading, risk assessment, and customer service automation. Transportation is being revolutionized by autonomous vehicles, while manufacturing benefits from predictive maintenance, quality control, and supply chain optimization.
+Ethical considerations surrounding AI development and deployment have become increasingly important as these systems gain more influence over human decisions. Issues include algorithmic bias, privacy concerns, job displacement, transparency in decision-making, and the concentration of AI capabilities in major technology companies. Ensuring that AI benefits all of humanity while minimizing potential harms requires careful consideration of these ethical challenges.
+Current AI limitations include brittleness in novel situations, lack of common sense reasoning, inability to explain decisions transparently, and dependence on large amounts of training data. These limitations drive ongoing research into more robust, interpretable, and efficient AI systems that can better understand and interact with the complex, dynamic nature of the real world.
+The future of AI promises continued advancement toward more general intelligence capabilities, potentially leading to Artificial General Intelligence that matches or exceeds human cognitive abilities across all domains. This possibility raises profound questions about the future of work, human-AI collaboration, and the long-term trajectory of technological development. Preparing for this future requires thoughtful planning, inclusive dialogue, and proactive governance to ensure that AI development serves human flourishing.
+Research frontiers include quantum computing applications to AI, neuromorphic computing that more closely mimics brain architecture, and the integration of AI with other emerging technologies like biotechnology and nanotechnology. These developments may unlock new possibilities for AI applications while also presenting new challenges and opportunities for society to navigate thoughtfully.
 ''',
     'questions': [
       {
-        "question": "What powers AI?",
-        "options": ["Machine learning", "Manual coding", "Traditional engines"],
-        "correctAnswer": "Machine learning",
-      },
-      {
-        "question": "What does AI enhance?",
-        "options": ["Decision-making", "Manual labor", "Urban farming"],
-        "correctAnswer": "Decision-making",
-      },
-      {
-        "question": "What excels in image recognition?",
-        "options": ["Deep learning", "Manual analysis", "Basic coding"],
-        "correctAnswer": "Deep learning",
-      },
-      {
-        "question": "What detects diseases in healthcare?",
-        "options": ["AI diagnostics", "Human doctors", "Basic scans"],
-        "correctAnswer": "AI diagnostics",
-      },
-      {
-        "question": "What identifies fraud in finance?",
-        "options": ["AI", "Manual audits", "Paper records"],
-        "correctAnswer": "AI",
-      },
-      {
-        "question": "What can algorithmic bias cause?",
-        "options": ["Inequality", "Efficiency", "Innovation"],
-        "correctAnswer": "Inequality",
-      },
-      {
-        "question": "What threatens workers?",
-        "options": ["Job displacement", "Increased wages", "Manual tasks"],
-        "correctAnswer": "Job displacement",
-      },
-      {
-        "question": "What arises from data collection?",
-        "options": ["Privacy concerns", "Crop yields", "Urban growth"],
-        "correctAnswer": "Privacy concerns",
-      },
-      {
-        "question": "What do smart cities optimize?",
-        "options": ["Efficiency", "Pollution", "Sprawl"],
-        "correctAnswer": "Efficiency",
-      },
-      {
-        "question": "What personalizes learning?",
-        "options": ["AI platforms", "Textbooks", "Lectures"],
-        "correctAnswer": "AI platforms",
-      },
-      {
-        "question": "What ensures AI fairness?",
-        "options": ["Regulations", "Data loss", "Job growth"],
-        "correctAnswer": "Regulations",
-      },
-      {
-        "question": "TRUE, FALSE, or NOT GIVEN: AI eliminates all jobs.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "TRUE, FALSE, or NOT GIVEN: AI mimics human emotions.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "NOT GIVEN",
-      },
-      {
-        "question": "Which paragraph mentions healthcare?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 2",
-      },
-      {
-        "question": "Which paragraph discusses ethical challenges?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 3",
-      },
-      {
-        "question": "What is NOT an AI application?",
-        "options": ["Diagnostics", "Fraud detection", "Soil restoration"],
-        "correctAnswer": "Soil restoration",
-      },
-      {
-        "question": "What does AI require?",
+        "question": "What has AI evolved from, according to the passage?",
         "options": [
-          "Responsible development",
-          "Increased pollution",
-          "Manual labor",
+          "Industrial automation",
+          "Theoretical concepts in academic labs",
+          "Military technology",
+          "Consumer electronics",
         ],
-        "correctAnswer": "Responsible development",
+        "correctAnswer": "Theoretical concepts in academic labs",
       },
       {
-        "question": "What do AI platforms personalize?",
-        "options": ["Education", "Transport", "Agriculture"],
-        "correctAnswer": "Education",
+        "question":
+            "Who proposed the Turing Test as a benchmark for machine intelligence?",
+        "options": [
+          "Elon Musk",
+          "Alan Turing",
+          "John McCarthy",
+          "Ada Lovelace",
+        ],
+        "correctAnswer": "Alan Turing",
       },
       {
-        "question": "What inspires deep learning?",
-        "options": ["Neural networks", "Manual systems", "Traditional engines"],
-        "correctAnswer": "Neural networks",
+        "question": "When did modern AI research begin taking shape?",
+        "options": ["1920s", "1950s", "1970s", "1990s"],
+        "correctAnswer": "1950s",
       },
       {
-        "question": "What does AI transform?",
-        "options": ["Society", "Oceans", "Forests"],
-        "correctAnswer": "Society",
+        "question": "What characterized early AI research?",
+        "options": [
+          "Deep learning",
+          "Symbolic reasoning and rule-based systems",
+          "Quantum computing",
+          "Natural language processing",
+        ],
+        "correctAnswer": "Symbolic reasoning and rule-based systems",
+      },
+      {
+        "question":
+            "What allows machine learning systems to improve performance automatically?",
+        "options": [
+          "Explicit programming",
+          "Learning from data",
+          "Manual updates",
+          "Hardware upgrades",
+        ],
+        "correctAnswer": "Learning from data",
+      },
+      {
+        "question":
+            "Which traditional machine learning algorithm is mentioned in the passage?",
+        "options": [
+          "Blockchain",
+          "Decision trees",
+          "Quantum algorithms",
+          "Genetic algorithms",
+        ],
+        "correctAnswer": "Decision trees",
+      },
+      {
+        "question": "What is deep learning inspired by?",
+        "options": [
+          "Quantum mechanics",
+          "Human brain structure and function",
+          "Satellite technology",
+          "Chemical reactions",
+        ],
+        "correctAnswer": "Human brain structure and function",
+      },
+      {
+        "question":
+            "What has enabled deep learning to become practical and effective?",
+        "options": [
+          "Small datasets and basic hardware",
+          "Massive datasets and powerful hardware",
+          "Rule-based programming",
+          "Manual data labeling",
+        ],
+        "correctAnswer": "Massive datasets and powerful hardware",
+      },
+      {
+        "question":
+            "What can modern language models perform using natural language?",
+        "options": [
+          "Image recognition",
+          "Conversations and complex reasoning",
+          "Weather forecasting",
+          "Mechanical repairs",
+        ],
+        "correctAnswer": "Conversations and complex reasoning",
+      },
+      {
+        "question":
+            "What has computer vision achieved in tasks like medical image diagnosis?",
+        "options": [
+          "Subhuman performance",
+          "Superhuman performance",
+          "No significant progress",
+          "Basic functionality",
+        ],
+        "correctAnswer": "Superhuman performance",
+      },
+      {
+        "question":
+            "What is an application of AI in healthcare mentioned in the passage?",
+        "options": [
+          "Fraud detection",
+          "Robotic surgery assistance",
+          "Supply chain optimization",
+          "Algorithmic trading",
+        ],
+        "correctAnswer": "Robotic surgery assistance",
+      },
+      {
+        "question": "How is AI used in financial services?",
+        "options": [
+          "Drug discovery",
+          "Fraud detection",
+          "Vehicle navigation",
+          "Climate modeling",
+        ],
+        "correctAnswer": "Fraud detection",
+      },
+      {
+        "question": "What ethical issue is associated with AI development?",
+        "options": [
+          "Algorithmic bias",
+          "Increased hardware costs",
+          "Reduced data requirements",
+          "Simplified decision-making",
+        ],
+        "correctAnswer": "Algorithmic bias",
+      },
+      {
+        "question":
+            "What is a current limitation of AI mentioned in the passage?",
+        "options": [
+          "Excessive common sense reasoning",
+          "Brittleness in novel situations",
+          "Complete transparency",
+          "No data dependency",
+        ],
+        "correctAnswer": "Brittleness in novel situations",
+      },
+      {
+        "question": "What is Artificial General Intelligence (AGI)?",
+        "options": [
+          "AI limited to specific tasks",
+          "AI matching human cognitive abilities",
+          "AI for gaming only",
+          "AI for hardware design",
+        ],
+        "correctAnswer": "AI matching human cognitive abilities",
+      },
+      {
+        "question":
+            "What does the future of AI require to ensure human flourishing?",
+        "options": [
+          "Reduced research",
+          "Thoughtful planning and governance",
+          "Limited applications",
+          "Fewer ethical considerations",
+        ],
+        "correctAnswer": "Thoughtful planning and governance",
+      },
+      {
+        "question":
+            "What research frontier involves mimicking brain architecture for AI?",
+        "options": [
+          "Quantum computing",
+          "Neuromorphic computing",
+          "Biotechnology integration",
+          "Nanotechnology",
+        ],
+        "correctAnswer": "Neuromorphic computing",
+      },
+      {
+        "question":
+            "What does AI integration with biotechnology and nanotechnology present?",
+        "options": [
+          "Fewer opportunities",
+          "New challenges and opportunities",
+          "Simplified systems",
+          "Reduced applications",
+        ],
+        "correctAnswer": "New challenges and opportunities",
+      },
+      {
+        "question": "Which paragraph discusses the impact of deep learning?",
+        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4", "Paragraph 5"],
+        "correctAnswer": "Paragraph 4",
+      },
+      {
+        "question": "Which paragraph addresses ethical considerations of AI?",
+        "options": ["Paragraph 6", "Paragraph 7", "Paragraph 8", "Paragraph 9"],
+        "correctAnswer": "Paragraph 8",
       },
     ],
-    'questionsToAsk': 10, // Added
-    'requiredCorrectAnswers': 5, // Added
+    'questionsToAsk': 10,
+    'requiredCorrectAnswers': 5,
   };
 }

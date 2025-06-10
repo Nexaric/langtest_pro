@@ -7,9 +7,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:langtest_pro/controller/auth/auth_controller.dart';
 import 'package:langtest_pro/res/colors/app_colors.dart';
 
-
 class LoginScreen extends StatelessWidget {
-   LoginScreen({super.key});
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -140,61 +139,61 @@ class LoginScreen extends StatelessWidget {
                   ),
                   SizedBox(height: screenHeight * 0.1),
                   // Google Sign-In Button
-                 Obx(
-                   ()=>authController.loading.value? Center(child: CircularProgressIndicator(color: AppColors.whiteColor,),):
-                   
-                    ElevatedButton(
-                                  onPressed: authController.signInwithGoogle,
-                                  // (){Navigator.push(context, MaterialPageRoute(builder: (ctx)=>HomeScreen()));},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor:
-                                        Theme.of(context).colorScheme.secondary,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: screenHeight * 0.02,
-                                      horizontal: screenWidth * 0.06,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    elevation: 0,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/google_logo.png',
-                                        height: 28,
-                                        width: 28,
-                                        errorBuilder: (
-                                          context,
-                                          error,
-                                          stackTrace,
-                                        ) {
-                                          return Icon(
-                                            Icons.g_mobiledata,
-                                            size: 28,
-                                            color:
-                                                Theme.of(
-                                                  context,
-                                                ).colorScheme.secondary,
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(width: 16),
-                                      const Text(
-                                        'Continue with Google',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                  Obx(
+                    () =>
+                        authController.loading.value
+                            ? Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.whiteColor,
+                              ),
+                            )
+                            : ElevatedButton(
+                              onPressed: authController.signInwithGoogle,
+                              // (){Navigator.push(context, MaterialPageRoute(builder: (ctx)=>HomeScreen()));},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.02,
+                                  horizontal: screenWidth * 0.06,
                                 ),
-                 ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 0,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/google_logo.png',
+                                    height: 28,
+                                    width: 28,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.g_mobiledata,
+                                        size: 28,
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.secondary,
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(width: 16),
+                                  const Text(
+                                    'Continue with Google',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                  ),
                   SizedBox(height: screenHeight * 0.1),
                 ],
               ),
