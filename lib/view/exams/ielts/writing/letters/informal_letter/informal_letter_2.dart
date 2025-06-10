@@ -2,11 +2,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/writing_result.dart';
 
 class InformalLetterLesson2 extends StatefulWidget {
@@ -21,6 +21,9 @@ class InformalLetterLesson2 extends StatefulWidget {
 class _InformalLetterLesson2State extends State<InformalLetterLesson2>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   final TextEditingController _letterController = TextEditingController();
+  final WritingProgressController _progressController = Get.put(
+    WritingProgressController(),
+  );
   late final AnimationController _saveAnimationController;
   late final Animation<double> _saveScaleAnimation;
   int _wordCount = 0;
@@ -217,10 +220,9 @@ Tom
     try {
       await _saveResponse();
       final score = _calculateScore(_letterController.text);
-      Provider.of<WritingProgressProvider>(
-        context,
-        listen: false,
-      ).completeLesson(_parseLessonId(widget.lessonData['id']));
+      _progressController.completeLesson(
+        _parseLessonId(widget.lessonData['id']),
+      );
       await Future.delayed(const Duration(milliseconds: 500));
       if (!mounted) return;
       Navigator.pushReplacement(

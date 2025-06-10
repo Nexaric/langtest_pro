@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:provider/provider.dart';
-import 'package:langtest_pro/view/exams/ielts/reading/academic/lessons/academic_result.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/academic/lessons/academic_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'lessons/academic_lesson_1.dart' as lesson1;
 import 'lessons/academic_lesson_2.dart' as lesson2;
@@ -48,7 +48,6 @@ import 'lessons/academic_lesson_38.dart' as lesson38;
 import 'lessons/academic_lesson_39.dart' as lesson39;
 import 'lessons/academic_lesson_40.dart' as lesson40;
 
-// Custom ShapeBorder for beveled rectangle with asymmetric corners
 class CustomBeveledBorder extends ShapeBorder {
   @override
   EdgeInsetsGeometry get dimensions => const EdgeInsets.all(0);
@@ -104,7 +103,6 @@ class _LessonScreenState extends State<LessonScreen> {
   final ScrollController _scrollController = ScrollController();
   final ScrollController _questionScrollController = ScrollController();
 
-  // Color schemes for light and dark modes
   final Map<String, Color> _lightColors = {
     'gradientStart': const Color(0xFF4B0082),
     'gradientEnd': const Color(0xFF6A5ACD),
@@ -127,13 +125,11 @@ class _LessonScreenState extends State<LessonScreen> {
     'cardAccent': const Color(0xFF4A40BF),
   };
 
-  // Magic gradient for Passage screen button
   final List<Color> _magicGradient = [
     const Color(0xFF3E1E68),
     const Color.fromARGB(255, 84, 65, 228),
   ];
 
-  // Attractive gradient for Question screen buttons
   final List<Color> _attractiveGradient = [
     const Color(0xFF00CED1),
     const Color(0xFF00CED1),
@@ -142,6 +138,9 @@ class _LessonScreenState extends State<LessonScreen> {
   @override
   void initState() {
     super.initState();
+    if (!Get.isRegistered<ReadingProgressController>()) {
+      Get.put(ReadingProgressController());
+    }
     lessonData = _getLessonData();
     selectedQuestions = _getRandomQuestions();
     _scrollController.addListener(() {
@@ -149,10 +148,7 @@ class _LessonScreenState extends State<LessonScreen> {
       final currentScroll = _scrollController.position.pixels;
       if (maxScroll > 0) {
         final progress = (currentScroll / maxScroll).clamp(0.0, 1.0) * 0.5;
-        Provider.of<ReadingProgressProvider>(
-          context,
-          listen: false,
-        ).updateProgress(progress);
+        Get.find<ReadingProgressController>().updateProgress(progress);
       }
     });
   }
@@ -335,7 +331,7 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     return _isQuestionScreen
         ? _buildQuestionScaffold()
         : _buildPassageScaffold();
@@ -401,7 +397,6 @@ class _LessonScreenState extends State<LessonScreen> {
       ),
       body: Column(
         children: [
-          // Formatting bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: FadeInDown(
@@ -546,9 +541,7 @@ class _LessonScreenState extends State<LessonScreen> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     transform: Matrix4.identity()..scale(1.0),
-                    onEnd: () {
-                      setState(() {}); // Reset scale after animation
-                    },
+                    onEnd: () => setState(() {}),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,
                       vertical: 16,
@@ -824,10 +817,7 @@ class _LessonScreenState extends State<LessonScreen> {
                               selectedQuestions
                                   .where((q) => q['selectedIndex'] != -1)
                                   .length;
-                          Provider.of<ReadingProgressProvider>(
-                            context,
-                            listen: false,
-                          ).updateProgress(
+                          Get.find<ReadingProgressController>().updateProgress(
                             0.5 + (answered / selectedQuestions.length) * 0.5,
                           );
                         });
@@ -922,10 +912,7 @@ class _LessonScreenState extends State<LessonScreen> {
             ? 10
             : 13);
     if (correctAnswers >= requiredCorrect) {
-      Provider.of<ReadingProgressProvider>(
-        context,
-        listen: false,
-      ).completeAcademicLesson(
+      Get.find<ReadingProgressController>().completeAcademicLesson(
         lessonId: widget.lessonId,
         score: '$correctAnswers/$totalQuestions',
       );

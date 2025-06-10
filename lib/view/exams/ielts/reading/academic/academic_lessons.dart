@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:provider/provider.dart';
-import '../../../../../controller/reading_progress_provider.dart';
+import 'package:get/get.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
 import 'lesson_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 
@@ -296,6 +296,9 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
   @override
   void initState() {
     super.initState();
+    if (!Get.isRegistered<ReadingProgressController>()) {
+      Get.put(ReadingProgressController());
+    }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -372,22 +375,22 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                 toolbarHeight: kToolbarHeight,
               ),
               const SliverPadding(padding: EdgeInsets.only(top: 10)),
-              Consumer<ReadingProgressProvider>(
-                builder: (context, progressProvider, _) {
-                  if (progressProvider.isLoading) {
+              GetBuilder<ReadingProgressController>(
+                builder: (progressController) {
+                  if (progressController.isLoading) {
                     return const SliverFillRemaining(
                       child: Center(child: CircularProgressIndicator()),
                     );
                   }
 
-                  if (progressProvider.hasError) {
+                  if (progressController.hasError) {
                     return SliverFillRemaining(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              progressProvider.errorMessage ??
+                              progressController.errorMessage ??
                                   'Error loading progress',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
@@ -398,7 +401,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () async {
-                                await progressProvider.restoreFromCloud();
+                                await progressController.restoreFromCloud();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: _accentColor,
@@ -458,7 +461,6 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                                 ],
                               ),
                             ),
-                            // Warn if lessons are placeholders
                             if (section["start"] > 10)
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
@@ -492,7 +494,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                                     context,
                                     lesson: lesson,
                                     lessonIndex: lessonIndex,
-                                    progressProvider: progressProvider,
+                                    progressController: progressController,
                                   ),
                                 );
                               },
@@ -516,15 +518,16 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
     BuildContext context, {
     required Map<String, dynamic> lesson,
     required int lessonIndex,
-    required ReadingProgressProvider progressProvider,
+    required ReadingProgressController progressController,
   }) {
     final lessonNumber = lessonIndex + 1;
-    final isLocked = !progressProvider.isAcademicLessonAccessible(lessonNumber);
+    final isLocked =
+        !progressController.isAcademicLessonAccessible(lessonNumber);
     final progress =
-        lessonNumber <= progressProvider.completedAcademicLessons
+        lessonNumber <= progressController.completedAcademicLessons
             ? 1.0
-            : (lessonNumber == progressProvider.completedAcademicLessons + 1
-                ? progressProvider.currentLessonProgress
+            : (lessonNumber == progressController.completedAcademicLessons + 1
+                ? progressController.currentLessonProgress
                 : 0.0);
     final lessonId = lesson['lessonId'] as int?;
 
@@ -571,14 +574,14 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                             (context) => LessonScreen(
                               lessonId: lessonId,
                               onComplete: () async {
-                                await progressProvider.completeAcademicLesson(
+                                await progressController.completeAcademicLesson(
                                   lessonId: lessonId,
                                   score:
-                                      progressProvider
+                                      progressController
                                           .academicLessonScores[lessonId] ??
                                       '0/0',
                                 );
-                                setState(() {}); // Refresh lock status
+                                setState(() {});
                               },
                             ),
                       ),

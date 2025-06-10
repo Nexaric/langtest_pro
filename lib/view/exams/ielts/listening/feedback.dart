@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
 
@@ -10,15 +10,15 @@ class FeedbackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressProvider = Provider.of<ListeningProgressProvider>(context);
-    final lessonProgress = progressProvider.completedLessons;
+    final progressController = Get.find<ListeningProgressController>();
+    final lessonProgress = progressController.completedLessons;
     final testProgress =
-        (progressProvider.testProgressPercentage / 25)
+        (progressController.testProgressPercentage / 25)
             .floor(); // 4 tests, each 25%
     final totalProgress =
         (lessonProgress / 50) * 0.6 +
         (testProgress / 4) * 0.4; // Weighted: 60% lessons, 40% tests
-    const totalLessons = ListeningProgressProvider.totalLessons; // 50 lessons
+    const totalLessons = ListeningProgressController.totalLessons; // 50 lessons
     const totalTests = 4; // 4 practice tests
 
     return Scaffold(

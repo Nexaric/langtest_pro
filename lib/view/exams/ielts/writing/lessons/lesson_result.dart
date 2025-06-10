@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/lesson_list_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_1.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_2.dart';
@@ -42,7 +43,6 @@ import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_38.
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_39.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_40.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
-import 'package:provider/provider.dart';
 
 class LessonResult extends StatefulWidget {
   final int academicWordCount;
@@ -653,14 +653,11 @@ class _LessonResultState extends State<LessonResult>
                         child: ElevatedButton(
                           onPressed: () {
                             HapticFeedback.lightImpact();
-                            final progressProvider =
-                                Provider.of<WritingProgressProvider>(
-                                  context,
-                                  listen: false,
-                                );
+                            final progressController =
+                                Get.find<WritingProgressController>();
 
                             // Mark current lesson as completed
-                            progressProvider.completeLesson(
+                            progressController.completeLesson(
                               widget.lessonNumber,
                             );
 

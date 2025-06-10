@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:get/get.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/lesson_list_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_list_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/feedback.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/strategies_tips.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
 
 class IeltsWritingScreen extends StatelessWidget {
   const IeltsWritingScreen({super.key});
@@ -161,74 +161,77 @@ class IeltsWritingScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final progressProvider = Provider.of<WritingProgressProvider>(context);
-    final progress = progressProvider.completedLessons / 50.0;
+    final progressController = Get.find<WritingProgressController>();
+    return Obx(() {
+      // Note: Original code uses 50.0 instead of totalLessons (54). Kept as-is for consistency.
+      final progress = progressController.completedLessons / 50.0;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.2)),
-      ),
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: CircularProgressIndicator(
-                  value: progress.clamp(0.0, 1.0),
-                  strokeWidth: 8,
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  color: Colors.white,
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.12),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
+        ),
+        child: Column(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: CircularProgressIndicator(
+                    value: progress.clamp(0.0, 1.0),
+                    strokeWidth: 8,
+                    backgroundColor: Colors.white.withOpacity(0.2),
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              Column(
-                children: [
-                  Text(
-                    "${(progress * 100).toStringAsFixed(0)}%",
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                Column(
+                  children: [
+                    Text(
+                      "${(progress * 100).toStringAsFixed(0)}%",
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  Text(
-                    "Complete",
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.white.withOpacity(0.8),
+                    Text(
+                      "Complete",
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Master IELTS Writing",
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            "Master IELTS Writing",
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Practice makes perfect! Complete lessons and track your progress.",
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
-              height: 1.4,
+            const SizedBox(height: 8),
+            Text(
+              "Practice makes perfect! Complete lessons and track your progress.",
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.8),
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildFeatureCard(
