@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/core/loading/under_maintenance.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:provider/provider.dart';
-
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
 import 'package:langtest_pro/controller/speaking_progress_provider.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/core/loading/under_maintenance.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:get/get.dart';
 
 import 'ielts_listening.dart';
 import 'ielts_reading.dart';
@@ -78,62 +77,63 @@ class IeltsScreen extends StatelessWidget {
   }
 
   Widget _buildProgressOverview(BuildContext context) {
-    return Consumer4<
-      ListeningProgressProvider,
-      ReadingProgressProvider,
-      WritingProgressProvider,
-      SpeakingProgressProvider
-    >(
-      builder: (context, listening, reading, writing, speaking, _) {
-        return GlassmorphicContainer(
-          width: double.infinity,
-          height: 200,
-          borderRadius: 20,
-          blur: 20,
-          alignment: Alignment.center,
-          linearGradient: LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.1),
-              Colors.white.withOpacity(0.05),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          border: 1,
-          borderGradient: LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.4),
-              Colors.white.withOpacity(0.1),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Text(
-                  "📊 Skill Progress",
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+    final listeningController = Get.find<ListeningProgressController>();
+    final readingController = Get.find<ReadingProgressController>();
+    final writingController = Get.find<WritingProgressController>();
+    final speakingController = Get.find<SpeakingProgressController>();
+
+    return Obx(() {
+      return GlassmorphicContainer(
+        width: double.infinity,
+        height: 200,
+        borderRadius: 20,
+        blur: 20,
+        alignment: Alignment.center,
+        linearGradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.1),
+            Colors.white.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: 1,
+        borderGradient: LinearGradient(
+          colors: [
+            Colors.white.withOpacity(0.4),
+            Colors.white.withOpacity(0.1),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                "📊 Skill Progress",
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildProgressCircle(
+                    "Listening",
+                    listeningController.progress,
                   ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildProgressCircle("Listening", listening.progress),
-                    _buildProgressCircle("Reading", reading.progress),
-                    _buildProgressCircle("Writing", writing.progress),
-                    _buildProgressCircle("Speaking", speaking.progress),
-                  ],
-                ),
-              ],
-            ),
+                  _buildProgressCircle("Reading", readingController.progress),
+                  _buildProgressCircle("Writing", writingController.progress),
+                  _buildProgressCircle("Speaking", speakingController.progress),
+                ],
+              ),
+            ],
           ),
-        );
-      },
-    );
+        ),
+      );
+    });
   }
 
   Widget _buildProgressCircle(String skill, double progress) {

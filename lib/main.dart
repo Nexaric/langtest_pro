@@ -1,19 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:langtest_pro/controller/listening_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/speaking_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/firebase_options.dart';
 import 'package:langtest_pro/res/routes/routes.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
-import 'package:provider/provider.dart';
 import 'package:langtest_pro/view/auth/login_screen.dart';
-import 'package:langtest_pro/controller/listening_progress_provider.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
-import 'package:langtest_pro/controller/speaking_progress_provider.dart';
 
 void main() async {
-debugDisableShadows = false;
+  debugDisableShadows = false;
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
@@ -26,18 +26,13 @@ debugDisableShadows = false;
   await Hive.openBox('writing_progress');
   await Hive.openBox('speaking_progress');
 
-  runApp(
-    MultiProvider(
-      providers: [
-        
-        // ChangeNotifierProvider(create: (_) => ListeningProgressProvider()),
-        ChangeNotifierProvider(create: (_) => ReadingProgressProvider()),
-        ChangeNotifierProvider(create: (_) => WritingProgressProvider()),
-        ChangeNotifierProvider(create: (_) => SpeakingProgressProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  // Initialize GetX controllers
+  Get.put(ListeningProgressController());
+  Get.put(ReadingProgressController());
+  Get.put(WritingProgressController());
+  Get.put(SpeakingProgressController());
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -124,9 +119,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-getPages: AppRoutes.appRoutes(),
-initialRoute: RoutesName.loginScreen,
-     
+      getPages: AppRoutes.appRoutes(),
+      initialRoute: RoutesName.loginScreen,
     );
   }
 }

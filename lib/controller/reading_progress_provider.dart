@@ -1,130 +1,175 @@
-import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ReadingProgressProvider with ChangeNotifier {
+class ReadingProgressController extends GetxController {
   static const int totalAcademicLessons = 40;
   static const int totalGeneralLessons = 14;
   static const int totalLessons = totalAcademicLessons + totalGeneralLessons;
 
-  int _completedAcademicLessons = 0;
-  int _completedGeneralLessons = 0;
-  double _currentLessonProgress = 0.0;
-  final Map<int, String> _academicLessonScores = {};
-  final Map<int, String> _generalLessonScores = {};
-  bool _isLoading = false;
-  String? _errorMessage;
+  final _completedAcademicLessons = 0.obs;
+  final _completedGeneralLessons = 0.obs;
+  final _currentLessonProgress = 0.0.obs;
+  final _academicLessonScores = <int, String>{}.obs;
+  final _generalLessonScores = <int, String>{}.obs;
+  final _isLoading = false.obs;
+  final _errorMessage = Rx<String?>(null);
 
-  int get completedAcademicLessons => _completedAcademicLessons;
-  int get completedGeneralLessons => _completedGeneralLessons;
-  double get currentLessonProgress => _currentLessonProgress;
+  int get completedAcademicLessons => _completedAcademicLessons.value;
+  int get completedGeneralLessons => _completedGeneralLessons.value;
+  double get currentLessonProgress => _currentLessonProgress.value;
   double get progress =>
-      (_completedAcademicLessons + _completedGeneralLessons) / totalLessons;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  bool get hasError => _errorMessage != null;
+      (_completedAcademicLessons.value + _completedGeneralLessons.value) /
+      totalLessons;
+  bool get isLoading => _isLoading.value;
+  String? get errorMessage => _errorMessage.value;
+  bool get hasError => _errorMessage.value != null;
   Map<int, String> get academicLessonScores =>
       Map.unmodifiable(_academicLessonScores);
   Map<int, String> get generalLessonScores =>
       Map.unmodifiable(_generalLessonScores);
 
-  ReadingProgressProvider() {
+  @override
+  void onInit() {
+    super.onInit();
     _loadProgress();
   }
 
   Future<void> _loadProgress() async {
-    _isLoading = true;
-    notifyListeners();
+    _isLoading.value = true;
     try {
       final prefs = await SharedPreferences.getInstance();
-      _completedAcademicLessons = prefs.getInt('completedAcademicLessons') ?? 0;
-      _completedGeneralLessons = prefs.getInt('completedGeneralLessons') ?? 0;
-      _currentLessonProgress = prefs.getDouble('currentLessonProgress') ?? 0.0;
+      _completedAcademicLessons.value =
+          prefs.getInt('completedAcademicLessons') ?? 0;
+      _completedGeneralLessons.value =
+          prefs.getInt('completedGeneralLessons') ?? 0;
+      _currentLessonProgress.value =
+          prefs.getDouble('currentLessonProgress') ?? 0.0;
+
       final academicScores = prefs.getStringList('academicLessonScores') ?? [];
-      final generalScores = prefs.getStringList('generalLessonScores') ?? [];
+      _academicLessonScores.clear();
       for (var entry in academicScores) {
         final parts = entry.split(':');
         if (parts.length == 2) {
-          _academicLessonScores[int.parse(parts[0])] = parts[1];
+          try {
+            final lessonId = int.parse(parts[0]);
+            _academicLessonScores[lessonId] = parts[1];
+          } catch (e) {
+            print('Error parsing academic score entry "$entry": $e');
+            continue;
+          }
         }
       }
+
+      final generalScores = prefs.getStringList('generalLessonScores') ?? [];
+      _generalLessonScores.clear();
       for (var entry in generalScores) {
         final parts = entry.split(':');
         if (parts.length == 2) {
-          _generalLessonScores[int.parse(parts[0])] = parts[1];
+          try {
+            final lessonId = int.parse(parts[0]);
+            _generalLessonScores[lessonId] = parts[1];
+          } catch (e) {
+            print('Error parsing general score entry "$entry": $e');
+            continue;
+          }
         }
       }
-      _isLoading = false;
-      _errorMessage = null;
+
+      _isLoading.value = false;
+      _errorMessage.value = null;
     } catch (e) {
-      _isLoading = false;
-      _errorMessage = 'Failed to load progress: $e';
+      _isLoading.value = false;
+      _errorMessage.value = 'Failed to load progress: $e';
+      print('Load progress error: $e');
     }
-    notifyListeners();
   }
 
   Future<void> restoreFromCloud() async {
-    _isLoading = true;
-    notifyListeners();
+    _isLoading.value = true;
     try {
+      // Simulate cloud sync (replace with actual cloud API call)
       await Future.delayed(const Duration(seconds: 1));
-      _isLoading = false;
-      _errorMessage = null;
+      // Example: Fetch data from cloud and update local state
+      // final cloudData = await YourCloudService.fetchProgress();
+      // _completedAcademicLessons.value = cloudData['academic'] ?? 0;
+      // _completedGeneralLessons.value = cloudData['general'] ?? 0;
+      // _currentLessonProgress.value = cloudData['progress'] ?? 0.0;
+      // ... update scores similarly
+      _isLoading.value = false;
+      _errorMessage.value = null;
+      Get.snackbar('Success', 'Progress restored from cloud');
     } catch (e) {
-      _isLoading = false;
-      _errorMessage = 'Failed to sync progress: $e';
+      _isLoading.value = false;
+      _errorMessage.value = 'Failed to sync progress: $e';
+      print('Cloud sync error: $e');
+      Get.snackbar('Error', 'Failed to sync progress: $e');
     }
-    notifyListeners();
   }
 
   Future<void> completeAcademicLesson({
     required int lessonId,
     required String score,
   }) async {
-    if (lessonId == _completedAcademicLessons + 1) {
-      _completedAcademicLessons++;
-      _currentLessonProgress = 0.0;
+    if (lessonId < 1 || lessonId > totalAcademicLessons) {
+      _errorMessage.value = 'Invalid academic lesson ID: $lessonId';
+      return;
+    }
+    if (lessonId == _completedAcademicLessons.value + 1) {
+      _completedAcademicLessons.value++;
+      _currentLessonProgress.value = 0.0;
       _academicLessonScores[lessonId] = score;
-    } else if (lessonId <= _completedAcademicLessons) {
+    } else if (lessonId <= _completedAcademicLessons.value) {
       _academicLessonScores[lessonId] = score;
     }
     await _saveProgress();
-    notifyListeners();
   }
 
   Future<void> completeGeneralLesson({
     required int lessonId,
     required String score,
   }) async {
-    if (lessonId == _completedGeneralLessons + 1) {
-      _completedGeneralLessons++;
+    if (lessonId < 1 || lessonId > totalGeneralLessons) {
+      _errorMessage.value = 'Invalid general lesson ID: $lessonId';
+      return;
+    }
+    if (lessonId == _completedGeneralLessons.value + 1) {
+      _completedGeneralLessons.value++;
       _generalLessonScores[lessonId] = score;
-    } else if (lessonId <= _completedGeneralLessons) {
+    } else if (lessonId <= _completedGeneralLessons.value) {
       _generalLessonScores[lessonId] = score;
     }
     await _saveProgress();
-    notifyListeners();
   }
 
   bool isAcademicLessonAccessible(int lessonId) {
-    return lessonId <= _completedAcademicLessons + 1;
+    return lessonId >= 1 && lessonId <= _completedAcademicLessons.value + 1;
   }
 
   bool isGeneralLessonAccessible(int lessonId) {
-    return lessonId <= _completedGeneralLessons + 1;
+    return lessonId >= 1 && lessonId <= _completedGeneralLessons.value + 1;
   }
 
   void updateProgress(double progress) {
-    _currentLessonProgress = progress.clamp(0.0, 1.0);
+    _currentLessonProgress.value = progress.clamp(0.0, 1.0);
     _saveProgress();
-    notifyListeners();
   }
 
   Future<void> _saveProgress() async {
+    _isLoading.value = true;
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('completedAcademicLessons', _completedAcademicLessons);
-      await prefs.setInt('completedGeneralLessons', _completedGeneralLessons);
-      await prefs.setDouble('currentLessonProgress', _currentLessonProgress);
+      await prefs.setInt(
+        'completedAcademicLessons',
+        _completedAcademicLessons.value,
+      );
+      await prefs.setInt(
+        'completedGeneralLessons',
+        _completedGeneralLessons.value,
+      );
+      await prefs.setDouble(
+        'currentLessonProgress',
+        _currentLessonProgress.value,
+      );
       final academicScores =
           _academicLessonScores.entries
               .map((e) => '${e.key}:${e.value}')
@@ -135,19 +180,22 @@ class ReadingProgressProvider with ChangeNotifier {
               .toList();
       await prefs.setStringList('academicLessonScores', academicScores);
       await prefs.setStringList('generalLessonScores', generalScores);
+      _isLoading.value = false;
+      _errorMessage.value = null;
     } catch (e) {
-      _errorMessage = 'Failed to save progress: $e';
+      _isLoading.value = false;
+      _errorMessage.value = 'Failed to save progress: $e';
+      print('Save progress error: $e');
     }
   }
 
-  void resetProgress() {
-    _completedAcademicLessons = 0;
-    _completedGeneralLessons = 0;
-    _currentLessonProgress = 0.0;
+  Future<void> resetProgress() async {
+    _completedAcademicLessons.value = 0;
+    _completedGeneralLessons.value = 0;
+    _currentLessonProgress.value = 0.0;
     _academicLessonScores.clear();
     _generalLessonScores.clear();
-    _errorMessage = null;
-    _saveProgress();
-    notifyListeners();
+    _errorMessage.value = null;
+    await _saveProgress();
   }
 }

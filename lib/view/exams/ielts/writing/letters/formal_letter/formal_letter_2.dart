@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -233,10 +233,9 @@ Emily Parker
       await _saveResponse();
 
       final score = _calculateScore(_letterController.text);
-      Provider.of<WritingProgressProvider>(
-        context,
-        listen: false,
-      ).completeLetterLesson(widget.lessonData['id']);
+      Get.find<WritingProgressController>().completeLetterLesson(
+        widget.lessonData['id'],
+      );
 
       await Future.delayed(const Duration(milliseconds: 500));
 

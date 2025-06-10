@@ -1,44 +1,45 @@
-import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class WritingProgressProvider with ChangeNotifier {
+class WritingProgressController extends GetxController {
   // Total number of lessons (40 Writing Task 2 + 14 Formal Letters)
   static const int totalLessons = 54;
   static const int totalWritingLessons = 40;
   static const int totalLetterLessons = 14;
 
   // Track completed Writing Task 2 lessons
-  int _completedLessons = 0;
-  final Set<int> _completedLessonIds = {};
+  final _completedLessons = 0.obs;
+  final _completedLessonIds = <int>{}.obs;
 
   // Track completed Formal Letter lessons
-  int _completedLetterLessons = 0;
-  final Set<int> _completedLetterIds = {};
+  final _completedLetterLessons = 0.obs;
+  final _completedLetterIds = <int>{}.obs;
 
   // SharedPreferences for persistence
   SharedPreferences? _prefs;
 
-  WritingProgressProvider() {
+  WritingProgressController() {
     _loadProgress();
   }
 
   // Getters
-  int get completedLessons => _completedLessons;
-  Set<int> get completedLessonIds => _completedLessonIds;
-  int get completedLetterLessons => _completedLetterLessons;
-  Set<int> get completedLetterIds => _completedLetterIds;
+  int get completedLessons => _completedLessons.value;
+  Set<int> get completedLessonIds => _completedLessonIds.toSet();
+  int get completedLetterLessons => _completedLetterLessons.value;
+  Set<int> get completedLetterIds => _completedLetterIds.toSet();
 
   double get progress =>
-      (_completedLessons + _completedLetterLessons) / totalLessons;
+      (_completedLessons.value + _completedLetterLessons.value) / totalLessons;
 
-  int get completionPercentage => ((progress) * 100).round();
+  int get completionPercentage => (progress * 100).round();
 
   // Load progress from SharedPreferences
   Future<void> _loadProgress() async {
     try {
       _prefs = await SharedPreferences.getInstance();
-      _completedLessons = _prefs?.getInt('completedLessons') ?? 0;
-      _completedLetterLessons = _prefs?.getInt('completedLetterLessons') ?? 0;
+      _completedLessons.value = _prefs?.getInt('completedLessons') ?? 0;
+      _completedLetterLessons.value =
+          _prefs?.getInt('completedLetterLessons') ?? 0;
 
       final lessonIds = _prefs?.getStringList('completedLessonIds') ?? [];
       _completedLessonIds.addAll(lessonIds.map(int.parse));
@@ -46,17 +47,20 @@ class WritingProgressProvider with ChangeNotifier {
       final letterIds = _prefs?.getStringList('completedLetterIds') ?? [];
       _completedLetterIds.addAll(letterIds.map(int.parse));
 
-      notifyListeners();
+      update();
     } catch (e) {
-      debugPrint('Error loading progress: $e');
+      print('Error loading progress: $e');
     }
   }
 
   // Save progress to SharedPreferences
   Future<void> _saveProgress() async {
     try {
-      await _prefs?.setInt('completedLessons', _completedLessons);
-      await _prefs?.setInt('completedLetterLessons', _completedLetterLessons);
+      await _prefs?.setInt('completedLessons', _completedLessons.value);
+      await _prefs?.setInt(
+        'completedLetterLessons',
+        _completedLetterLessons.value,
+      );
       await _prefs?.setStringList(
         'completedLessonIds',
         _completedLessonIds.map((id) => id.toString()).toList(),
@@ -66,33 +70,33 @@ class WritingProgressProvider with ChangeNotifier {
         _completedLetterIds.map((id) => id.toString()).toList(),
       );
     } catch (e) {
-      debugPrint('Error saving progress: $e');
+      print('Error saving progress: $e');
     }
   }
 
   // Complete a Writing Task 2 lesson
   void completeLesson(int lessonNumber) {
     if (lessonNumber < 1 || lessonNumber > totalWritingLessons) {
-      debugPrint('Invalid lesson number: $lessonNumber');
+      print('Invalid lesson number: $lessonNumber');
       return;
     }
     if (_completedLessonIds.add(lessonNumber)) {
-      _completedLessons = _completedLessonIds.length;
+      _completedLessons.value = _completedLessonIds.length;
       _saveProgress();
-      notifyListeners();
+      update();
     }
   }
 
   // Complete a Formal Letter lesson
   void completeLetterLesson(int letterId) {
     if (letterId < 1 || letterId > totalLetterLessons) {
-      debugPrint('Invalid letter ID: $letterId');
+      print('Invalid letter ID: $letterId');
       return;
     }
     if (_completedLetterIds.add(letterId)) {
-      _completedLetterLessons = _completedLetterIds.length;
+      _completedLetterLessons.value = _completedLetterIds.length;
       _saveProgress();
-      notifyListeners();
+      update();
     }
   }
 
@@ -106,13 +110,13 @@ class WritingProgressProvider with ChangeNotifier {
     return _completedLetterIds.contains(letterId);
   }
 
-  // Reset all progress (optional, for debugging or user reset)
+  // Reset all progress
   Future<void> resetProgress() async {
-    _completedLessons = 0;
+    _completedLessons.value = 0;
     _completedLessonIds.clear();
-    _completedLetterLessons = 0;
+    _completedLetterLessons.value = 0;
     _completedLetterIds.clear();
     await _saveProgress();
-    notifyListeners();
+    update();
   }
 }

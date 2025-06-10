@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
 import 'audio_screen.dart';
 import '../../../../../controller/listening_progress_provider.dart';
@@ -379,6 +379,12 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    Get.put(ListeningProgressController());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -431,22 +437,22 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                 toolbarHeight: kToolbarHeight,
               ),
               const SliverPadding(padding: EdgeInsets.only(top: 10)),
-              Consumer<ListeningProgressProvider>(
-                builder: (context, progressProvider, _) {
-                  if (progressProvider.isLoading) {
+              GetBuilder<ListeningProgressController>(
+                builder: (progressController) {
+                  if (progressController.isLoading) {
                     return const SliverFillRemaining(
                       child: Center(child: CircularProgressIndicator()),
                     );
                   }
 
-                  if (progressProvider.hasError) {
+                  if (progressController.hasError) {
                     return SliverFillRemaining(
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              progressProvider.errorMessage ??
+                              progressController.errorMessage ??
                                   'Error loading progress',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
@@ -457,10 +463,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                             const SizedBox(height: 16),
                             ElevatedButton(
                               onPressed: () async {
-                                await Provider.of<ListeningProgressProvider>(
-                                  context,
-                                  listen: false,
-                                ).restoreFromCloud();
+                                await progressController.restoreFromCloud();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: _accentColor,
@@ -565,17 +568,14 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
     required Map<String, dynamic> lesson,
     required int lessonIndex,
   }) {
-    final progressProvider = Provider.of<ListeningProgressProvider>(
-      context,
-      listen: false,
-    );
+    final progressController = Get.find<ListeningProgressController>();
     // Lock lesson if its index is greater than completed lessons + 1
-    final isLocked = lessonIndex > progressProvider.completedLessons;
+    final isLocked = lessonIndex > progressController.completedLessons;
     final progress =
-        lessonIndex < progressProvider.completedLessons
+        lessonIndex < progressController.completedLessons
             ? 1.0
-            : (lessonIndex == progressProvider.completedLessons
-                ? progressProvider.currentLessonProgress
+            : (lessonIndex == progressController.completedLessons
+                ? progressController.currentLessonProgress
                 : 0.0);
 
     return Material(
@@ -626,13 +626,11 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                                 "progress": progress,
                               },
                               onComplete: () async {
-                                await progressProvider.completeLesson();
-                                setState(
-                                  () {},
-                                ); // Trigger UI rebuild to update isLocked states
+                                await progressController.completeLesson();
+                               // Trigger UI rebuild to update isLocked states
                               },
                               onProgressUpdate: (progress) {
-                                progressProvider.updateProgress(progress);
+                                progressController.updateProgress(progress);
                               },
                             ),
                       ),

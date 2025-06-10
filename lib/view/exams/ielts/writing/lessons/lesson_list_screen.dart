@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:lottie/lottie.dart';
+import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_1.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_2.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_3.dart';
@@ -51,9 +52,7 @@ class LessonListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressProvider = Provider.of<WritingProgressProvider>(context);
     final theme = Theme.of(context);
-    final completedLessons = progressProvider.completedLessons;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -72,7 +71,7 @@ class LessonListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Iconsax.medal, color: theme.colorScheme.primary),
-            onPressed: () => _showAchievements(context, progressProvider),
+            onPressed: () => _showAchievements(context),
             tooltip: 'View Achievements',
           ),
         ],
@@ -82,101 +81,107 @@ class LessonListScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FadeInDown(
-                    duration: const Duration(milliseconds: 600),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Your Writing Journey",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: theme.colorScheme.onSurface,
-                              ),
-                            ),
-                            Chip(
-                              backgroundColor: theme.colorScheme.primary
-                                  .withOpacity(0.2),
-                              label: Text(
-                                "${progressProvider.completionPercentage}% Complete",
+              child: Obx(() {
+                final progressController =
+                    Get.find<WritingProgressController>();
+                final completedLessons = progressController.completedLessons;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FadeInDown(
+                      duration: const Duration(milliseconds: 600),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Your Writing Journey",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: theme.colorScheme.primary,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Stack(
-                          children: [
-                            Container(
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 800),
-                              curve: Curves.easeOutQuart,
-                              height: 10,
-                              width:
-                                  MediaQuery.of(context).size.width *
-                                  0.9 *
-                                  progressProvider.progress,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    theme.colorScheme.primary,
-                                    theme.colorScheme.primaryContainer,
-                                  ],
+                              Chip(
+                                backgroundColor: theme.colorScheme.primary
+                                    .withOpacity(0.2),
+                                label: Text(
+                                  "${progressController.completionPercentage}% Complete",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: theme.colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Stack(
+                            children: [
+                              Container(
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color:
+                                      theme.colorScheme.surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutQuart,
+                                height: 10,
+                                width:
+                                    MediaQuery.of(context).size.width *
+                                    0.9 *
+                                    progressController.progress,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      theme.colorScheme.primary,
+                                      theme.colorScheme.primaryContainer,
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 100),
-                    duration: const Duration(milliseconds: 600),
-                    child: Row(
-                      children: [
-                        _buildStatCard(
-                          context,
-                          "Completed",
-                          "$completedLessons",
-                          Iconsax.tick_circle,
-                          theme.colorScheme.primaryContainer,
-                        ),
-                        const SizedBox(width: 12),
-                        _buildStatCard(
-                          context,
-                          "Next Lesson",
-                          completedLessons < 40
-                              ? "Lesson ${completedLessons + 1}"
-                              : "All Done!",
-                          Iconsax.arrow_up,
-                          theme.colorScheme.tertiaryContainer,
-                        ),
-                      ],
+                    const SizedBox(height: 20),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 600),
+                      child: Row(
+                        children: [
+                          _buildStatCard(
+                            context,
+                            "Completed",
+                            "$completedLessons",
+                            Iconsax.tick_circle,
+                            theme.colorScheme.primaryContainer,
+                          ),
+                          const SizedBox(width: 12),
+                          _buildStatCard(
+                            context,
+                            "Next Lesson",
+                            completedLessons < 40
+                                ? "Lesson ${completedLessons + 1}"
+                                : "All Done!",
+                            Iconsax.arrow_up,
+                            theme.colorScheme.tertiaryContainer,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                );
+              }),
             ),
           ),
           SliverPadding(
@@ -192,17 +197,27 @@ class LessonListScreen extends StatelessWidget {
                   final lessonNumber = index + 1;
                   return FadeInUp(
                     delay: Duration(milliseconds: 100 * index),
-                    child: _buildLessonCard(
-                      context,
-                      lessonNumber,
-                      _getTask2Title(lessonNumber),
-                      _getTask2Subtitle(lessonNumber),
-                      lessonNumber <=
-                          completedLessons + 1, // Sequential unlocking
-                      lessonNumber <= completedLessons,
-                      _getTask2Icon(lessonNumber),
-                      progressProvider,
-                    ),
+                    child: Obx(() {
+                      final progressController =
+                          Get.find<WritingProgressController>();
+                      final isCompleted = progressController.isLessonCompleted(
+                        lessonNumber,
+                      );
+                      final isUnlocked =
+                          lessonNumber <=
+                          progressController.completedLessons + 1;
+
+                      return _buildLessonCard(
+                        context,
+                        lessonNumber,
+                        _getTask2Title(lessonNumber),
+                        _getTask2Subtitle(lessonNumber),
+                        isUnlocked,
+                        isCompleted,
+                        _getTask2Icon(lessonNumber),
+                        progressController,
+                      );
+                    }),
                   );
                 }),
               ]),
@@ -310,7 +325,7 @@ class LessonListScreen extends StatelessWidget {
     bool isUnlocked,
     bool isCompleted,
     IconData icon,
-    WritingProgressProvider progressProvider,
+    WritingProgressController progressController,
   ) {
     final theme = Theme.of(context);
 
@@ -333,7 +348,7 @@ class LessonListScreen extends StatelessWidget {
                     _openLesson(
                       context,
                       lessonNumber,
-                      progressProvider,
+                      progressController,
                       isCompleted,
                     );
                   }
@@ -472,14 +487,14 @@ class LessonListScreen extends StatelessWidget {
   void _openLesson(
     BuildContext context,
     int lessonNumber,
-    WritingProgressProvider provider,
+    WritingProgressController controller,
     bool isCompleted,
   ) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => _getLessonScreen(lessonNumber)),
     ).then((_) {
-      if (provider.completedLessonIds.contains(lessonNumber) && !isCompleted) {
+      if (controller.isLessonCompleted(lessonNumber) && !isCompleted) {
         _showLessonCompleteDialog(context, lessonNumber);
       }
     });
@@ -527,10 +542,8 @@ class LessonListScreen extends StatelessWidget {
     );
   }
 
-  void _showAchievements(
-    BuildContext context,
-    WritingProgressProvider provider,
-  ) {
+  void _showAchievements(BuildContext context) {
+    final progressController = Get.find<WritingProgressController>();
     showDialog(
       context: context,
       builder:
@@ -540,46 +553,49 @@ class LessonListScreen extends StatelessWidget {
               style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
             ),
             content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildAchievementItem(
-                    context,
-                    "Essay Beginner",
-                    "Complete Lesson 1: Technology",
-                    provider.completedLessons >= 1,
-                    Iconsax.edit_2,
-                  ),
-                  _buildAchievementItem(
-                    context,
-                    "Starter",
-                    "Complete your first lesson",
-                    provider.completedLessons > 0,
-                    Iconsax.star,
-                  ),
-                  _buildAchievementItem(
-                    context,
-                    "Essay Master",
-                    "Complete Lessons 1-10",
-                    provider.completedLessons >= 10,
-                    Iconsax.chart_success,
-                  ),
-                  _buildAchievementItem(
-                    context,
-                    "Advanced Writer",
-                    "Complete Lessons 11-20",
-                    provider.completedLessons >= 20,
-                    Iconsax.edit,
-                  ),
-                  _buildAchievementItem(
-                    context,
-                    "Writing Pro",
-                    "Complete all 40 lessons",
-                    provider.completedLessons >= 40,
-                    Iconsax.award,
-                  ),
-                ],
-              ),
+              child: Obx(() {
+                final completedLessons = progressController.completedLessons;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildAchievementItem(
+                      context,
+                      "Essay Beginner",
+                      "Complete Lesson 1: Technology",
+                      completedLessons >= 1,
+                      Iconsax.edit_2,
+                    ),
+                    _buildAchievementItem(
+                      context,
+                      "Starter",
+                      "Complete your first lesson",
+                      completedLessons > 0,
+                      Iconsax.star,
+                    ),
+                    _buildAchievementItem(
+                      context,
+                      "Essay Master",
+                      "Complete Lessons 1-10",
+                      completedLessons >= 10,
+                      Iconsax.chart_success,
+                    ),
+                    _buildAchievementItem(
+                      context,
+                      "Advanced Writer",
+                      "Complete Lessons 11-20",
+                      completedLessons >= 20,
+                      Iconsax.edit,
+                    ),
+                    _buildAchievementItem(
+                      context,
+                      "Writing Pro",
+                      "Complete all 40 lessons",
+                      completedLessons >= 40,
+                      Iconsax.award,
+                    ),
+                  ],
+                );
+              }),
             ),
             actions: [
               TextButton(
@@ -730,46 +746,46 @@ class LessonListScreen extends StatelessWidget {
 
   IconData _getTask2Icon(int lesson) {
     final icons = [
-      Iconsax.device_message, // Technology
-      Iconsax.book_1, // Education
-      Iconsax.briefcase, // Remote Work
-      Iconsax.car, // Traffic
-      Iconsax.tree, // Endangered Species
-      Iconsax.messages_1, // Social Media
-      Iconsax.hospital, // Healthcare
-      Iconsax.cake, // Fast Food
-      Iconsax.user, // Youth Unemployment
-      Iconsax.people, // Aging Populations
-      Iconsax.airplane, // Space Exploration
-      Iconsax.money_4, // Universal Basic Income
-      Iconsax.monitor, // Online Education
-      Iconsax.trash, // Plastic Pollution
-      Iconsax.cpu, // AI
-      Iconsax.security, // Censorship
-      Iconsax.global, // Globalization
-      Iconsax.building_3, // Tourism
-      Iconsax.weight, // Obesity
-      Iconsax.flash, // Renewable Energy
-      Iconsax.code, // Genetic Engineering
-      Iconsax.wallet, // Minimum Wage
-      Iconsax.task, // Gig Economy
-      Iconsax.shield_tick, // Cybercrime
-      Iconsax.profile_2user, // Overpopulation
-      Iconsax.bezier, // Animal Testing
-      Iconsax.building, // Cultural Heritage
-      Iconsax.book, // E-books
-      Iconsax.heart, // Mental Health
-      Iconsax.location, // Urban Planning
-      Iconsax.map, // Global Tourism
-      Iconsax.building_4, // Urbanization
-      Iconsax.chart, // Automation
-      Iconsax.money_send, // Income Inequality
-      Iconsax.cloud_snow, // Climate Change
-      Iconsax.judge, // Capital Punishment
-      Iconsax.teacher, // Homeschooling
-      Iconsax.command, // Artificial Intelligence
-      Iconsax.radar, // Urban Overcrowding
-      Iconsax.airplane_square, // Space Exploration
+      Iconsax.device_message,
+      Iconsax.book_1,
+      Iconsax.briefcase,
+      Iconsax.car,
+      Iconsax.tree,
+      Iconsax.messages_1,
+      Iconsax.hospital,
+      Iconsax.cake,
+      Iconsax.user,
+      Iconsax.people,
+      Iconsax.airplane,
+      Iconsax.money_4,
+      Iconsax.monitor,
+      Iconsax.trash,
+      Iconsax.cpu,
+      Iconsax.security,
+      Iconsax.global,
+      Iconsax.building_3,
+      Iconsax.weight,
+      Iconsax.flash,
+      Iconsax.code,
+      Iconsax.wallet,
+      Iconsax.task,
+      Iconsax.shield_tick,
+      Iconsax.profile_2user,
+      Iconsax.bezier,
+      Iconsax.building,
+      Iconsax.book,
+      Iconsax.heart,
+      Iconsax.location,
+      Iconsax.map,
+      Iconsax.building_4,
+      Iconsax.chart,
+      Iconsax.money_send,
+      Iconsax.cloud_snow,
+      Iconsax.judge,
+      Iconsax.teacher,
+      Iconsax.command,
+      Iconsax.radar,
+      Iconsax.airplane_square,
     ];
     return icons[lesson - 1];
   }
