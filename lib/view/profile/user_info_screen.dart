@@ -1,6 +1,4 @@
 import 'dart:ui';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:langtest_pro/controller/auth/auth_controller.dart';
 import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/res/colors/app_colors.dart';
-import 'package:langtest_pro/view/home/home_screen.dart';
 
 class UserInfoScreen extends StatefulWidget {
   final UserCredential userCredentials;
