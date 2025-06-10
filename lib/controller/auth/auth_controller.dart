@@ -9,6 +9,7 @@ import 'package:langtest_pro/utils/utils.dart';
 
 class AuthController extends GetxController {
   IAuthfacade auth = AuthImpl();
+  
   RxBool loading = false.obs;
 
   void signInwithGoogle() {
