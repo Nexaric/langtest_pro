@@ -49,13 +49,20 @@ class AuthImpl implements IAuthfacade {
       }
     } on PlatformException catch (e) {
       if (e.code == 'network_error' || e.message?.contains('7') == true) {
-      debugPrint('Network error: Please check your internet connection.');
-      return left(AppExceptions("Please check your internet connection.","Network Error"));
-    } else{
-      return left(AppExceptions(e.message ?? 'Platform error during sign-in'));
-    }
+        debugPrint('Network error: Please check your internet connection.');
+        return left(
+          AppExceptions(
+            "Please check your internet connection.",
+            "Network Error",
+          ),
+        );
+      } else {
+        return left(
+          AppExceptions(e.message ?? 'Platform error during sign-in'),
+        );
+      }
     } on FirebaseAuthException catch (e) {
-      return(left(AppExceptions.fromFirebaseError(e)));
+      return (left(AppExceptions.fromFirebaseError(e)));
     } catch (e) {
       debugPrint('Unknown error during Google Sign-In: $e');
       return left(AppExceptions('Unexpected error: $e'));
@@ -89,5 +96,34 @@ class AuthImpl implements IAuthfacade {
       debugPrint('Unexpected error while adding user data: $e');
       return left(AppExceptions('Unexpected error: $e'));
     }
+  }
+
+  @override
+  Future<User?> isLoginned() async {
+
+    final user = await FirebaseAuth.instance.authStateChanges().first;
+    print("user status $user");
+    return user;
+  }
+
+  @override
+  Future<bool> checkUserDataAdded({required User user}) async {
+    print("reached data checkking");
+    try {
+      final documentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+
+      if (documentSnapshot.exists) {
+        final data = documentSnapshot.get('isCompleted');
+        return data;
+      }
+    } catch (e) {
+      print("in data checking $e");
+    }
+
+    return false;
   }
 }

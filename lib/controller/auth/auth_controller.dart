@@ -9,38 +9,62 @@ import 'package:langtest_pro/utils/utils.dart';
 
 class AuthController extends GetxController {
   IAuthfacade auth = AuthImpl();
-  
+
   RxBool loading = false.obs;
 
   void signInwithGoogle() {
     loading.value = true;
-    auth.loginWithGoogle().then((value){
-      value.fold((f){
-         debugPrint(value.toString());
-        Utils.snakBar("Error",f.toString());
-        loading.value = false;
-      }, (s){
-        loading.value = false;
-        Get.offNamed(RoutesName.userDetailsScreen,
-        arguments: s
-        );
-      });
+    auth.loginWithGoogle().then((value) {
+      value.fold(
+        (f) {
+          debugPrint(value.toString());
+          Utils.snakBar("Error", f.toString());
+          loading.value = false;
+        },
+        (s) {
+          loading.value = false;
+          Get.offNamed(RoutesName.userDetailsScreen, arguments: s);
+        },
+      );
     });
   }
 
-  void addUserDataController({required UserCredential user, required UserData userModel}){
+  void addUserDataController({
+    required UserCredential user,
+    required UserData userModel,
+  }) {
     loading.value = true;
-    auth.addUserData(user: user, userModel: userModel).then((value){
-      value.fold((f){
-        debugPrint(value.toString());
-        Utils.snakBar("Error", f.toString());
-        loading.value = false;
-      }, (s){
-        loading.value = false;
-        Get.offNamed(RoutesName.homeScreen);
-      });
+    auth.addUserData(user: user, userModel: userModel).then((value) {
+      value.fold(
+        (f) {
+          debugPrint(value.toString());
+          Utils.snakBar("Error", f.toString());
+          loading.value = false;
+        },
+        (s) {
+          loading.value = false;
+          Get.offNamed(RoutesName.homeScreen);
+        },
+      );
     });
   }
+
+  void checkLogin() async {
+    print("in contorller");
+    loading.value = true;
+    final userStatus = await auth.isLoginned();
+    if (userStatus != null) {
+      final dataStatus = await auth.checkUserDataAdded(user: userStatus);
+      if (dataStatus == true) {
+        loading.value = false;
+        Get.offNamed(RoutesName.homeScreen);
+      } else {
+        loading.value = false;
+        Get.offNamed(RoutesName.userDetailsScreen);
+      }
+    } else {
+      loading.value = false;
+      Get.offNamed(RoutesName.loginScreen);
+    }
+  }
 }
-//i made login page
-//i made forget screen

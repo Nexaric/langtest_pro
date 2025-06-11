@@ -11,5 +11,8 @@ abstract class IAuthfacade {
     required UserCredential user,
     required UserData userModel,
   });
-  
+
+  Future<User?> isLoginned();
+
+  Future<bool> checkUserDataAdded({required User user});
 }
