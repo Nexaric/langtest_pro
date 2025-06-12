@@ -8,8 +8,8 @@ import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/res/colors/app_colors.dart';
 
 class UserInfoScreen extends StatefulWidget {
-  final UserCredential userCredentials;
-  const UserInfoScreen({super.key, required this.userCredentials});
+  final User user;
+  const UserInfoScreen({super.key, required this.user});
 
   @override
   _UserInfoScreenState createState() => _UserInfoScreenState();
@@ -66,13 +66,13 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         lastName: _lastNameController.text,
         dob: _selectedDate.toString(),
         gender: _selectedGender.toString(),
-        email: widget.userCredentials.user!.email ?? '',
+        email: widget.user.email ?? '',
         role: 'Student',
         isCompleted: true,
       );
 
       authController.addUserDataController(
-        user: widget.userCredentials,
+        user: widget.user,
         userModel: userData,
       );
     } else {

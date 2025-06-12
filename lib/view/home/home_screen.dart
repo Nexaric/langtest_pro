@@ -1,8 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
+import 'package:langtest_pro/controller/push_notification/notification_controller.dart';
+import 'package:langtest_pro/utils/utils.dart';
 import 'package:langtest_pro/view/home/side_menu/menu_screen.dart';
 import 'package:langtest_pro/view/home/quick_access/practice_test.dart';
 import 'package:langtest_pro/view/home/quick_access/speaking_practice.dart';
@@ -26,6 +29,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final pushController = Get.put(NotificationController());
+
   List<String> purchasedCourses = [];
   final _pageController = PageController(initialPage: 0);
   final _controller = NotchBottomBarController(index: 0);
@@ -37,9 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
-    // _loadPurchasedCourses();
+   getUserId();
+  }
+
+  void getUserId() async{
+    print("in view get user id");
+     final userId = await Utils.getString('userId');
+    if (userId != null) {
+      pushController.requestPermissionForFcm(userId: userId);
+    }
   }
 
   // Future<void> _loadPurchasedCourses() async {

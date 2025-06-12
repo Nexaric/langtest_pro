@@ -1,35 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:langtest_pro/repo/push_notification/i_push_facade.dart';
+import 'package:langtest_pro/repo/push_notification/push_impl.dart';
 
 class NotificationController extends GetxController {
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  IPushFacade pushFacade = PushImpl();
 
-  Future<void> requestPermission({required String userId}) async {
-    await _messaging.requestPermission();
+  void requestPermissionForFcm({required String userId}) {
+    print("in push controller");
+    pushFacade.requestPermissionForFcm(userId: userId);
+  }
 
-    final _token = await _messaging.getToken();
-    debugPrint("Fcm token = $_token");
-
-    if (_token != null) {
-      await FirebaseFirestore.instance.collection('users').doc(userId).set({
-        'fcmToken': _token,
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
-    }
-
-    FirebaseMessaging.onMessage.listen((message) {
-      debugPrint(
-        '📬 Message received in foreground: ${message.notification?.title}',
-      );
-    });
-
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
-        'fcmToken': newToken,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-    });
+  void foregroundNotificationChannel() {
+    pushFacade.foregroundNotificationChannel();
   }
 }

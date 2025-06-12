@@ -63,7 +63,7 @@ class MenuScreen extends StatelessWidget {
                             context,
                             "🏠 Home",
                             Icons.home_filled,
-                            const HomeScreen(),
+                             HomeScreen(),
                           ),
                           _buildMenuOption(
                             context,

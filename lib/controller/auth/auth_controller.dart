@@ -23,6 +23,7 @@ class AuthController extends GetxController {
         },
         (s) {
           loading.value = false;
+          Utils.saveString('userId', s.user!.uid);
           Get.offNamed(RoutesName.userDetailsScreen, arguments: s);
         },
       );
@@ -30,7 +31,7 @@ class AuthController extends GetxController {
   }
 
   void addUserDataController({
-    required UserCredential user,
+    required User user,
     required UserData userModel,
   }) {
     loading.value = true;
@@ -55,12 +56,15 @@ class AuthController extends GetxController {
     final userStatus = await auth.isLoginned();
     if (userStatus != null) {
       final dataStatus = await auth.checkUserDataAdded(user: userStatus);
+      print("data status $dataStatus");
       if (dataStatus == true) {
         loading.value = false;
         Get.offNamed(RoutesName.homeScreen);
       } else {
         loading.value = false;
-        Get.offNamed(RoutesName.userDetailsScreen);
+        Get.offNamed(RoutesName.userDetailsScreen,
+        arguments: userStatus
+        );
       }
     } else {
       loading.value = false;

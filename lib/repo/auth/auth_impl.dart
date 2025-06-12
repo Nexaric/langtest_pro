@@ -31,18 +31,22 @@ class AuthImpl implements IAuthfacade {
       );
 
       if (userCredential.user != null) {
-        await addUserData(
-          user: userCredential,
-          userModel: UserData(
-            firstName: '',
-            lastName: '',
-            dob: '',
-            gender: '',
-            email: '',
-            role: '',
-            isCompleted: false,
-          ),
-        ); // await to ensure it's completed
+        final status = await checkUserDataAdded(user: userCredential.user!);
+        if (status == false) {
+          await addUserData(
+            user: userCredential.user!,
+            userModel: UserData(
+              firstName: '',
+              lastName: '',
+              dob: '',
+              gender: '',
+              email: '',
+              role: '',
+              isCompleted: false,
+            ),
+          ); // await to ensure it's completed
+        }
+
         return right(userCredential);
       } else {
         return left(ServerException('User object is null'));
@@ -71,7 +75,7 @@ class AuthImpl implements IAuthfacade {
 
   @override
   Future<Either<AppExceptions, Unit>> addUserData({
-    required UserCredential user,
+    required User user,
     required UserData userModel,
   }) async {
     final db = FirebaseFirestore.instance;
@@ -81,13 +85,13 @@ class AuthImpl implements IAuthfacade {
       "last_name": userModel.lastName,
       "dob": userModel.dob,
       "gender": userModel.gender,
-      "email": user.user!.email,
+      "email": user.email,
       "role": "student",
       "isCompleted": userModel.isCompleted,
     };
 
     try {
-      await db.collection('users').doc(user.user!.uid).set(userData);
+      await db.collection('users').doc(user.uid).set(userData);
       return right(unit);
     } on FirebaseException catch (e) {
       debugPrint('Firebase error while adding user data: ${e.message}');
@@ -100,7 +104,6 @@ class AuthImpl implements IAuthfacade {
 
   @override
   Future<User?> isLoginned() async {
-
     final user = await FirebaseAuth.instance.authStateChanges().first;
     print("user status $user");
     return user;
@@ -117,11 +120,14 @@ class AuthImpl implements IAuthfacade {
               .get();
 
       if (documentSnapshot.exists) {
+        print("snapshot exists");
         final data = documentSnapshot.get('isCompleted');
         return data;
       }
+      
     } catch (e) {
       print("in data checking $e");
+      
     }
 
     return false;

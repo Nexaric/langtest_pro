@@ -13,7 +13,7 @@ class AppRoutes {
 
     GetPage(
       name: RoutesName.userDetailsScreen,
-      page: () => UserInfoScreen(userCredentials: Get.arguments),
+      page: () => UserInfoScreen(user: Get.arguments),
     ),
 
     GetPage(name: RoutesName.homeScreen, page: () => const HomeScreen()),

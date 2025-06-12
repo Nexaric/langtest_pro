@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
+import 'package:langtest_pro/controller/push_notification/notification_controller.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
 import 'package:langtest_pro/controller/speaking_progress_provider.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
@@ -11,12 +13,31 @@ import 'package:langtest_pro/res/routes/routes.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 
 void main() async {
+  
+
   debugDisableShadows = false;
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  initialise();
+
+  final pushNotification = Get.put(NotificationController());
+
+  pushNotification.foregroundNotificationChannel();
+
+  runApp(const MyApp());
+}
+
+// 👇 Top-level function
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("📩 Background FCM received: ");
+}
+
+void initialise() async {
   // Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox('listening_progress');
@@ -29,8 +50,6 @@ void main() async {
   Get.put(ReadingProgressController());
   Get.put(WritingProgressController());
   Get.put(SpeakingProgressController());
-
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
