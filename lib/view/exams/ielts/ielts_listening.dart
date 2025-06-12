@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
 
 class IeltsListeningScreen extends StatelessWidget {
-  const IeltsListeningScreen({super.key});
+  const IeltsListeningScreen({super.key, required sectionData});
 
   @override
   Widget build(BuildContext context) {

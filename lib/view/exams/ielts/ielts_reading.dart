@@ -9,7 +9,7 @@ import 'package:langtest_pro/view/exams/ielts/reading/feedback.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/strategies_tips.dart';
 
 class IeltsReadingScreen extends StatelessWidget {
-  const IeltsReadingScreen({super.key});
+  const IeltsReadingScreen({super.key, required sectionData});
 
   @override
   Widget build(BuildContext context) {

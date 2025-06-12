@@ -8,7 +8,7 @@ import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import '../../core/widgets/progress_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  const DashboardScreen({super.key, required dashboardData});
 
   @override
   Widget build(BuildContext context) {

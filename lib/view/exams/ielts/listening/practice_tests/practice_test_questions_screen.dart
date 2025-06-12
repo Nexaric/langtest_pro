@@ -21,7 +21,11 @@ import 'questions/part_4.dart' as part4;
 class PracticeTestQuestionsScreen extends StatefulWidget {
   final String part;
 
-  const PracticeTestQuestionsScreen({required this.part, super.key});
+  const PracticeTestQuestionsScreen({
+    required this.part,
+    super.key,
+    required questionData,
+  });
 
   @override
   State<PracticeTestQuestionsScreen> createState() =>

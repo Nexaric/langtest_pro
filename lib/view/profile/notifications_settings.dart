@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
-  const NotificationSettingsScreen({super.key});
+  const NotificationSettingsScreen({super.key, required settingsData});
 
   @override
   _NotificationSettingsScreenState createState() =>

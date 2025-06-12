@@ -17,6 +17,7 @@ class PracticeTestResultScreen extends StatefulWidget {
     required this.unlockedNextPart,
     required this.timeExpired,
     super.key,
+    required resultData,
   });
 
   @override

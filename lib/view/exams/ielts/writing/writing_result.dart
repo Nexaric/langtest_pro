@@ -34,6 +34,7 @@ class WritingResultScreen extends StatelessWidget {
     required this.taskType,
     this.wordCount = 0,
     required this.lessonData,
+    required resultData,
   });
 
   Widget getCurrentLessonWidget() {

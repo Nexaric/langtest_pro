@@ -8,7 +8,7 @@ import 'lesson_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 
 class AcademicLessonsScreen extends StatefulWidget {
-  const AcademicLessonsScreen({super.key});
+  const AcademicLessonsScreen({super.key, required lessonData});
 
   @override
   State<AcademicLessonsScreen> createState() => _AcademicLessonsScreenState();

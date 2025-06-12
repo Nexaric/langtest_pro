@@ -48,7 +48,7 @@ import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_39.
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_40.dart';
 
 class LessonListScreen extends StatelessWidget {
-  const LessonListScreen({super.key});
+  const LessonListScreen({super.key, required listData});
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PreferencesScreen extends StatefulWidget {
-  const PreferencesScreen({super.key});
+  const PreferencesScreen({super.key, required preferencesData});
 
   @override
   _PreferencesScreenState createState() => _PreferencesScreenState();

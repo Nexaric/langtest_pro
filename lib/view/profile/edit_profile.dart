@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  const EditProfileScreen({super.key, required userData});
 
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();

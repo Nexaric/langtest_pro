@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class ReportProblemScreen extends StatefulWidget {
-  const ReportProblemScreen({super.key});
+  const ReportProblemScreen({super.key, required problemData});
 
   @override
   _ReportProblemScreenState createState() => _ReportProblemScreenState();

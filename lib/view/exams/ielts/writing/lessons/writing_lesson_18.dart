@@ -8,7 +8,7 @@ import 'lesson_result.dart';
 import 'lesson_list_screen.dart';
 
 class WritingLesson18 extends StatefulWidget {
-  const WritingLesson18({super.key});
+  const WritingLesson18({super.key, required lessonData});
 
   @override
   State<WritingLesson18> createState() => _WritingLesson18State();

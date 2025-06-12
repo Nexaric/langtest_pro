@@ -9,7 +9,7 @@ import 'package:langtest_pro/view/exams/ielts/writing/feedback.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/strategies_tips.dart';
 
 class IeltsWritingScreen extends StatelessWidget {
-  const IeltsWritingScreen({super.key});
+  const IeltsWritingScreen({super.key, required sectionData});
 
   @override
   Widget build(BuildContext context) {

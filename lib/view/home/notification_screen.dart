@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NotificationScreen extends StatelessWidget {
-  const NotificationScreen({super.key});
+  const NotificationScreen({super.key, required notificationData});
 
   @override
   Widget build(BuildContext context) {

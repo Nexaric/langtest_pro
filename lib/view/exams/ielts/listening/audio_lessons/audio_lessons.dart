@@ -9,7 +9,7 @@ import 'audio_screen.dart';
 import '../../../../../controller/listening_progress_provider.dart';
 
 class AudioLessonsScreen extends StatefulWidget {
-  const AudioLessonsScreen({super.key});
+  const AudioLessonsScreen({super.key, required lessonData});
 
   @override
   _AudioLessonsScreenState createState() => _AudioLessonsScreenState();

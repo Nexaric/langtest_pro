@@ -25,6 +25,7 @@ class AudioScreen extends StatefulWidget {
     required this.onComplete,
     this.onProgressUpdate,
     super.key,
+    required audioData,
   });
 
   @override

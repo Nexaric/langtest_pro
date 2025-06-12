@@ -9,7 +9,7 @@ import 'package:langtest_pro/view/profile/notifications_settings.dart';
 import 'edit_profile.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, required userData});
 
   @override
   Widget build(BuildContext context) {

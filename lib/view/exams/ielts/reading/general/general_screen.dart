@@ -58,6 +58,7 @@ class GeneralScreen extends StatefulWidget {
     super.key,
     required this.lessonId,
     required this.onComplete,
+    required data,
   });
 
   @override

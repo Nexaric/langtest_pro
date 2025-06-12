@@ -5,7 +5,7 @@ import 'package:langtest_pro/view/subscriptions/onetime_offer.dart';
 import 'offer_timer_manager.dart';
 
 class SubscriptionScreen extends StatefulWidget {
-  const SubscriptionScreen({super.key});
+  const SubscriptionScreen({super.key, required subscriptionData});
 
   @override
   State<SubscriptionScreen> createState() => _SubscriptionScreenState();

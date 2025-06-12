@@ -7,7 +7,7 @@ import '../../../../../controller/listening_progress_provider.dart';
 import 'practice_test_questions_screen.dart';
 
 class PracticeTestScreen extends StatefulWidget {
-  const PracticeTestScreen({super.key});
+  const PracticeTestScreen({super.key, required testData});
 
   @override
   _PracticeTestScreenState createState() => _PracticeTestScreenState();

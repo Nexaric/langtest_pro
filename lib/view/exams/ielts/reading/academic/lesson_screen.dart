@@ -84,6 +84,7 @@ class LessonScreen extends StatefulWidget {
     super.key,
     required this.lessonId,
     required this.onComplete,
+    required lessonData,
   });
 
   @override

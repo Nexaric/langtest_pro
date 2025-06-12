@@ -9,7 +9,7 @@ import 'general_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 
 class GeneralLessonsScreen extends StatefulWidget {
-  const GeneralLessonsScreen({super.key});
+  const GeneralLessonsScreen({super.key, required lessonData});
 
   @override
   State<GeneralLessonsScreen> createState() => _GeneralLessonsScreenState();

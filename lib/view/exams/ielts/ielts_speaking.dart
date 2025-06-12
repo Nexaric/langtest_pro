@@ -6,7 +6,7 @@ import 'package:langtest_pro/view/exams/ielts/speaking/part2_cue_card.dart';
 import 'package:langtest_pro/view/exams/ielts/speaking/part3_discussion.dart';
 
 class IeltsSpeakingScreen extends StatelessWidget {
-  const IeltsSpeakingScreen({super.key});
+  const IeltsSpeakingScreen({super.key, required sectionData});
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../home/home_screen.dart';
 
 class PaymentSuccessfulScreen extends StatefulWidget {
-  const PaymentSuccessfulScreen({super.key});
+  const PaymentSuccessfulScreen({super.key, required paymentStatus});
 
   @override
   _PaymentSuccessfulScreenState createState() =>

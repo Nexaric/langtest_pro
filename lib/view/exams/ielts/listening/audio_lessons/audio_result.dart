@@ -24,6 +24,7 @@ class AudioResultScreen extends StatefulWidget {
     required this.lessonId,
     required this.onComplete,
     super.key,
+    required resultData,
   });
 
   @override

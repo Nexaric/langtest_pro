@@ -7,7 +7,7 @@ import '../exams/pte/pte_screen.dart';
 import '../exams/toefl/toefl_screen.dart';
 
 class MyCoursesScreen extends StatefulWidget {
-  const MyCoursesScreen({super.key});
+  const MyCoursesScreen({super.key, required courseData});
 
   @override
   _MyCoursesScreenState createState() => _MyCoursesScreenState();

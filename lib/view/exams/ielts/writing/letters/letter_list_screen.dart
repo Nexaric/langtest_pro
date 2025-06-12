@@ -21,7 +21,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
 
 class LetterListScreen extends StatelessWidget {
-  const LetterListScreen({super.key});
+  const LetterListScreen({super.key, required listData});
 
   @override
   Widget build(BuildContext context) {

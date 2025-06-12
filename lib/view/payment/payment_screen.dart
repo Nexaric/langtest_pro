@@ -4,7 +4,7 @@ import 'package:langtest_pro/view/payment/loading_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
   final String price; // Add price parameter to receive subscription amount
-  const PaymentScreen({super.key, required this.price});
+  const PaymentScreen({super.key, required this.price, required paymentData});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
