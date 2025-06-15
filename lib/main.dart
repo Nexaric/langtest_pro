@@ -1,43 +1,33 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
-import 'package:langtest_pro/controller/push_notification/notification_controller.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
 import 'package:langtest_pro/controller/speaking_progress_provider.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
-import 'package:langtest_pro/firebase_options.dart';
 import 'package:langtest_pro/res/routes/routes.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 
 void main() async {
-  
-
   debugDisableShadows = false;
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // Initialize Supabase
+  await Supabase.initialize(
+    url:
+        'https://xrcrymvcztdjduazxzzi.supabase.co', // Replace with your Supabase project URL
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3J5bXZjenRkamR1YXp4enppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MzI2OTYsImV4cCI6MjA2NTQwODY5Nn0.rRSGWB4aPkifmL8_z22B4OTu8Hv0opJc-YzrxH-qKpQ', // Replace with your Supabase anon key
+  );
 
-  initialise();
-
-  final pushNotification = Get.put(NotificationController());
-
-  pushNotification.foregroundNotificationChannel();
+  // Initialize Hive
+  await initialise();
 
   runApp(const MyApp());
 }
 
-// 👇 Top-level function
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("📩 Background FCM received: ");
-}
-
-void initialise() async {
+Future<void> initialise() async {
   // Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox('listening_progress');

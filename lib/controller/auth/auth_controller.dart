@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/repo/auth/auth_impl.dart';
 import 'package:langtest_pro/repo/auth/i_authfacade.dart';
@@ -17,14 +17,14 @@ class AuthController extends GetxController {
     auth.loginWithGoogle().then((value) {
       value.fold(
         (f) {
-          debugPrint(value.toString());
+          debugPrint(f.toString());
           Utils.snakBar("Error", f.toString());
           loading.value = false;
         },
-        (s) {
+        (user) {
           loading.value = false;
-          Utils.saveString('userId', s.user!.uid);
-          Get.offNamed(RoutesName.userDetailsScreen, arguments: s);
+          Utils.saveString('userId', user.id);
+          Get.offNamed(RoutesName.userDetailsScreen, arguments: user);
         },
       );
     });
@@ -38,7 +38,7 @@ class AuthController extends GetxController {
     auth.addUserData(user: user, userModel: userModel).then((value) {
       value.fold(
         (f) {
-          debugPrint(value.toString());
+          debugPrint(f.toString());
           Utils.snakBar("Error", f.toString());
           loading.value = false;
         },
@@ -51,20 +51,18 @@ class AuthController extends GetxController {
   }
 
   void checkLogin() async {
-    print("in contorller");
+    debugPrint("In controller");
     loading.value = true;
     final userStatus = await auth.isLoginned();
     if (userStatus != null) {
       final dataStatus = await auth.checkUserDataAdded(user: userStatus);
-      print("data status $dataStatus");
-      if (dataStatus == true) {
+      debugPrint("Data status: $dataStatus");
+      if (dataStatus) {
         loading.value = false;
         Get.offNamed(RoutesName.homeScreen);
       } else {
         loading.value = false;
-        Get.offNamed(RoutesName.userDetailsScreen,
-        arguments: userStatus
-        );
+        Get.offNamed(RoutesName.userDetailsScreen, arguments: userStatus);
       }
     } else {
       loading.value = false;

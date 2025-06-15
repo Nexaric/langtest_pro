@@ -1,8 +1,8 @@
 import 'dart:ui';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:langtest_pro/controller/auth/auth_controller.dart';
 import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/res/colors/app_colors.dart';
@@ -16,7 +16,7 @@ class UserInfoScreen extends StatefulWidget {
 }
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
-  final authController = Get.put(AuthController());
+  final authController = Get.find<AuthController>();
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -303,34 +303,41 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                       ),
                       const SizedBox(height: 40),
 
-                      // Continue Button\
-
-                      
+                      // Continue Button
                       Obx(
-                        ()=>authController.loading.value? Center(child: CircularProgressIndicator(color: AppColors.whiteColor,),): SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _saveUserInfo,
-                        
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 0,
-                              shadowColor: Colors.transparent,
-                            ),
-                            child: Text(
-                              "Continue",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF6C4DF6),
-                              ),
-                            ),
-                          ),
-                        ),
+                        () =>
+                            authController.loading.value
+                                ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.whiteColor,
+                                  ),
+                                )
+                                : SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: _saveUserInfo,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: const Color(0xFF6C4DF6),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      elevation: 0,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    child: Text(
+                                      "Continue",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF6C4DF6),
+                                      ),
+                                    ),
+                                  ),
+                                ),
                       ),
                     ],
                   ),

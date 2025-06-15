@@ -1,16 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/repo/auth/i_authfacade.dart';
 import 'package:langtest_pro/utils/app_exceptions.dart';
 
 class AuthImpl implements IAuthfacade {
+  final supabase = Supabase.instance.client;
+
   @override
-  Future<Either<AppExceptions, UserCredential>> loginWithGoogle() async {
+  Future<Either<AppExceptions, User>> loginWithGoogle() async {
     try {
       final googleSignIn = GoogleSignIn();
       final googleUser = await googleSignIn.signIn();
@@ -20,34 +21,37 @@ class AuthImpl implements IAuthfacade {
       }
 
       final googleAuth = await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      if (accessToken == null || idToken == null) {
+        return left(AppExceptions('Google Sign-In failed: No tokens received'));
+      }
+
+      final response = await supabase.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
       );
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(
-        credential,
-      );
-
-      if (userCredential.user != null) {
-        final status = await checkUserDataAdded(user: userCredential.user!);
-        if (status == false) {
+      final user = response.user;
+      if (user != null) {
+        final status = await checkUserDataAdded(user: user);
+        if (!status) {
           await addUserData(
-            user: userCredential.user!,
+            user: user,
             userModel: UserData(
               firstName: '',
               lastName: '',
               dob: '',
               gender: '',
-              email: '',
-              role: '',
+              email: user.email ?? '',
+              role: 'student',
               isCompleted: false,
             ),
-          ); // await to ensure it's completed
+          );
         }
-
-        return right(userCredential);
+        return right(user);
       } else {
         return left(ServerException('User object is null'));
       }
@@ -65,8 +69,8 @@ class AuthImpl implements IAuthfacade {
           AppExceptions(e.message ?? 'Platform error during sign-in'),
         );
       }
-    } on FirebaseAuthException catch (e) {
-      return (left(AppExceptions.fromFirebaseError(e)));
+    } on AuthException catch (e) {
+      return left(AppExceptions(e.message));
     } catch (e) {
       debugPrint('Unknown error during Google Sign-In: $e');
       return left(AppExceptions('Unexpected error: $e'));
@@ -78,58 +82,48 @@ class AuthImpl implements IAuthfacade {
     required User user,
     required UserData userModel,
   }) async {
-    final db = FirebaseFirestore.instance;
-
-    final userData = {
-      "first_name": userModel.firstName,
-      "last_name": userModel.lastName,
-      "dob": userModel.dob,
-      "gender": userModel.gender,
-      "email": user.email,
-      "role": "student",
-      "isCompleted": userModel.isCompleted,
-    };
-
     try {
-      await db.collection('users').doc(user.uid).set(userData);
+      final userData = {
+        'id': user.id,
+        'first_name': userModel.firstName,
+        'last_name': userModel.lastName,
+        'dob': userModel.dob,
+        'gender': userModel.gender,
+        'email': user.email,
+        'role': userModel.role,
+        'is_completed': userModel.isCompleted,
+      };
+
+      await supabase.from('users').insert(userData);
       return right(unit);
-    } on FirebaseException catch (e) {
-      debugPrint('Firebase error while adding user data: ${e.message}');
-      return left(ServerException(e.message ?? 'Firestore error'));
     } catch (e) {
-      debugPrint('Unexpected error while adding user data: $e');
+      debugPrint('Error while adding user data: $e');
       return left(AppExceptions('Unexpected error: $e'));
     }
   }
 
   @override
   Future<User?> isLoginned() async {
-    final user = await FirebaseAuth.instance.authStateChanges().first;
-    print("user status $user");
-    return user;
+    return supabase.auth.currentUser;
   }
 
   @override
   Future<bool> checkUserDataAdded({required User user}) async {
-    print("reached data checkking");
     try {
-      final documentSnapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
+      final response =
+          await supabase
+              .from('users')
+              .select('is_completed')
+              .eq('id', user.id)
+              .maybeSingle();
 
-      if (documentSnapshot.exists) {
-        print("snapshot exists");
-        final data = documentSnapshot.get('isCompleted');
-        return data;
+      if (response != null) {
+        return response['is_completed'] ?? false;
       }
-      
+      return false;
     } catch (e) {
-      print("in data checking $e");
-      
+      debugPrint('Error checking user data: $e');
+      return false;
     }
-
-    return false;
   }
 }
