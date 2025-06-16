@@ -1,51 +1,35 @@
 {
   "project_info": {
-    "project_number": "914970438031",
-    "project_id": "lang-test-pro",
-    "storage_bucket": "lang-test-pro.firebasestorage.app"
+    "project_number": "882549364582",
+    "project_id": "lang-test-prof",
+    "storage_bucket": "lang-test-prof.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:914970438031:android:be6cb127d71104ac9043fa",
+        "mobilesdk_app_id": "1:882549364582:android:b512069e87a92c5d2cdaa7",
         "android_client_info": {
-          "package_name": "com.example.langtest_pro"
+          "package_name": "com.example.nexariclangtest"
         }
       },
       "oauth_client": [
         {
-          "client_id": "914970438031-pf4t1v3uckikq2tom9e9c9rer9vfc7vp.apps.googleusercontent.com",
+          "client_id": "882549364582-gbjpb0v39t5gl7cck3lf3leoa2mjcefb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.langtest_pro",
-            "certificate_hash": "852ef7bb89ddf310faeea0f9790e157d50ece7fc"
+            "package_name": "com.example.nexariclangtest",
+            "certificate_hash": "2912cc37b6c9123bb2d6e8e48e0f4961481211ad"
           }
-        },
-        {
-          "client_id": "914970438031-1hf99tm8arsl3hdionj5k6kn469m76lp.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDUnZ3s9HTMM_8yZnasSc9aVFJ83O2Xh68"
+          "current_key": "AIzaSyDcjVndx-8ocCNZ3ytgVoMBg6CPHBZbq1o"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "914970438031-1hf99tm8arsl3hdionj5k6kn469m76lp.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "914970438031-cdfokodtlan6lfnih71phpg59ldj4t3i.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.langtestPro"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
