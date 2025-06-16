@@ -21,14 +21,20 @@ class AuthImpl implements IAuthfacade {
 
       final googleAuth = await googleUser.authentication;
 
+      print("this is google auth $googleAuth");
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
+      print("this is credentials $credential");
+
       final userCredential = await FirebaseAuth.instance.signInWithCredential(
         credential,
       );
+
+      print("this is user cred $userCredential");
 
       if (userCredential.user != null) {
         final status = await checkUserDataAdded(user: userCredential.user!);
