@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/model/userData_model.dart';
@@ -6,6 +6,7 @@ import 'package:langtest_pro/repo/auth/auth_impl.dart';
 import 'package:langtest_pro/repo/auth/i_authfacade.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/utils/utils.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthController extends GetxController {
   IAuthfacade auth = AuthImpl();
@@ -23,7 +24,7 @@ class AuthController extends GetxController {
         },
         (s) {
           loading.value = false;
-          Utils.saveString('userId', s.user!.uid);
+          Utils.saveString('userId', s.id);
           Get.offNamed(RoutesName.userDetailsScreen, arguments: s);
         },
       );
@@ -31,7 +32,7 @@ class AuthController extends GetxController {
   }
 
   void addUserDataController({
-    required UserCredential userCred,
+    required User userCred,
     required UserData userModel,
   }) {
     loading.value = true;
@@ -55,7 +56,7 @@ class AuthController extends GetxController {
     loading.value = true;
     final userStatus = await auth.isLoginned();
     if (userStatus != null) {
-      final dataStatus = await auth.checkUserDataAdded(user: userStatus);
+      final dataStatus = await auth.checkUserDataAdded(userCred: userStatus);
       print("data status $dataStatus");
       if (dataStatus == true) {
         loading.value = false;
