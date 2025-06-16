@@ -13,7 +13,13 @@ class AuthImpl implements IAuthfacade {
   @override
   Future<Either<AppExceptions, User>> loginWithGoogle() async {
     try {
-      final googleSignIn = GoogleSignIn();
+      // Use the Web Client ID from Firebase
+      final googleSignIn = GoogleSignIn(
+        scopes: ['email'],
+        serverClientId:
+            '580644750853-abc123def456.apps.googleusercontent.com', // 🔁 Replace with your actual Web client ID
+      );
+
       final googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
@@ -56,6 +62,7 @@ class AuthImpl implements IAuthfacade {
         return left(ServerException('User object is null'));
       }
     } on PlatformException catch (e) {
+      debugPrint('Google Sign-In failed: ${e.message}');
       if (e.code == 'network_error' || e.message?.contains('7') == true) {
         debugPrint('Network error: Please check your internet connection.');
         return left(
@@ -70,7 +77,7 @@ class AuthImpl implements IAuthfacade {
         );
       }
     } on AuthException catch (e) {
-      debugPrint("hello print error ${e.message.toString()}");
+      debugPrint("AuthException: ${e.message}");
       return left(AppExceptions(e.message));
     } catch (e) {
       debugPrint('Unknown error during Google Sign-In: $e');
