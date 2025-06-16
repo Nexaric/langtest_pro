@@ -127,5 +127,3 @@ class AuthImpl implements IAuthfacade {
     return false;
   }
 }
-//client id : 882549364582-r1cins0s0f9drfk2v0bk5qhc08c9891m.apps.googleusercontent.com
-//secret_id : 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
