@@ -70,6 +70,7 @@ class AuthImpl implements IAuthfacade {
         );
       }
     } on AuthException catch (e) {
+      debugPrint("hello print error ${e.message.toString()}");
       return left(AppExceptions(e.message));
     } catch (e) {
       debugPrint('Unknown error during Google Sign-In: $e');
