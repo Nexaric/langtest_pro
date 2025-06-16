@@ -1,4 +1,4 @@
-package com.example.nexariclangtest-lang-test
+package com.example.nexariclangtest
 
 import io.flutter.embedding.android.FlutterActivity
 
