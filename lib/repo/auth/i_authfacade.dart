@@ -8,7 +8,7 @@ abstract class IAuthfacade {
   Future<Either<AppExceptions, UserCredential>> loginWithGoogle();
 
   Future<Either<AppExceptions, Unit>> addUserData({
-    required User user,
+    required UserCredential userCred,
     required UserData userModel,
   });
 

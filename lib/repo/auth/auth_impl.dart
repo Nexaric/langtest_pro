@@ -40,7 +40,7 @@ class AuthImpl implements IAuthfacade {
         final status = await checkUserDataAdded(user: userCredential.user!);
         if (status == false) {
           await addUserData(
-            user: userCredential.user!,
+            userCred: userCredential,
             userModel: UserData(
               firstName: '',
               lastName: '',
@@ -81,7 +81,7 @@ class AuthImpl implements IAuthfacade {
 
   @override
   Future<Either<AppExceptions, Unit>> addUserData({
-    required User user,
+    required UserCredential userCred,
     required UserData userModel,
   }) async {
     final db = FirebaseFirestore.instance;
@@ -91,13 +91,13 @@ class AuthImpl implements IAuthfacade {
       "last_name": userModel.lastName,
       "dob": userModel.dob,
       "gender": userModel.gender,
-      "email": user.email,
+      "email": userCred.user!.email,
       "role": "student",
       "isCompleted": userModel.isCompleted,
     };
 
     try {
-      await db.collection('users').doc(user.uid).set(userData);
+      await db.collection('users').doc(userCred.user!.uid).set(userData);
       return right(unit);
     } on FirebaseException catch (e) {
       debugPrint('Firebase error while adding user data: ${e.message}');

@@ -31,11 +31,11 @@ class AuthController extends GetxController {
   }
 
   void addUserDataController({
-    required User user,
+    required UserCredential userCred,
     required UserData userModel,
   }) {
     loading.value = true;
-    auth.addUserData(user: user, userModel: userModel).then((value) {
+    auth.addUserData(userCred: userCred, userModel: userModel).then((value) {
       value.fold(
         (f) {
           debugPrint(value.toString());
