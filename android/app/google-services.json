@@ -1,57 +1,42 @@
 {
   "project_info": {
-    "project_number": "580644750853",
-    "project_id": "lang-test-pro-c6f79",
-    "storage_bucket": "lang-test-pro-c6f79.firebasestorage.app"
+    "project_number": "882549364582",
+    "project_id": "lang-test-prof",
+    "storage_bucket": "lang-test-prof.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:580644750853:android:e1cf78f9baffc9abf67e6c",
+        "mobilesdk_app_id": "1:882549364582:android:1576f2521b8361682cdaa7",
         "android_client_info": {
           "package_name": "com.example.langtest_pro"
         }
       },
       "oauth_client": [
         {
-          "client_id": "580644750853-b9i9ipq4mpk3sq80g6pliikqfqlbgbob.apps.googleusercontent.com",
+          "client_id": "882549364582-lm9soe5h1msbil3irg9urllcilob9vmr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.langtest_pro",
-            "certificate_hash": "5485ffe3bbd3e62634dc8bdfd75b15c3e9ae8321"
+            "certificate_hash": "852ef7bb89ddf310faeea0f9790e157d50ece7fc"
           }
         },
         {
-          "client_id": "580644750853-ee9p5jb3joo2u0t7tj6smnle6t3cqm2c.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.langtest_pro",
-            "certificate_hash": "2912cc37b6c9123bb2d6e8e48e0f4961481211ad"
-          }
-        },
-        {
-          "client_id": "580644750853-nk7aae52kajsn3rlanj20mb5ne8kdlea.apps.googleusercontent.com",
+          "client_id": "882549364582-3f9qs7tvdt03bst6qa6anhqv2p1fikns.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB8XArLMy8-MDwpab_4QS-9VrF0NdGDH2U"
+          "current_key": "AIzaSyCbHrxg7JkTKUHBCISYriIMYHOTvq0nW64"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "580644750853-nk7aae52kajsn3rlanj20mb5ne8kdlea.apps.googleusercontent.com",
+              "client_id": "882549364582-3f9qs7tvdt03bst6qa6anhqv2p1fikns.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "580644750853-4ol2ceok334rpnof093gseqb0rpe7fjm.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.langtestPro"
-              }
             }
           ]
         }

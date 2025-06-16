@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:langtest_pro/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
@@ -13,12 +15,24 @@ void main() async {
   debugDisableShadows = false;
   WidgetsFlutterBinding.ensureInitialized();
 
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } on FirebaseException catch (e) {
+    if (e.code == 'duplicate-app') {
+      // Already initialized, just get the default instance
+      Firebase.app();
+    } else {
+      rethrow; // It's a different error, throw it
+    }
+  }
+
   // Initialize Supabase
   await Supabase.initialize(
-    url:
-        'https://xrcrymvcztdjduazxzzi.supabase.co', // Replace with your Supabase project URL
+    url: 'https://xrcrymvcztdjduazxzzi.supabase.co',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3J5bXZjenRkamR1YXp4enppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MzI2OTYsImV4cCI6MjA2NTQwODY5Nn0.rRSGWB4aPkifmL8_z22B4OTu8Hv0opJc-YzrxH-qKpQ', // Replace with your Supabase anon key
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3J5bXZjenRkamR1YXp4enppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MzI2OTYsImV4cCI6MjA2NTQwODY5Nn0.rRSGWB4aPkifmL8_z22B4OTu8Hv0opJc-YzrxH-qKpQ',
   );
 
   // Initialize Hive
@@ -26,6 +40,8 @@ void main() async {
 
   runApp(const MyApp());
 }
+
+
 
 Future<void> initialise() async {
   // Initialize Hive
