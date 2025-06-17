@@ -11,12 +11,12 @@ class PushImpl implements IPushFacade {
   Future<void> requestPermissionForFcm({required String userId}) async {
     await _messaging.requestPermission();
     print("object in fcm clss impl");
-    final _token = await _messaging.getToken();
-    debugPrint("Fcm token = $_token");
+    final token = await _messaging.getToken();
+    debugPrint("Fcm token = $token");
 
-    if (_token != null) {
+    if (token != null) {
       await FirebaseFirestore.instance.collection('users').doc(userId).set({
-        'fcmToken': _token,
+        'fcmToken': token,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     }

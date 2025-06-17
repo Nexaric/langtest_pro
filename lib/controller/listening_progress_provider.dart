@@ -13,9 +13,9 @@ class ListeningProgressController extends GetxController {
       {'Part 1': false, 'Part 2': false, 'Part 3': false, 'Part 4': false}.obs;
 
   // Loading and error states
-  var _isLoading = false.obs;
-  var _hasError = false.obs;
-  var _errorMessage = Rx<String?>(null);
+  final _isLoading = false.obs;
+  final _hasError = false.obs;
+  final _errorMessage = Rx<String?>(null);
 
   // Hive box for local storage
   Box? _progressBox;
