@@ -1,5 +1,3 @@
-
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:langtest_pro/model/userData_model.dart';
@@ -15,8 +13,8 @@ class AuthImpl implements IAuthfacade {
     try {
       // Trigger Google Sign-In via Supabase
       final response = await Supabase.instance.client.auth.signInWithOAuth(
-          OAuthProvider.google,
-          redirectTo: 'com.example.nexariclangtest://login-callback'
+        OAuthProvider.google,
+        redirectTo: 'com.example.nexariclangtest://login-callback',
       );
 
       // Supabase handles the redirect in web, and on mobile via deep linking.
@@ -35,6 +33,7 @@ class AuthImpl implements IAuthfacade {
         await addUserData(
           userCred: user,
           userModel: UserData(
+            uid: user.id,
             firstName: '',
             lastName: '',
             dob: '',
@@ -51,7 +50,6 @@ class AuthImpl implements IAuthfacade {
       print("Exception one ${e.toString()}");
       return left(AppExceptions(e.message ?? 'Authentication error'));
     } catch (e) {
-       
       debugPrint('Unexpected error during Supabase Google Sign-In: $e');
       return left(AppExceptions('Unexpected error: $e'));
     }
@@ -65,7 +63,7 @@ class AuthImpl implements IAuthfacade {
     // final db = FirebaseFirestore.instance;
 
     final userData = {
-      "uid": userCred.id,
+      "uid": userModel.uid,
       "first_name": userModel.firstName,
       "last_name": userModel.lastName,
       "dob": userModel.dob,
@@ -79,33 +77,34 @@ class AuthImpl implements IAuthfacade {
       // await db.collection('users').doc(userCred.user!.uid).set(userData);
       await supabase.from('users').insert(userData);
       return right(unit);
-    }  catch (e) {
+    } catch (e) {
       debugPrint('Firebase error while adding user data: $e');
-      return left(ServerException(e.toString() ));
-    } 
+      return left(ServerException(e.toString()));
+    }
   }
 
   @override
   Future<User?> isLoginned() async {
-    final user =  supabase.auth.currentUser;
+    final user = supabase.auth.currentUser;
     print("user status $user");
     return user;
   }
 
   @override
   Future<bool> checkUserDataAdded({required User userCred}) async {
-    print("Reached data checking");
+    print("Reached data checking, ${userCred.id}");
 
     try {
+      final allUsers = await supabase.from('users').select();
+      print("allusers $allUsers");
       final response =
           await supabase
               .from('users')
               .select('isCompleted')
-              .eq(
-                'uid',
-                userCred.id,
-              ) // Ensure 'uid' is your Supabase column for user ID
+              .eq('uid', userCred.id.toString())
               .maybeSingle();
+
+      print("Response: $response");
 
       if (response == null) {
         print("No user data found");

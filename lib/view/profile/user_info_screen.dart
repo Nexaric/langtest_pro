@@ -62,6 +62,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
       debugPrint(_selectedGender);
 
       final userData = UserData(
+        uid:widget.userCred.id,
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         dob: _selectedDate.toString(),
