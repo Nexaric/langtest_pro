@@ -75,7 +75,7 @@ class AuthImpl implements IAuthfacade {
 
     try {
       // await db.collection('users').doc(userCred.user!.uid).set(userData);
-      await supabase.from('users').insert(userData);
+      await supabase.from('users').upsert(userData);
       return right(unit);
     } catch (e) {
       debugPrint('Firebase error while adding user data: $e');
@@ -95,8 +95,8 @@ class AuthImpl implements IAuthfacade {
     print("Reached data checking, ${userCred.id}");
 
     try {
-      final allUsers = await supabase.from('users').select();
-      print("allusers $allUsers");
+      
+     
       final response =
           await supabase
               .from('users')
