@@ -11,6 +11,7 @@ import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/firebase_options.dart';
 import 'package:langtest_pro/res/routes/routes.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   
@@ -21,6 +22,14 @@ void main() async {
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+    await Supabase.initialize(
+    url: 'https://xrcrymvcztdjduazxzzi.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3J5bXZjenRkamR1YXp4enppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MzI2OTYsImV4cCI6MjA2NTQwODY5Nn0.rRSGWB4aPkifmL8_z22B4OTu8Hv0opJc-YzrxH-qKpQ',
+    authOptions: FlutterAuthClientOptions(
+      authFlowType: AuthFlowType.implicit
+    )
+  );
 
   initialise();
 

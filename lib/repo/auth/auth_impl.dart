@@ -1,139 +1,127 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/repo/auth/i_authfacade.dart';
 import 'package:langtest_pro/utils/app_exceptions.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthImpl implements IAuthfacade {
+  final supabase = Supabase.instance.client;
+
   @override
-  Future<Either<AppExceptions, UserCredential>> loginWithGoogle() async {
+  Future<Either<AppExceptions, User>> loginWithGoogle() async {
     try {
-      final googleSignIn = GoogleSignIn();
-      final googleUser = await googleSignIn.signIn();
-
-      if (googleUser == null) {
-        return left(AppExceptions('Sign-in cancelled by user'));
-      }
-
-      final googleAuth = await googleUser.authentication;
-
-      print("this is google auth $googleAuth");
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      // Trigger Google Sign-In via Supabase
+      final response = await Supabase.instance.client.auth.signInWithOAuth(
+          OAuthProvider.google,
+          redirectTo: 'com.example.nexariclangtest://login-callback'
       );
 
-      print("this is credentials $credential");
+      // Supabase handles the redirect in web, and on mobile via deep linking.
+      // The session is saved automatically.
 
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(
-        credential,
-      );
+      // You can get the current user like this:
+      final user = Supabase.instance.client.auth.currentUser;
 
-      print("this is user cred $userCredential");
-
-      if (userCredential.user != null) {
-        final status = await checkUserDataAdded(user: userCredential.user!);
-        if (status == false) {
-          await addUserData(
-            user: userCredential.user!,
-            userModel: UserData(
-              firstName: '',
-              lastName: '',
-              dob: '',
-              gender: '',
-              email: '',
-              role: '',
-              isCompleted: false,
-            ),
-          ); // await to ensure it's completed
-        }
-
-        return right(userCredential);
-      } else {
-        return left(ServerException('User object is null'));
+      if (user == null) {
+        return left(AppExceptions('User object is null after sign-in'));
       }
-    } on PlatformException catch (e) {
-      if (e.code == 'network_error' || e.message?.contains('7') == true) {
-        debugPrint('Network error: Please check your internet connection.');
-        return left(
-          AppExceptions(
-            "Please check your internet connection.",
-            "Network Error",
+
+      // Check if user data is already added to the Supabase DB
+      final status = await checkUserDataAdded(userCred: user);
+      if (!status) {
+        await addUserData(
+          userCred: user,
+          userModel: UserData(
+            firstName: '',
+            lastName: '',
+            dob: '',
+            gender: '',
+            email: user.email ?? '',
+            role: '',
+            isCompleted: false,
           ),
         );
-      } else {
-        return left(
-          AppExceptions(e.message ?? 'Platform error during sign-in'),
-        );
       }
-    } on FirebaseAuthException catch (e) {
-      return (left(AppExceptions.fromFirebaseError(e)));
+
+      return right(user);
+    } on AuthException catch (e) {
+      print("Exception one ${e.toString()}");
+      return left(AppExceptions(e.message ?? 'Authentication error'));
     } catch (e) {
-      debugPrint('Unknown error during Google Sign-In: $e');
+       
+      debugPrint('Unexpected error during Supabase Google Sign-In: $e');
       return left(AppExceptions('Unexpected error: $e'));
     }
   }
 
   @override
   Future<Either<AppExceptions, Unit>> addUserData({
-    required User user,
+    required User userCred,
     required UserData userModel,
   }) async {
-    final db = FirebaseFirestore.instance;
+    // final db = FirebaseFirestore.instance;
 
     final userData = {
+      "uid": userCred.id,
       "first_name": userModel.firstName,
       "last_name": userModel.lastName,
       "dob": userModel.dob,
       "gender": userModel.gender,
-      "email": user.email,
+      "email": userCred.email,
       "role": "student",
       "isCompleted": userModel.isCompleted,
     };
 
     try {
-      await db.collection('users').doc(user.uid).set(userData);
+      // await db.collection('users').doc(userCred.user!.uid).set(userData);
+      await supabase.from('users').insert(userData);
       return right(unit);
-    } on FirebaseException catch (e) {
-      debugPrint('Firebase error while adding user data: ${e.message}');
-      return left(ServerException(e.message ?? 'Firestore error'));
-    } catch (e) {
-      debugPrint('Unexpected error while adding user data: $e');
-      return left(AppExceptions('Unexpected error: $e'));
-    }
+    }  catch (e) {
+      debugPrint('Firebase error while adding user data: $e');
+      return left(ServerException(e.toString() ));
+    } 
   }
 
   @override
   Future<User?> isLoginned() async {
-    final user = await FirebaseAuth.instance.authStateChanges().first;
+    final user =  supabase.auth.currentUser;
     print("user status $user");
     return user;
   }
 
   @override
-  Future<bool> checkUserDataAdded({required User user}) async {
-    print("reached data checkking");
-    try {
-      final documentSnapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
+  Future<bool> checkUserDataAdded({required User userCred}) async {
+    print("Reached data checking");
 
-      if (documentSnapshot.exists) {
-        print("snapshot exists");
-        final data = documentSnapshot.get('isCompleted');
-        return data;
+    try {
+      final response =
+          await supabase
+              .from('users')
+              .select('isCompleted')
+              .eq(
+                'uid',
+                userCred.id,
+              ) // Ensure 'uid' is your Supabase column for user ID
+              .maybeSingle();
+
+      if (response == null) {
+        print("No user data found");
+        return false;
       }
-      
+
+      final isCompleted = response['isCompleted'] as bool?;
+
+      if (isCompleted != null) {
+        print("User data found. isCompleted: $isCompleted");
+        return isCompleted;
+      } else {
+        debugPrint("User data not found");
+      }
     } catch (e) {
-      print("in data checking $e");
-      
+      print("Error in data checking: $e");
     }
 
     return false;
