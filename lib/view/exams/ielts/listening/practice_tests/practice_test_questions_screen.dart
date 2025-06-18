@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -11,6 +10,7 @@ import 'package:langtest_pro/core/loading/internet_signel_low.dart';
 import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'practice_test_result.dart';
 import 'practice_test_timer.dart';
 import 'questions/part_1.dart' as part1;
@@ -150,29 +150,36 @@ class _PracticeTestQuestionsScreenState
 
   Future<String> _getAudioPathForPart(String part) async {
     final audioPaths = {
-      'Part 1': await fetchAudioFromFirebase('audio/practice_test/part1.mp3'),
-      'Part 2': await fetchAudioFromFirebase('audio/practice_test/part2.mp3'),
-      'Part 3': await fetchAudioFromFirebase('audio/practice_test/part3.mp3'),
-      'Part 4': await fetchAudioFromFirebase('audio/practice_test/part4.mp3'),
+      'Part 1': await fetchAudioFromSupabase('practice_test/part1.mp3'),
+      'Part 2': await fetchAudioFromSupabase('practice_test/part2.mp3'),
+      'Part 3': await fetchAudioFromSupabase('practice_test/part3.mp3'),
+      'Part 4': await fetchAudioFromSupabase('practice_test/part4.mp3'),
     };
     return audioPaths[part]!;
   }
 
-  Future<String> fetchAudioFromFirebase(String firebasePath) async {
-    try {
-      final ref = FirebaseStorage.instance.ref(firebasePath);
-      final url = await ref.getDownloadURL();
-      debugPrint("Fetched audio URL: $url");
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/${ref.name}');
-      await ref.writeToFile(file);
-      debugPrint("Audio path: ${file.path}");
-      return file.path;
-    } catch (e) {
-      debugPrint('Error fetching audio: $e');
-      rethrow;
-    }
+ Future<String> fetchAudioFromSupabase(String supabasePath) async {
+  try {
+    // Download file bytes from Supabase
+    final bytes = await Supabase.instance.client.storage
+        .from('audio') // your bucket name
+        .download(supabasePath); // e.g., 'folder/filename.mp3'
+
+    // Prepare to store the file locally
+    final dir = await getTemporaryDirectory();
+    final fileName = supabasePath.split('/').last;
+    final file = File('${dir.path}/$fileName');
+
+    // Write bytes to the file
+    await file.writeAsBytes(bytes);
+
+    debugPrint("Audio path: ${file.path}");
+    return file.path;
+  } catch (e) {
+    debugPrint('Error fetching audio: $e');
+    rethrow;
   }
+}
 
   List<Map<String, dynamic>> _getRandomQuestionsForPart(String part) {
     final allQuestions = {
