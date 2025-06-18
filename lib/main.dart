@@ -21,7 +21,7 @@ void main() async {
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     await Supabase.initialize(
     url: 'https://xrcrymvcztdjduazxzzi.supabase.co',
@@ -33,9 +33,9 @@ void main() async {
 
   initialise();
 
-  final pushNotification = Get.put(NotificationController());
+  // final pushNotification = Get.put(NotificationController());
 
-  pushNotification.foregroundNotificationChannel();
+  // pushNotification.foregroundNotificationChannel();
 
   runApp(const MyApp());
 }
