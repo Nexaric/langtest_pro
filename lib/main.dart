@@ -20,7 +20,7 @@ void main() async {
 
   // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // Initialize Supabase
   await Supabase.initialize(
@@ -33,8 +33,8 @@ void main() async {
   // Initialize Hive and controllers
   await initialise();
 
-  // Initialize push notifications
   final pushNotification = Get.put(NotificationController());
+
   pushNotification.foregroundNotificationChannel();
 
   runApp(const MyApp());

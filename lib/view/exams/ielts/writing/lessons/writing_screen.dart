@@ -4,7 +4,6 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-import 'package:get/get.dart';
 import 'lesson_result.dart';
 import 'lesson_list_screen.dart';
 import 'writing_data.dart';

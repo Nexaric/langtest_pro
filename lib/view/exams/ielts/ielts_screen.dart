@@ -77,10 +77,10 @@ class IeltsScreen extends StatelessWidget {
   }
 
   Widget _buildProgressOverview(BuildContext context) {
-    final listeningController = Get.find<ListeningProgressController>();
-    final readingController = Get.find<ReadingProgressController>();
-    final writingController = Get.find<WritingProgressController>();
-    final speakingController = Get.find<SpeakingProgressController>();
+    final listeningController = Get.put(ListeningProgressController());
+    final readingController = Get.put(ReadingProgressController());
+    final writingController = Get.put(WritingProgressController());
+    final speakingController = Get.put(SpeakingProgressController());
 
     return Obx(() {
       return GlassmorphicContainer(
