@@ -1,72 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:langtest_pro/view/home/home_screen.dart';
-import 'package:langtest_pro/view/payment/payment_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/subscriptions/onetime_offer.dart';
-import 'offer_timer_manager.dart';
+import 'package:langtest_pro/view/subscriptions/offer_timer_manager.dart';
 
-class SubscriptionScreen extends StatefulWidget {
+class SubscriptionScreen extends StatelessWidget {
   const SubscriptionScreen({super.key});
 
   @override
-  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
-}
-
-class _SubscriptionScreenState extends State<SubscriptionScreen>
-    with RouteAware {
-  int _selectedPlanIndex = 1; // Default to Monthly plan
-
-  @override
-  void initState() {
-    super.initState();
-    // Defer popup display to after initial build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showOfferPopup();
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final ModalRoute? route = ModalRoute.of(context);
-    if (route is PageRoute) {
-      routeObserver.subscribe(this, route);
-    }
-    // Defer popup display on each navigation
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showOfferPopup();
-    });
-  }
-
-  void _showOfferPopup() {
-    if (OfferTimerManager().isOfferExpired) return; // Skip if expired
-    OfferTimerManager().startCountdown(
-      onUpdate: () {
-        if (mounted) {
-          setState(() {}); // Update UI if needed
-        }
-      },
-    );
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent dismissal by tapping outside
-      builder: (BuildContext context) {
-        return OneTimeOfferPopup(
-          onClose: () {
-            OfferTimerManager().stopCountdown(); // Mark as expired when closed
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final ValueNotifier<int> selectedPlanIndex = ValueNotifier<int>(
+      1,
+    ); // Default to Monthly plan
+
+    void showOfferPopup() {
+      if (OfferTimerManager().isOfferExpired) return;
+      OfferTimerManager().startCountdown(onUpdate: () {});
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return OneTimeOfferPopup(
+            onClose: () {
+              OfferTimerManager().stopCountdown();
+            },
+          );
+        },
+      );
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showOfferPopup();
+    });
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -78,120 +45,135 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 20.0),
+            padding: EdgeInsets.only(bottom: 20.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 20.0, left: 16.0, right: 16.0),
-                ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 Icon(
                   Icons.card_giftcard,
                   color: Colors.white.withOpacity(0.8),
-                  size: 80,
+                  size: 80.sp,
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 Text(
                   'Choose your plan',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: 28.sp,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Montserrat',
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 Text(
                   '3 DAY FREE TRIAL',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.7),
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontFamily: 'Montserrat',
                   ),
                 ),
-                const SizedBox(height: 40),
-                _buildPlanOption(
-                  context,
-                  index: 0,
-                  title: '3 days',
-                  description: 'Billed monthly no trial',
-                  price: '₹FREE',
-                  pricePeriod: '/Trial',
-                  isRecommended: false,
-                ),
-                const SizedBox(height: 16),
-                _buildPlanOption(
-                  context,
-                  index: 1,
-                  title: 'Monthly',
-                  description: 'Billed monthly no trial',
-                  price: '₹99',
-                  pricePeriod: '/month',
-                  isRecommended: true,
-                ),
-                const SizedBox(height: 16),
-                _buildPlanOption(
-                  context,
-                  index: 2,
-                  title: 'Yearly',
-                  description: 'Billed yearly no trial',
-                  price: '₹599',
-                  pricePeriod: '/year',
-                  isRecommended: false,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Cancel anytime in the App store',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
-                    fontSize: 14,
-                    fontFamily: 'Montserrat',
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 55,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        switch (_selectedPlanIndex) {
-                          case 0:
-                            break;
-                          case 1:
-                            break;
-                          case 2:
-                            break;
-                          default:
-                        }
-                        Navigator.push(
+                SizedBox(height: 40.h),
+                ValueListenableBuilder<int>(
+                  valueListenable: selectedPlanIndex,
+                  builder: (context, value, child) {
+                    return Column(
+                      children: [
+                        _buildPlanOption(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => PaymentScreen(price: '99'),
+                          index: 0,
+                          title: '3 days',
+                          description: 'Billed monthly no trial',
+                          price: '₹FREE',
+                          pricePeriod: '/Trial',
+                          isRecommended: false,
+                          isSelected: value == 0,
+                          onTap: () => selectedPlanIndex.value = 0,
+                        ),
+                        SizedBox(height: 16.h),
+                        _buildPlanOption(
+                          context,
+                          index: 1,
+                          title: 'Monthly',
+                          description: 'Billed monthly no trial',
+                          price: '₹99',
+                          pricePeriod: '/month',
+                          isRecommended: true,
+                          isSelected: value == 1,
+                          onTap: () => selectedPlanIndex.value = 1,
+                        ),
+                        SizedBox(height: 16.h),
+                        _buildPlanOption(
+                          context,
+                          index: 2,
+                          title: 'Yearly',
+                          description: 'Billed yearly no trial',
+                          price: '₹599',
+                          pricePeriod: '/year',
+                          isRecommended: false,
+                          isSelected: value == 2,
+                          onTap: () => selectedPlanIndex.value = 2,
+                        ),
+                        SizedBox(height: 20.h),
+                        Text(
+                          'Cancel anytime in the App store',
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.6),
+                            fontSize: 14.sp,
+                            fontFamily: 'Montserrat',
                           ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6B48EE),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      child: Text(
-                        _selectedPlanIndex == 0
-                            ? 'Continue with FREE trial'
-                            : 'Continue with ${_getPlanPriceText(_selectedPlanIndex)}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Montserrat',
+                        SizedBox(height: 20.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24.w),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 55.h,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                String price;
+                                switch (value) {
+                                  case 0:
+                                    price = 'FREE';
+                                    break;
+                                  case 1:
+                                    price = '₹99';
+                                    break;
+                                  case 2:
+                                    price = '₹599';
+                                    break;
+                                  default:
+                                    price = '₹99';
+                                }
+                                Get.toNamed(
+                                  RoutesName.paymentScreen,
+                                  arguments: {'price': price},
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF6B48EE),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                              ),
+                              child: Text(
+                                value == 0
+                                    ? 'Continue with FREE trial'
+                                    : 'Continue with ${_getPlanPriceText(value)}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Montserrat',
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -222,25 +204,22 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
     required String price,
     required String pricePeriod,
     required bool isRecommended,
+    required bool isSelected,
+    required VoidCallback onTap,
   }) {
-    final bool isSelected = _selectedPlanIndex == index;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedPlanIndex = index;
-          });
-        },
+        onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
           decoration: BoxDecoration(
             color:
                 isSelected ? const Color(0xFF4A2F7C) : const Color(0xFF2A1C49),
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(15.r),
             border:
                 isSelected
-                    ? Border.all(color: const Color(0xFF6B48EE), width: 3)
+                    ? Border.all(color: const Color(0xFF6B48EE), width: 3.w)
                     : Border.all(color: Colors.transparent),
           ),
           child: Row(
@@ -253,17 +232,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                       title,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 20.sp,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Montserrat',
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4.h),
                     Text(
                       description,
                       style: TextStyle(
                         color: Colors.white.withOpacity(0.7),
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontFamily: 'Montserrat',
                       ),
                     ),
@@ -275,32 +254,32 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                 children: [
                   if (isRecommended)
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF6B48EE),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: Text(
                         'RECOMMENDED',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Montserrat',
                         ),
                       ),
                     ),
-                  if (isRecommended) const SizedBox(height: 4),
+                  if (isRecommended) SizedBox(height: 4.h),
                   Row(
                     children: [
                       Text(
                         price,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 22,
+                          fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Montserrat',
                         ),
@@ -309,7 +288,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
                         pricePeriod,
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.7),
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontFamily: 'Montserrat',
                         ),
                       ),

@@ -42,14 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
-   getUserId();
+    getUserId();
   }
 
-  void getUserId() async{
+  void getUserId() async {
     print("in view get user id");
-     final userId = await Utils.getString('userId');
+    final userId = await Utils.getString('userId');
     if (userId != null) {
       pushController.requestPermissionForFcm(userId: userId);
     }

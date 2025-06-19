@@ -4,75 +4,53 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'lesson_result.dart';
 import 'lesson_list_screen.dart';
+import 'writing_data.dart';
 
-class WritingLesson17 extends StatefulWidget {
-  const WritingLesson17({super.key});
+class WritingScreen extends StatefulWidget {
+  final int lessonNumber;
+
+  const WritingScreen({super.key, required this.lessonNumber});
 
   @override
-  State<WritingLesson17> createState() => _WritingLesson17State();
+  State<WritingScreen> createState() => _WritingScreenState();
 }
 
-class _WritingLesson17State extends State<WritingLesson17>
+class _WritingScreenState extends State<WritingScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
+  // Controllers
   final TextEditingController _essayController = TextEditingController();
+
+  // Animation Controllers
   late final AnimationController _saveAnimationController;
   late final Animation<double> _saveScaleAnimation;
+
+  // State variables
   int _wordCount = 0;
   bool _showSample = false;
   bool _showTips = false;
   bool _isSubmitting = false;
   bool _isLoading = true;
   bool _showSaveIndicator = false;
+
+  // Storage
   late String _storagePath;
   late File _essayFile;
 
-  final Map<String, dynamic> _task = {
-    'title': 'Discussion Essay – Globalization',
-    'icon': Icons.public,
-    'question':
-        'Global trade has made products cheaper but also increased competition. Is globalization positive or negative overall?',
-    'sampleAnswer': '''
-📝 Sample Answer (275 words)
-
-Globalization, the interconnectedness of economies, yields both benefits and drawbacks. Its positive impact lies in affordability and innovation. Global trade reduces costs—WTO reports a 20% drop in consumer goods prices since 1990 due to supply chains. Developing nations like Vietnam benefit, with GDP tripling since joining the WTO in 2007. Technology transfer, as seen in India’s IT boom, fosters innovation, creating 4 million tech jobs.
-
-However, globalization intensifies competition, harming local industries. In Mexico, NAFTA led to 700,000 job losses in agriculture as US imports flooded markets. Cultural erosion is another concern—UNESCO notes 50% of languages risk extinction by 2100 due to global media dominance. Inequality also rises; Oxfam reports the richest 1% own 50% of global wealth.
-
-A balanced approach mitigates negatives. Fair trade policies, like the EU’s tariffs protecting farmers, support local economies. Cultural preservation programs, such as Canada’s Indigenous media funds, counter homogenization. Wealth redistribution through progressive taxation can address inequality, as seen in Scandinavia.
-
-In conclusion, globalization’s benefits outweigh its drawbacks if managed equitably. Strategic policies can ensure shared prosperity without sacrificing cultural diversity.
-''',
-    'tips': '''
-💡 Expert Tips
-
-1. Structure:
-   - Introduction: Define globalization’s scope
-   - Paragraph 1: Benefits (e.g., affordability, growth)
-   - Paragraph 2: Drawbacks (e.g., job losses, inequality)
-   - Paragraph 3: Solutions or balanced view
-   - Conclusion: Weigh positives and negatives
-
-2. Linking Words:
-   - Benefits: "notably", "for instance", "furthermore"
-   - Drawbacks: "however", "on the other hand", "consequently"
-
-3. Vocabulary:
-   - Benefits: "interconnectedness", "supply chain efficiency", "technology transfer"
-   - Drawbacks: "cultural erosion", "economic displacement", "wealth disparity"
-
-4. Examples:
-   - WTO’s 20% price drop
-   - Vietnam’s GDP growth
-   - Mexico’s NAFTA job losses
-''',
-  };
+  // Task content
+  late Map<String, dynamic> _task;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    // Load task data
+    _task = WritingData.lessons[widget.lessonNumber - 1];
+
+    // Initialize animation controllers
     _saveAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -81,11 +59,15 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
       parent: _saveAnimationController,
       curve: Curves.elasticOut,
     );
+
+    // Initialize storage and load data
     _initStorage().then((_) {
       _loadSavedResponse().then((_) {
         setState(() => _isLoading = false);
       });
     });
+
+    // Setup text controller
     _setupController();
   }
 
@@ -93,7 +75,9 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
     try {
       final directory = await getApplicationDocumentsDirectory();
       _storagePath = directory.path;
-      _essayFile = File('$_storagePath/essay_response_17.json');
+      _essayFile = File(
+        '$_storagePath/essay_response_${widget.lessonNumber}.json',
+      );
     } catch (e) {
       debugPrint('Error initializing storage: $e');
     }
@@ -147,12 +131,15 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
         }
         return;
       }
+
       final data = {
         'response': response,
         'lastSaved': DateTime.now().toIso8601String(),
         'wordCount': _wordCount,
       };
       await _essayFile.writeAsString(jsonEncode(data));
+
+      // Show save indicator animation
       setState(() => _showSaveIndicator = true);
       _saveAnimationController.reset();
       _saveAnimationController.forward();
@@ -199,10 +186,14 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
 
   Future<void> _submitResponse() async {
     setState(() => _isSubmitting = true);
+
     try {
       await _saveResponse();
+
       await Future.delayed(const Duration(milliseconds: 500));
+
       if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -218,7 +209,7 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
                         builder: (context) => const LessonListScreen(),
                       ),
                     ),
-                lessonNumber: 17,
+                lessonNumber: widget.lessonNumber,
               ),
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(
@@ -263,6 +254,7 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
         _essayController.clear();
         _wordCount = 0;
       });
+
       await _essayFile.writeAsString(
         jsonEncode({
           'response': '',
@@ -270,6 +262,7 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
           'wordCount': 0,
         }),
       );
+
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -307,11 +300,13 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
         ),
       );
     }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title at the very top
           Text(
             _task['title'],
             style: TextStyle(
@@ -321,6 +316,8 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
             ),
           ),
           const SizedBox(height: 16),
+
+          // Question Card
           Card(
             elevation: 0,
             margin: EdgeInsets.zero,
@@ -340,7 +337,7 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.public, color: Colors.blue[700]),
+                        Icon(_task['icon'], color: Colors.blue[700]),
                         const SizedBox(width: 8),
                         Text(
                           'Question',
@@ -368,6 +365,8 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
             ),
           ),
           const SizedBox(height: 24),
+
+          // Writing Area
           Text(
             'YOUR RESPONSE',
             style: TextStyle(
@@ -397,7 +396,7 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
                   controller: _essayController,
                   maxLines: 12,
                   minLines: 6,
-                  style: const TextStyle(height: 1.5),
+                  style: const TextStyle(height: 1.5, color: Colors.black),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9 ]')),
                     TextInputFormatter.withFunction((oldValue, newValue) {
@@ -529,10 +528,13 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
             ),
           ),
           const SizedBox(height: 24),
+
+          // Action Buttons
           Wrap(
             spacing: 12,
             runSpacing: 12,
             children: [
+              // Tips Button
               _buildActionButton(
                 icon: Icons.lightbulb_outline,
                 label: _showTips ? 'Hide Tips' : 'Show Tips',
@@ -544,6 +546,8 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
                   });
                 },
               ),
+
+              // Sample Answer Button
               _buildActionButton(
                 icon: Icons.visibility_outlined,
                 label: _showSample ? 'Hide Sample' : 'Show Sample Answer',
@@ -555,6 +559,8 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
                   });
                 },
               ),
+
+              // Submit Button
               ElevatedButton(
                 onPressed: _isSubmitting ? null : _submitResponse,
                 style: ElevatedButton.styleFrom(
@@ -592,6 +598,8 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
             ],
           ),
           const SizedBox(height: 24),
+
+          // Tips Section
           if (_showTips)
             _buildExpandableSection(
               icon: Icons.lightbulb_outline,
@@ -599,6 +607,8 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
               title: 'Expert Writing Tips',
               content: _task['tips'],
             ),
+
+          // Sample Answer Section
           if (_showSample)
             _buildExpandableSection(
               icon: Icons.auto_awesome,
@@ -606,6 +616,7 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
               title: 'Sample Answer (Band 9)',
               content: _task['sampleAnswer'],
             ),
+
           const SizedBox(height: 60),
         ],
       ),
@@ -640,10 +651,12 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
   String _getLastModifiedTime() {
     try {
       if (!_essayFile.existsSync()) return 'Not saved yet';
+
       final stat = _essayFile.statSync();
       final modified = stat.modified;
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
+
       if (modified.isAfter(today)) {
         return 'Today at ${modified.hour}:${modified.minute.toString().padLeft(2, '0')}';
       } else {
@@ -722,9 +735,12 @@ In conclusion, globalization’s benefits outweigh its drawbacks if managed equi
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'IELTS Writing Lesson 17',
-          style: TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.w600),
+        title: Text(
+          'IELTS Writing Lesson ${widget.lessonNumber}',
+          style: const TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,

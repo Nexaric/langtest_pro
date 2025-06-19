@@ -2,46 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/lesson_list_screen.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_1.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_2.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_3.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_4.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_5.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_6.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_7.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_8.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_9.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_10.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_11.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_12.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_13.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_14.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_15.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_16.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_17.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_18.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_19.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_20.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_21.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_22.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_23.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_24.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_25.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_26.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_27.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_28.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_29.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_30.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_31.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_32.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_33.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_34.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_35.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_36.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_37.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_38.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_39.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_lesson_40.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_screen.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
 
 class LessonResult extends StatefulWidget {
@@ -320,103 +281,23 @@ class _LessonResultState extends State<LessonResult>
   }
 
   Widget _getLessonScreen(int lessonNumber) {
-    switch (lessonNumber) {
-      case 1:
-        return const WritingLesson1();
-      case 2:
-        return const WritingLesson2();
-      case 3:
-        return const WritingLesson3();
-      case 4:
-        return const WritingLesson4();
-      case 5:
-        return const WritingLesson5();
-      case 6:
-        return const WritingLesson6();
-      case 7:
-        return const WritingLesson7();
-      case 8:
-        return const WritingLesson8();
-      case 9:
-        return const WritingLesson9();
-      case 10:
-        return const WritingLesson10();
-      case 11:
-        return const WritingLesson11();
-      case 12:
-        return const WritingLesson12();
-      case 13:
-        return const WritingLesson13();
-      case 14:
-        return const WritingLesson14();
-      case 15:
-        return const WritingLesson15();
-      case 16:
-        return const WritingLesson16();
-      case 17:
-        return const WritingLesson17();
-      case 18:
-        return const WritingLesson18();
-      case 19:
-        return const WritingLesson19();
-      case 20:
-        return const WritingLesson20();
-      case 21:
-        return const WritingLesson21();
-      case 22:
-        return const WritingLesson22();
-      case 23:
-        return const WritingLesson23();
-      case 24:
-        return const WritingLesson24();
-      case 25:
-        return const WritingLesson25();
-      case 26:
-        return const WritingLesson26();
-      case 27:
-        return const WritingLesson27();
-      case 28:
-        return const WritingLesson28();
-      case 29:
-        return const WritingLesson29();
-      case 30:
-        return const WritingLesson30();
-      case 31:
-        return const WritingLesson31();
-      case 32:
-        return const WritingLesson32();
-      case 33:
-        return const WritingLesson33();
-      case 34:
-        return const WritingLesson34();
-      case 35:
-        return const WritingLesson35();
-      case 36:
-        return const WritingLesson36();
-      case 37:
-        return const WritingLesson37();
-      case 38:
-        return const WritingLesson38();
-      case 39:
-        return const WritingLesson39();
-      case 40:
-        return const WritingLesson40();
-      default:
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              "Lesson $lessonNumber",
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-          body: Center(
-            child: Text(
-              "Lesson $lessonNumber content not found",
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        );
+    if (lessonNumber >= 1 && lessonNumber <= 40) {
+      return WritingScreen(lessonNumber: lessonNumber);
     }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Lesson $lessonNumber",
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
+      body: Center(
+        child: Text(
+          "Lesson $lessonNumber content not found",
+          style: const TextStyle(fontSize: 18),
+        ),
+      ),
+    );
   }
 
   @override
