@@ -1,98 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:langtest_pro/view/payment/payment_successful.dart';
-// Adjust import based on your project structure
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 
-class LoadingScreen extends StatefulWidget {
+class LoadingScreen extends StatelessWidget {
   const LoadingScreen({super.key});
 
   @override
-  State<LoadingScreen> createState() => _LoadingScreenState();
-}
-
-class _LoadingScreenState extends State<LoadingScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 2), // Adjust animation duration
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _animation = Tween<double>(
-      begin: 0.8,
-      end: 1.2,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-    // Simulate network delay and navigate to success screen
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const PaymentSuccessfulScreen(),
-          ),
-        );
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 2), () {
+        Get.offNamed(
+          RoutesName.paymentSuccessfulScreen,
+          arguments: Get.arguments, // Pass plan details (price, plan, duration)
+        );
+      });
+    });
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // Background of the original payment screen (partially visible)
-          // This creates the effect of a modal popping up
-          // You might need to pass the parent widget's content here if you want it to be truly dynamic
-          // For simplicity, we are just showing a white background.
-          Container(color: Colors.white),
-          Center(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ScaleTransition(
-                  scale: _animation,
-                  child: Image.asset(
-                    'assets/shopping_cart_animation.png', // Placeholder for shopping cart
-                    height: 150,
-                    width: 150,
+                Image.asset(
+                  'assets/shopping_cart_animation.png',
+                  height: 150.h,
+                  width: 150.w,
+                ),
+                SizedBox(height: 30.h),
+                Text(
+                  'Confirming Payment',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 30),
-                const Text(
-                  'Confirming Payment',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                const Text(
+                SizedBox(height: 10.h),
+                Text(
                   'This will only take a few seconds.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16.sp,
+                    color: Colors.white70,
+                  ),
                 ),
-                const SizedBox(height: 50),
-                Image.asset(
-                  'assets/razorpay_logo.png', // Placeholder for Razorpay logo
-                  height: 30,
-                ),
-                const SizedBox(height: 5),
-                const Text(
+                SizedBox(height: 50.h),
+                Image.asset('assets/razorpay_logo.png', height: 30.h),
+                SizedBox(height: 5.h),
+                Text(
                   'Secured by Razorpay',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14.sp,
+                    color: Colors.white70,
+                  ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,113 +1,151 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:langtest_pro/view/payment/loading_screen.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 
-class PaymentScreen extends StatefulWidget {
-  final String price; // Add price parameter to receive subscription amount
-  const PaymentScreen({super.key, required this.price});
-
-  @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
-}
-
-class _PaymentScreenState extends State<PaymentScreen> {
-  final TextEditingController _upiIdController = TextEditingController(
-    text: 'gauravkumar@okhdfcbank',
-  );
-  bool _isLoading = false;
+class PaymentScreen extends StatelessWidget {
+  const PaymentScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        Get.arguments ??
+        {
+          'price': '₹99',
+          'plan': 'Monthly',
+          'duration': const Duration(days: 30),
+        };
+    final String price = args['price'];
+    final TextEditingController upiIdController = TextEditingController(
+      text: 'gauravkumar@okhdfcbank',
+    );
+    final isLoading = ValueNotifier<bool>(false);
+
     return Scaffold(
-      backgroundColor: Colors.white, // Full white screen as requested
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'UPI',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
-                    'UPI Apps',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      final itemWidth = (constraints.maxWidth / 2) - 10;
-                      return Wrap(
-                        spacing: 20,
-                        runSpacing: 10,
-                        children: [
-                          _buildUpiAppButton(
-                            'Google Pay',
-                            'assets/google_pay_logo.png',
-                            itemWidth,
-                          ),
-                          _buildUpiAppButton(
-                            'PhonePe',
-                            'assets/phonepe_logo.png',
-                            itemWidth,
-                          ),
-                          _buildUpiAppButton(
-                            'PayTM',
-                            'assets/paytm_logo.png',
-                            itemWidth,
-                          ),
-                          _buildUpiAppButton(
-                            'BHIM',
-                            'assets/bhim_logo.png',
-                            itemWidth,
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
-                    'UPI ID / Number',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: TextField(
-                      controller: _upiIdController,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        suffixIcon: Icon(Icons.copy, color: Colors.grey),
-                      ),
-                      style: GoogleFonts.poppins(color: Colors.black),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      backgroundColor: Colors.white,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          _buildBottomBar(context),
-        ],
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                title: Text(
+                  'Payment',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                centerTitle: true,
+                automaticallyImplyLeading: false, // Remove back icon
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(16.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'UPI',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 30.h),
+                      Text(
+                        'UPI Apps',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final itemWidth = (constraints.maxWidth / 2) - 10.w;
+                          return Wrap(
+                            spacing: 20.w,
+                            runSpacing: 10.h,
+                            children: [
+                              _buildUpiAppButton(
+                                'Google Pay',
+                                'assets/google_pay_logo.png',
+                                itemWidth,
+                              ),
+                              _buildUpiAppButton(
+                                'PhonePe',
+                                'assets/phonepe_logo.png',
+                                itemWidth,
+                              ),
+                              _buildUpiAppButton(
+                                'PayTM',
+                                'assets/paytm_logo.png',
+                                itemWidth,
+                              ),
+                              _buildUpiAppButton(
+                                'BHIM',
+                                'assets/bhim_logo.png',
+                                itemWidth,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                      SizedBox(height: 30.h),
+                      Text(
+                        'UPI ID / Number',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 10.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: TextField(
+                          controller: upiIdController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            suffixIcon: Icon(
+                              Icons.copy,
+                              color: Colors.white70,
+                              size: 20.sp,
+                            ),
+                          ),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14.sp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              _buildBottomBar(context, price, isLoading),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -120,33 +158,45 @@ class _PaymentScreenState extends State<PaymentScreen> {
           debugPrint('$title clicked!');
         },
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          side: const BorderSide(color: Colors.grey),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: EdgeInsets.symmetric(vertical: 15.h),
+          side: BorderSide(color: Colors.white.withOpacity(0.5)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.r),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(imagePath, height: 24, width: 24),
-            const SizedBox(width: 8),
-            Text(title, style: GoogleFonts.poppins(color: Colors.black)),
+            Image.asset(imagePath, height: 24.h, width: 24.w),
+            SizedBox(width: 8.w),
+            Text(
+              title,
+              style: GoogleFonts.montserrat(
+                fontSize: 14.sp,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBottomBar(BuildContext context) {
+  Widget _buildBottomBar(
+    BuildContext context,
+    String price,
+    ValueNotifier<bool> isLoading,
+  ) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, -3),
+            spreadRadius: 2.w,
+            blurRadius: 5.w,
+            offset: Offset(0, -3.h),
           ),
         ],
       ),
@@ -157,11 +207,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.price == 'FREE'
-                    ? '₹0'
-                    : widget.price, // Display passed amount
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
+                price,
+                style: GoogleFonts.montserrat(
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
@@ -172,70 +220,69 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   children: [
                     Text(
                       'View Details',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14.sp,
                         color: Colors.grey,
-                        fontSize: 14,
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.keyboard_arrow_up,
                       color: Colors.grey,
-                      size: 16,
+                      size: 16.sp,
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          ElevatedButton(
-            onPressed:
-                _isLoading
-                    ? null
-                    : () async {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      await Future.delayed(const Duration(seconds: 2));
-                      if (mounted) {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoadingScreen(),
+          ValueListenableBuilder<bool>(
+            valueListenable: isLoading,
+            builder: (context, loading, child) {
+              return ElevatedButton(
+                onPressed:
+                    loading
+                        ? null
+                        : () {
+                          isLoading.value = true;
+                          Future.delayed(const Duration(seconds: 2), () {
+                            isLoading.value = false;
+                            Get.toNamed(
+                              RoutesName.loadingScreen,
+                              arguments: Get.arguments, // Pass plan details
+                            );
+                          });
+                        },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D47A1),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 50.w,
+                    vertical: 15.h,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                ),
+                child:
+                    loading
+                        ? SizedBox(
+                          width: 40.w,
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: const [_Dot(), _Dot(), _Dot()],
+                            ),
                           ),
-                        );
-                      }
-                    },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0D47A1),
-              padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).size.width * 0.15,
-                vertical: 15,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child:
-                _isLoading
-                    ? const SizedBox(
-                      width: 40,
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [_Dot(), _Dot(), _Dot()],
+                        )
+                        : Text(
+                          'Continue',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    )
-                    : Text(
-                      'Continue',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
+              );
+            },
           ),
         ],
       ),
@@ -278,8 +325,8 @@ class _DotState extends State<_Dot> with SingleTickerProviderStateMixin {
         return Opacity(
           opacity: _animation.value,
           child: Container(
-            width: 8.0,
-            height: 8.0,
+            width: 8.w,
+            height: 8.h,
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,

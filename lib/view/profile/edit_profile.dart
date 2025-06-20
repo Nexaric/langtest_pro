@@ -1,45 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 
-class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+class EditProfileController extends GetxController {
+  var imagePath = Rx<File?>(null);
+  var name = 'John Doe'.obs;
+  var email = 'johndoe@example.com'.obs;
+  var phone = '+91 9876543210'.obs;
+  var selectedGender = 'Male'.obs;
+  var selectedDate = Rx<DateTime?>(null);
 
-  @override
-  _EditProfileScreenState createState() => _EditProfileScreenState();
-}
-
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  File? _image;
   final picker = ImagePicker();
 
-  final TextEditingController _nameController = TextEditingController(
-    text: "John Doe",
-  );
-  final TextEditingController _emailController = TextEditingController(
-    text: "johndoe@example.com",
-  );
-  final TextEditingController _phoneController = TextEditingController(
-    text: "+91 9876543210",
-  );
-  String _selectedGender = "Male";
-  DateTime? _selectedDate;
-
-  Future<void> _pickImage() async {
+  Future<void> pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+      imagePath.value = File(pickedFile.path);
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime(2000, 1, 1),
+      initialDate: selectedDate.value ?? DateTime(2000, 1, 1),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       builder: (context, child) {
@@ -60,22 +47,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         );
       },
     );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
+    if (picked != null && picked != selectedDate.value) {
+      selectedDate.value = picked;
     }
   }
 
+  void saveProfile() {
+    Get.snackbar(
+      'Success',
+      'Profile updated successfully!',
+      backgroundColor: const Color(0xFF6A5AE0),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      borderRadius: 10,
+      margin: EdgeInsets.all(16.w),
+    );
+  }
+}
+
+class EditProfileScreen extends StatelessWidget {
+  const EditProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(EditProfileController());
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
           "Edit Profile",
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 22.sp,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -85,88 +88,90 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back(),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF6A5AE0), Color(0xFF9B78FF)],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 16,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 16.h,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 40),
-
-                        // Profile Picture with edit icon
+                        SizedBox(height: 40.h),
                         FadeInDown(
                           duration: const Duration(milliseconds: 500),
                           child: Stack(
                             children: [
                               Container(
-                                padding: const EdgeInsets.all(4),
+                                padding: EdgeInsets.all(4.w),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: Colors.white.withOpacity(0.3),
-                                    width: 2,
+                                    width: 2.w,
                                   ),
                                 ),
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.white.withOpacity(
-                                    0.2,
+                                child: Obx(
+                                  () => CircleAvatar(
+                                    radius: 50.r,
+                                    backgroundColor: Colors.white.withOpacity(
+                                      0.2,
+                                    ),
+                                    backgroundImage:
+                                        controller.imagePath.value != null
+                                            ? FileImage(
+                                              controller.imagePath.value!,
+                                            )
+                                            : null,
+                                    child:
+                                        controller.imagePath.value == null
+                                            ? Icon(
+                                              Icons.person,
+                                              size: 50.sp,
+                                              color: Colors.white,
+                                            )
+                                            : null,
                                   ),
-                                  backgroundImage:
-                                      _image != null
-                                          ? FileImage(_image!)
-                                          : null,
-                                  child:
-                                      _image == null
-                                          ? const Icon(
-                                            Icons.person,
-                                            size: 50,
-                                            color: Colors.white,
-                                          )
-                                          : null,
                                 ),
                               ),
                               Positioned(
                                 bottom: 0,
                                 right: 0,
                                 child: GestureDetector(
-                                  onTap: _pickImage,
+                                  onTap: controller.pickImage,
                                   child: Container(
-                                    padding: const EdgeInsets.all(8),
+                                    padding: EdgeInsets.all(8.w),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       shape: BoxShape.circle,
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
+                                          blurRadius: 10.w,
+                                          offset: Offset(0, 4.h),
                                         ),
                                       ],
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.edit,
-                                      color: Color(0xFF6A5AE0),
-                                      size: 20,
+                                      color: const Color(0xFF6A5AE0),
+                                      size: 20.sp,
                                     ),
                                   ),
                                 ),
@@ -174,99 +179,69 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 30),
-
-                        // Input Fields
+                        SizedBox(height: 30.h),
                         FadeInLeft(
                           duration: const Duration(milliseconds: 600),
                           child: _buildTextField(
                             "Full Name",
                             Icons.person_outline,
-                            _nameController,
+                            controller.name,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         FadeInRight(
                           duration: const Duration(milliseconds: 600),
                           child: _buildTextField(
                             "Email",
                             Icons.email_outlined,
-                            _emailController,
+                            controller.email,
                             enabled: false,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         FadeInLeft(
                           duration: const Duration(milliseconds: 600),
                           child: _buildTextField(
                             "Phone",
                             Icons.phone_outlined,
-                            _phoneController,
+                            controller.phone,
                           ),
                         ),
-                        const SizedBox(height: 16),
-
-                        // Gender Dropdown
+                        SizedBox(height: 16.h),
                         FadeInRight(
                           duration: const Duration(milliseconds: 600),
-                          child: _buildDropdown(
-                            "Gender",
-                            Icons.transgender,
-                            ["Male", "Female", "Other", "Prefer not to say"],
-                            _selectedGender,
-                            (value) {
-                              setState(() {
-                                _selectedGender = value!;
-                              });
-                            },
-                          ),
+                          child: _buildDropdown("Gender", Icons.transgender, [
+                            "Male",
+                            "Female",
+                            "Other",
+                            "Prefer not to say",
+                          ], controller.selectedGender),
                         ),
-                        const SizedBox(height: 16),
-
-                        // Date of Birth Picker
+                        SizedBox(height: 16.h),
                         FadeInLeft(
                           duration: const Duration(milliseconds: 600),
                           child: _buildDatePicker(
                             "Date of Birth",
                             Icons.calendar_today_outlined,
-                            _selectedDate,
-                            () {
-                              _selectDate(context);
-                            },
+                            controller.selectedDate,
+                            () => controller.selectDate(context),
                           ),
                         ),
-                        const SizedBox(height: 30),
-
-                        // Save Button
+                        SizedBox(height: 30.h),
                         BounceInUp(
                           duration: const Duration(milliseconds: 800),
                           child: SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
-                                // Save action
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Profile updated successfully!',
-                                      style: GoogleFonts.poppins(),
-                                    ),
-                                    backgroundColor: const Color(0xFF6A5AE0),
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                );
-                              },
+                              onPressed: controller.saveProfile,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 40,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 16.h,
+                                  horizontal: 40.w,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 elevation: 5,
                                 shadowColor: Colors.black.withOpacity(0.2),
@@ -275,148 +250,158 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 "Save Changes",
                                 style: GoogleFonts.poppins(
                                   color: const Color(0xFF6A5AE0),
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        // Add extra space at the bottom to ensure gradient covers when keyboard opens
                         SizedBox(
                           height:
                               MediaQuery.of(context).viewInsets.bottom > 0
                                   ? MediaQuery.of(context).viewInsets.bottom +
-                                      20
-                                  : 20,
+                                      20.h
+                                  : 20.h,
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 
-  // Custom Input Field
   Widget _buildTextField(
     String label,
     IconData icon,
-    TextEditingController controller, {
+    RxString controller, {
     bool enabled = true,
   }) {
-    return TextField(
-      controller: controller,
-      enabled: enabled,
-      style: GoogleFonts.poppins(
-        fontSize: 15,
-        color: Colors.white,
-        fontWeight: FontWeight.w500,
-      ),
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.8)),
-        labelText: label,
-        labelStyle: GoogleFonts.poppins(
-          color: Colors.white.withOpacity(0.7),
-          fontSize: 14,
-        ),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Colors.white.withOpacity(0.3),
-            width: 1,
+    return Obx(
+      () => TextField(
+        controller: TextEditingController(text: controller.value)
+          ..selection = TextSelection.fromPosition(
+            TextPosition(offset: controller.value.length),
           ),
+        onChanged: (value) => controller.value = value,
+        enabled: enabled,
+        style: GoogleFonts.poppins(
+          fontSize: 15.sp,
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 16,
-          horizontal: 16,
-        ),
-      ),
-    );
-  }
-
-  // Custom Dropdown Field
-  Widget _buildDropdown(
-    String label,
-    IconData icon,
-    List<String> items,
-    String selectedItem,
-    Function(String?) onChanged,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
-      ),
-      child: DropdownButtonFormField<String>(
-        value: selectedItem,
-        dropdownColor: const Color(0xFFF5F5FF),
-        icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.8)),
           labelText: label,
           labelStyle: GoogleFonts.poppins(
             color: Colors.white.withOpacity(0.7),
-            fontSize: 14,
+            fontSize: 14.sp,
           ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.1),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: BorderSide(
+              color: Colors.white.withOpacity(0.3),
+              width: 1.w,
+            ),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 16.h,
+            horizontal: 16.w,
+          ),
         ),
-        style: GoogleFonts.poppins(
-          fontSize: 15,
-          color: Colors.black,
-          fontWeight: FontWeight.w500,
-        ),
-        items:
-            items.map((String value) {
-              return DropdownMenuItem<String>(value: value, child: Text(value));
-            }).toList(),
-        onChanged: onChanged,
-        borderRadius: BorderRadius.circular(12),
       ),
     );
   }
 
-  // Custom Date Picker
+  Widget _buildDropdown(
+    String label,
+    IconData icon,
+    List<String> items,
+    RxString selectedItem,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.w),
+      ),
+      child: Obx(
+        () => DropdownButtonFormField<String>(
+          value: selectedItem.value,
+          dropdownColor: const Color(0xFFF5F5FF),
+          icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: Colors.white.withOpacity(0.8)),
+            labelText: label,
+            labelStyle: GoogleFonts.poppins(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 14.sp,
+            ),
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+          ),
+          style: GoogleFonts.poppins(
+            fontSize: 15.sp,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+          items:
+              items.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+          onChanged: (value) => selectedItem.value = value!,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDatePicker(
     String label,
     IconData icon,
-    DateTime? date,
+    Rx<DateTime?> date,
     VoidCallback onTap,
   ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.w),
         ),
         child: Row(
           children: [
             Icon(icon, color: Colors.white.withOpacity(0.8)),
-            const SizedBox(width: 12),
-            Text(
-              date != null
-                  ? "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}"
-                  : label,
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                color:
-                    date != null ? Colors.white : Colors.white.withOpacity(0.7),
-                fontWeight: FontWeight.w500,
+            SizedBox(width: 12.w),
+            Obx(
+              () => Text(
+                date.value != null
+                    ? "${date.value!.day.toString().padLeft(2, '0')}/${date.value!.month.toString().padLeft(2, '0')}/${date.value!.year}"
+                    : label,
+                style: GoogleFonts.poppins(
+                  fontSize: 15.sp,
+                  color:
+                      date.value != null
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.7),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ],

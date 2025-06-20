@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class NotificationScreen extends StatelessWidget {
@@ -6,31 +8,35 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          "Notifications",
+          style: GoogleFonts.poppins(
+            fontSize: 22.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
+          onPressed: () => Get.back(),
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text(
-            "Notifications",
-            style: GoogleFonts.poppins(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          centerTitle: true,
         ),
-        body: ListView(
-          padding: const EdgeInsets.all(20),
+        child: ListView(
+          padding: EdgeInsets.all(20.sp),
           children: [
             _buildNotification(
               "New AI Chat Update!",
@@ -52,24 +58,21 @@ class NotificationScreen extends StatelessWidget {
 
   Widget _buildNotification(String title, String description) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       elevation: 8,
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 10.h),
       color: Colors.white.withOpacity(0.95),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-        leading: const Icon(
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        leading: Icon(
           Icons.notifications_active,
-          color: Color(0xFF3E1E68),
-          size: 32,
+          color: const Color(0xFF3E1E68),
+          size: 32.sp,
         ),
         title: Text(
           title,
           style: GoogleFonts.poppins(
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF2D3748),
           ),
@@ -77,14 +80,14 @@ class NotificationScreen extends StatelessWidget {
         subtitle: Text(
           description,
           style: GoogleFonts.poppins(
-            fontSize: 14,
+            fontSize: 14.sp,
             color: const Color(0xFF718096),
           ),
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
-          size: 18,
-          color: Color(0xFF3E1E68),
+          size: 18.sp,
+          color: const Color(0xFF3E1E68),
         ),
       ),
     );

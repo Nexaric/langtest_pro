@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 
@@ -13,7 +15,7 @@ class AboutUsScreen extends StatelessWidget {
         title: Text(
           "About Us",
           style: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: 20.sp,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -22,91 +24,91 @@ class AboutUsScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.sp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
                   child: FadeInDown(
                     child: CircleAvatar(
-                      radius: 50,
+                      radius: 50.r,
                       backgroundImage: const AssetImage("assets/logo.png"),
                       backgroundColor: Colors.white24,
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h),
                 FadeInUp(
                   child: Text(
                     "Welcome to LangTest Pro!",
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
+                      fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 FadeInUp(
                   delay: const Duration(milliseconds: 300),
                   child: Text(
                     "LangTest Pro is your AI-powered companion for mastering IELTS, OET, PTE, and TOEFL exams with tools like AI-driven speaking evaluations, writing feedback, and interactive lessons.",
                     style: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       color: Colors.white70,
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 FadeInLeft(
                   child: Text(
                     "🚀 Our Mission",
                     style: GoogleFonts.poppins(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 FadeInLeft(
                   delay: const Duration(milliseconds: 400),
                   child: Text(
                     "Empowering students globally with AI-driven learning to achieve top scores in English proficiency exams.",
                     style: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       color: Colors.white70,
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 FadeInRight(
                   child: Text(
                     "✨ Key Features",
                     style: GoogleFonts.poppins(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 FadeInRight(
                   delay: const Duration(milliseconds: 400),
                   child: _buildBulletPoint("AI-Powered Exam Preparation"),
@@ -127,29 +129,29 @@ class AboutUsScreen extends StatelessWidget {
                     "Mock Tests & Performance Analytics",
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h),
                 FadeInLeft(
                   child: Text(
                     "📞 Contact Us",
                     style: GoogleFonts.poppins(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 FadeInLeft(
                   delay: const Duration(milliseconds: 400),
                   child: Text(
                     "For support, reach out at:\n📧 support@langtestpro.com\n🌐 www.langtestpro.com",
                     style: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       color: Colors.white70,
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32.h),
               ],
             ),
           ),
@@ -160,15 +162,18 @@ class AboutUsScreen extends StatelessWidget {
 
   Widget _buildBulletPoint(String text) {
     return Padding(
-      padding: const EdgeInsets.only(left: 12, top: 8),
+      padding: EdgeInsets.only(left: 12.w, top: 8.h),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: Colors.white70, size: 18),
-          const SizedBox(width: 8),
+          Icon(Icons.check_circle, color: Colors.white70, size: 18.sp),
+          SizedBox(width: 8.w),
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.poppins(fontSize: 16, color: Colors.white70),
+              style: GoogleFonts.poppins(
+                fontSize: 16.sp,
+                color: Colors.white70,
+              ),
             ),
           ),
         ],

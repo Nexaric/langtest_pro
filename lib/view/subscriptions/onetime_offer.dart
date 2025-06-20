@@ -1,7 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:langtest_pro/view/payment/payment_screen.dart';
-import 'offer_timer_manager.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
+import 'package:langtest_pro/view/subscriptions/offer_timer_manager.dart';
 
 class OneTimeOfferPopup extends StatefulWidget {
   final VoidCallback onClose;
@@ -65,9 +68,6 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
     int minutes = (OfferTimerManager().remainingSeconds ~/ 60) % 60;
     int seconds = OfferTimerManager().remainingSeconds % 60;
 
@@ -81,34 +81,31 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
         scale: _scaleAnimation,
         child: Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20.0),
+          insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: BorderRadius.circular(20.r),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
-                width: screenWidth * 0.9, // 90% of screen width
+                width: 0.9.sw, // 90% of screen width
                 constraints: BoxConstraints(
-                  maxHeight: screenHeight * 0.6, // Max 60% of screen height
-                  minHeight: 300, // Minimum height for content
+                  maxHeight: 0.6.sh, // Max 60% of screen height
+                  minHeight: 300.h, // Minimum height for content
                 ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 25.0,
-                  vertical: 20.0,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 20.h),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20.0),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: Colors.white.withOpacity(0.2),
-                    width: 1.5,
+                    width: 1.5.w,
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.2),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 5),
+                      blurRadius: 10.w,
+                      spreadRadius: 2.w,
+                      offset: Offset(0, 5.h),
                     ),
                   ],
                 ),
@@ -118,7 +115,11 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
                       top: 0,
                       right: 0,
                       child: IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white70),
+                        icon: Icon(
+                          Icons.close,
+                          color: Colors.white70,
+                          size: 24.sp,
+                        ),
                         onPressed: () {
                           _isTimerActive = false;
                           OfferTimerManager().stopCountdown(); // Stop timer
@@ -132,33 +133,36 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(height: 20),
-                        const Text(
+                        SizedBox(height: 20.h),
+                        Text(
                           'One Time Offer',
-                          style: TextStyle(
-                            fontSize: 26,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 26.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        const Text(
+                        Text(
                           '50% OFF',
-                          style: TextStyle(
-                            fontSize: 36,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 36.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const Text(
+                        SizedBox(height: 20.h),
+                        Text(
                           'Limited Time Offer',
-                          style: TextStyle(fontSize: 14, color: Colors.white70),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14.sp,
+                            color: Colors.white70,
+                          ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: 10.h),
                         _buildTimerRow(minutes, seconds),
-                        const SizedBox(height: 25),
+                        SizedBox(height: 25.h),
                         _buildPriceComparison(),
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30.h),
                         _buildClaimOfferButton(mainGradientColors, context),
                       ],
                     ),
@@ -178,7 +182,10 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
       children: [
         _buildTimerDigit((minutes ~/ 10).toString()),
         _buildTimerDigit((minutes % 10).toString()),
-        const Text(':', style: TextStyle(fontSize: 24, color: Colors.white70)),
+        Text(
+          ':',
+          style: GoogleFonts.montserrat(fontSize: 24.sp, color: Colors.white70),
+        ),
         _buildTimerDigit((seconds ~/ 10).toString()),
         _buildTimerDigit((seconds % 10).toString()),
       ],
@@ -187,16 +194,16 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
 
   Widget _buildTimerDigit(String digit) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8.r),
       ),
       child: Text(
         digit,
-        style: const TextStyle(
-          fontSize: 24,
+        style: GoogleFonts.montserrat(
+          fontSize: 24.sp,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
@@ -206,10 +213,10 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
 
   Widget _buildPriceComparison() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+      padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(15.r),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -218,15 +225,18 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Original Price',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16.sp,
+                    color: Colors.white70,
+                  ),
                 ),
-                const SizedBox(height: 5),
+                SizedBox(height: 5.h),
                 Text(
                   '₹99',
-                  style: TextStyle(
-                    fontSize: 24,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     decoration: TextDecoration.lineThrough,
@@ -234,37 +244,50 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
                     decorationThickness: 2,
                   ),
                 ),
-                const Text(
+                Text(
                   'per month',
-                  style: TextStyle(fontSize: 12, color: Colors.white54),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12.sp,
+                    color: Colors.white54,
+                  ),
                 ),
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Icon(Icons.arrow_forward, color: Colors.white70, size: 30),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: Icon(
+              Icons.arrow_forward,
+              color: Colors.white70,
+              size: 30.sp,
+            ),
           ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'Offer Price',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16.sp,
+                    color: Colors.white70,
+                  ),
                 ),
-                const SizedBox(height: 5),
+                SizedBox(height: 5.h),
                 Text(
                   _offerPrice,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 24.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
                 ),
-                const Text(
+                Text(
                   'per month',
-                  style: TextStyle(fontSize: 12, color: Colors.white54),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12.sp,
+                    color: Colors.white54,
+                  ),
                 ),
               ],
             ),
@@ -281,7 +304,7 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30.0),
+        borderRadius: BorderRadius.circular(30.r),
         gradient: LinearGradient(
           colors: gradientColors,
           begin: Alignment.centerLeft,
@@ -290,16 +313,16 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF6A5AE0).withOpacity(0.5),
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: const Offset(0, 5),
+            blurRadius: 10.w,
+            spreadRadius: 1.w,
+            offset: Offset(0, 5.h),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(30.0),
+          borderRadius: BorderRadius.circular(30.r),
           onTap: () {
             _isTimerActive = false;
             OfferTimerManager().stopCountdown(); // Stop timer
@@ -307,22 +330,22 @@ class _OneTimeOfferPopupState extends State<OneTimeOfferPopup>
             if (Navigator.of(context).canPop()) {
               Navigator.of(context).pop(); // Dismiss dialog
             }
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PaymentScreen(price: _offerPrice),
-                ),
-              );
-            });
+            Get.toNamed(
+              RoutesName.paymentScreen,
+              arguments: {
+                'price': _offerPrice,
+                'plan': 'One-Time Offer',
+                'duration': const Duration(days: 30),
+              },
+            );
           },
-          child: const Center(
+          child: Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0),
+              padding: EdgeInsets.symmetric(vertical: 15.h),
               child: Text(
                 'Buy Now',
-                style: TextStyle(
-                  fontSize: 18,
+                style: GoogleFonts.montserrat(
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),

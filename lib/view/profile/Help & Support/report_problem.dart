@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-class ReportProblemScreen extends StatefulWidget {
-  const ReportProblemScreen({super.key});
+class ReportProblemController extends GetxController {
+  var description = ''.obs;
+  var image = Rx<File?>(null);
+  var selectedIssue = 'App Crash'.obs;
 
-  @override
-  _ReportProblemScreenState createState() => _ReportProblemScreenState();
-}
-
-class _ReportProblemScreenState extends State<ReportProblemScreen> {
-  final TextEditingController _descriptionController = TextEditingController();
-  File? _image;
-  String _selectedIssue = "App Crash"; // Default selected issue
-
-  // List of issue types
-  final List<String> _issues = [
+  final List<String> issues = [
     "App Crash",
     "Login Issues",
     "Payment Problems",
@@ -25,44 +19,52 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
     "Other",
   ];
 
-  // Pick an image from the gallery
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
+  final picker = ImagePicker();
+
+  Future<void> pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+      image.value = File(pickedFile.path);
     }
   }
 
-  // Submit report function
-  void _submitReport() {
-    String description = _descriptionController.text.trim();
-
-    if (description.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please describe the issue.")),
+  void submitReport() {
+    if (description.value.trim().isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please describe the issue.',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        borderRadius: 12.r,
+        margin: EdgeInsets.all(16.w),
       );
       return;
     }
 
-    // Handle sending the report (Firebase, API, etc.)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Report submitted successfully!")),
+    Get.snackbar(
+      'Success',
+      'Report submitted successfully!',
+      backgroundColor: const Color(0xFF6A5AE0),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      borderRadius: 12.r,
+      margin: EdgeInsets.all(16.w),
     );
 
-    // Reset fields after submission
-    setState(() {
-      _descriptionController.clear();
-      _image = null;
-      _selectedIssue = "App Crash";
-    });
+    description.value = '';
+    image.value = null;
+    selectedIssue.value = 'App Crash';
   }
+}
+
+class ReportProblemScreen extends StatelessWidget {
+  const ReportProblemScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(ReportProblemController());
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -71,150 +73,173 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
         title: Text(
           "Report a Problem",
           style: GoogleFonts.poppins(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
+            fontSize: 22.sp,
+            fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
         ),
         centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: 20.sp),
+          onPressed: () => Get.back(),
+        ),
       ),
-      body: Stack(
-        children: [
-          // Gradient Background
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF6A5AE0), Color(0xFF9B78FF)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 80),
-
-                  // Select Issue Type
-                  Text(
-                    "Select Issue Type",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 80.h),
+                Text(
+                  "Select Issue Type",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 5,
+                ),
+                SizedBox(height: 10.h),
+                Obx(
+                  () => Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 5.h,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: DropdownButton<String>(
                       isExpanded: true,
                       dropdownColor: Colors.white,
-                      value: _selectedIssue,
-                      icon: const Icon(
+                      value: controller.selectedIssue.value,
+                      icon: Icon(
                         Icons.keyboard_arrow_down,
                         color: Colors.white,
+                        size: 20.sp,
                       ),
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         color: Colors.black,
                       ),
                       onChanged: (String? newValue) {
-                        setState(() {
-                          _selectedIssue = newValue!;
-                        });
+                        controller.selectedIssue.value = newValue!;
                       },
                       items:
-                          _issues.map<DropdownMenuItem<String>>((String issue) {
+                          controller.issues.map<DropdownMenuItem<String>>((
+                            String issue,
+                          ) {
                             return DropdownMenuItem<String>(
                               value: issue,
-                              child: Text(issue),
+                              child: Text(
+                                issue,
+                                style: GoogleFonts.poppins(fontSize: 16.sp),
+                              ),
                             );
                           }).toList(),
                     ),
                   ),
-
-                  const SizedBox(height: 20),
-
-                  // Issue Description
-                  Text(
-                    "Describe the Problem",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                ),
+                SizedBox(height: 20.h),
+                Text(
+                  "Describe the Problem",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _descriptionController,
+                ),
+                SizedBox(height: 10.h),
+                Obx(
+                  () => TextField(
+                    controller: TextEditingController(
+                        text: controller.description.value,
+                      )
+                      ..selection = TextSelection.fromPosition(
+                        TextPosition(
+                          offset: controller.description.value.length,
+                        ),
+                      ),
+                    onChanged: (value) => controller.description.value = value,
                     maxLines: 5,
-                    style: GoogleFonts.poppins(color: Colors.white),
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                    ),
                     decoration: InputDecoration(
                       hintText: "Enter details...",
-                      hintStyle: GoogleFonts.poppins(color: Colors.white70),
+                      hintStyle: GoogleFonts.poppins(
+                        color: Colors.white.withOpacity(0.7),
+                        fontSize: 14.sp,
+                      ),
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.2),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                         borderSide: BorderSide.none,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
                       ),
                     ),
                   ),
-
-                  const SizedBox(height: 20),
-
-                  // Attach Screenshot
-                  Text(
-                    "Attach Screenshot (Optional)",
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                ),
+                SizedBox(height: 20.h),
+                Text(
+                  "Attach Screenshot (Optional)",
+                  style: GoogleFonts.poppins(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
+                ),
+                SizedBox(height: 10.h),
+                GestureDetector(
+                  onTap: controller.pickImage,
+                  child: Obx(
+                    () => Container(
                       width: double.infinity,
-                      height: 150,
+                      height: 150.h,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color: Colors.white.withOpacity(0.3),
+                          width: 1.w,
                         ),
                       ),
                       child:
-                          _image != null
+                          controller.image.value != null
                               ? ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.file(_image!, fit: BoxFit.cover),
+                                borderRadius: BorderRadius.circular(12.r),
+                                child: Image.file(
+                                  controller.image.value!,
+                                  fit: BoxFit.cover,
+                                ),
                               )
                               : Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.camera_alt,
                                     color: Colors.white,
-                                    size: 40,
+                                    size: 40.sp,
                                   ),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: 10.h),
                                   Text(
                                     "Tap to Upload",
                                     style: GoogleFonts.poppins(
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -222,38 +247,38 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                               ),
                     ),
                   ),
-
-                  const SizedBox(height: 30),
-
-                  // Submit Button
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: _submitReport,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 40,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                ),
+                SizedBox(height: 30.h),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: controller.submitReport,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12.h,
+                        horizontal: 40.w,
                       ),
-                      child: Text(
-                        "Submit Report",
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      elevation: 8,
+                      shadowColor: Colors.black.withOpacity(0.1),
+                    ),
+                    child: Text(
+                      "Submit Report",
+                      style: GoogleFonts.poppins(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: 20.h),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

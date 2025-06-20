@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:animate_do/animate_do.dart';
@@ -15,20 +17,18 @@ class ShareAppScreen extends StatelessWidget {
     );
   }
 
-  void _copyAppLink(BuildContext context) {
+  void _copyAppLink() {
     const String appLink =
         "https://play.google.com/store/apps/details?id=com.nexaric.langtestpro";
     Clipboard.setData(const ClipboardData(text: appLink));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Link copied to clipboard!",
-          style: GoogleFonts.poppins(),
-        ),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
+    Get.snackbar(
+      "Link Copied",
+      "Link copied to clipboard!",
+      backgroundColor: Colors.green,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      borderRadius: 8.r,
+      margin: EdgeInsets.all(16.sp),
     );
   }
 
@@ -40,7 +40,7 @@ class ShareAppScreen extends StatelessWidget {
         title: Text(
           "Share LangTest Pro",
           style: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: 20.sp,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -49,21 +49,21 @@ class ShareAppScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.white, size: 20.sp),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.sp),
             child: Center(
               child: BounceInUp(
                 child: Column(
@@ -72,55 +72,55 @@ class ShareAppScreen extends StatelessWidget {
                     Text(
                       "Invite Your Friends 🎉",
                       style: GoogleFonts.poppins(
-                        fontSize: 24,
+                        fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12.h),
                     Text(
                       "Share LangTest Pro to help your friends excel in their English exams!",
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                         color: Colors.white70,
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    SizedBox(height: 32.h),
                     ElevatedButton.icon(
                       onPressed: _shareApp,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        foregroundColor: const Color.fromARGB(255, 84, 65, 228),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
+                        foregroundColor: const Color(0xFF6A5AE0),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24.w,
+                          vertical: 12.h,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
                         elevation: 2,
                       ),
-                      icon: const Icon(Icons.share, size: 20),
+                      icon: Icon(Icons.share, size: 20.sp),
                       label: Text(
                         "Share Now",
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     TextButton.icon(
-                      onPressed: () => _copyAppLink(context),
+                      onPressed: _copyAppLink,
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.white,
                       ),
-                      icon: const Icon(Icons.link),
+                      icon: Icon(Icons.link, size: 20.sp),
                       label: Text(
                         "Copy App Link",
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

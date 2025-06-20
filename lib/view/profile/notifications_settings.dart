@@ -1,45 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class NotificationSettingsScreen extends StatefulWidget {
+class NotificationSettingsController extends GetxController {
+  var generalNotifications = true.obs;
+  var courseUpdates = true.obs;
+  var examReminders = false.obs;
+  var aiAssistantAlerts = true.obs;
+
+  void saveSettings() {
+    Get.snackbar(
+      'Success',
+      'Settings saved successfully!',
+      backgroundColor: const Color(0xFF3E1E68),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      borderRadius: 12.r,
+      margin: EdgeInsets.all(16.w),
+    );
+  }
+}
+
+class NotificationSettingsScreen extends StatelessWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  _NotificationSettingsScreenState createState() =>
-      _NotificationSettingsScreenState();
-}
-
-class _NotificationSettingsScreenState
-    extends State<NotificationSettingsScreen> {
-  bool _generalNotifications = true;
-  bool _courseUpdates = true;
-  bool _examReminders = false;
-  bool _aiAssistantAlerts = true;
-
-  void _saveSettings() {
-    // Placeholder for saving settings (e.g., to Firebase)
-    print(
-      "Saved notification settings: "
-      "General: $_generalNotifications, "
-      "Course Updates: $_courseUpdates, "
-      "Exam Reminders: $_examReminders, "
-      "AI Assistant: $_aiAssistantAlerts",
-    );
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Settings saved successfully!",
-          style: GoogleFonts.poppins(),
-        ),
-        backgroundColor: const Color(0xFF3E1E68),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.put(NotificationSettingsController());
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -48,7 +37,7 @@ class _NotificationSettingsScreenState
         title: Text(
           "Notification Settings",
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 22.sp,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -56,83 +45,82 @@ class _NotificationSettingsScreenState
         centerTitle: true,
         leading: IconButton(
           icon: Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.arrow_back, color: Colors.white),
           ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Manage Notifications",
                 style: GoogleFonts.poppins(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 16),
-              _buildSwitchTile(
-                "📢 General Notifications",
-                "Receive app-wide updates and announcements",
-                _generalNotifications,
-                (value) => setState(() => _generalNotifications = value),
+              SizedBox(height: 16.h),
+              Obx(
+                () => _buildSwitchTile(
+                  "📢 General Notifications",
+                  "Receive app-wide updates and announcements",
+                  controller.generalNotifications.value,
+                  (value) => controller.generalNotifications.value = value,
+                ),
               ),
-              _buildSwitchTile(
-                "📚 Course Updates",
-                "Get notified about new course content",
-                _courseUpdates,
-                (value) => setState(() => _courseUpdates = value),
+              Obx(
+                () => _buildSwitchTile(
+                  "📚 Course Updates",
+                  "Get notified about new course content",
+                  controller.courseUpdates.value,
+                  (value) => controller.courseUpdates.value = value,
+                ),
               ),
-              _buildSwitchTile(
-                "⏰ Exam Reminders",
-                "Reminders for upcoming tests and deadlines",
-                _examReminders,
-                (value) => setState(() => _examReminders = value),
+              Obx(
+                () => _buildSwitchTile(
+                  "⏰ Exam Reminders",
+                  "Reminders for upcoming tests and deadlines",
+                  controller.examReminders.value,
+                  (value) => controller.examReminders.value = value,
+                ),
               ),
-              _buildSwitchTile(
-                "🤖 AI Assistant Alerts",
-                "Alerts from your AI tutor and practice sessions",
-                _aiAssistantAlerts,
-                (value) => setState(() => _aiAssistantAlerts = value),
+              Obx(
+                () => _buildSwitchTile(
+                  "🤖 AI Assistant Alerts",
+                  "Alerts from your AI tutor and practice sessions",
+                  controller.aiAssistantAlerts.value,
+                  (value) => controller.aiAssistantAlerts.value = value,
+                ),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30.h),
               Center(
                 child: ElevatedButton(
-                  onPressed: _saveSettings,
+                  onPressed: controller.saveSettings,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white.withOpacity(0.95),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 40,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 16.h,
+                      horizontal: 40.w,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                     ),
                     elevation: 8,
                     shadowColor: Colors.black.withOpacity(0.1),
@@ -140,7 +128,7 @@ class _NotificationSettingsScreenState
                   child: Text(
                     "Save Settings",
                     style: GoogleFonts.poppins(
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF3E1E68),
                     ),
@@ -161,24 +149,21 @@ class _NotificationSettingsScreenState
     Function(bool) onChanged,
   ) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       elevation: 8,
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 10.h),
       color: Colors.white.withOpacity(0.95),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         leading: Icon(
           Icons.notifications,
           color: value ? const Color(0xFF3E1E68) : Colors.grey,
-          size: 32,
+          size: 32.sp,
         ),
         title: Text(
           title,
           style: GoogleFonts.poppins(
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF2D3748),
           ),
@@ -186,7 +171,7 @@ class _NotificationSettingsScreenState
         subtitle: Text(
           subtitle,
           style: GoogleFonts.poppins(
-            fontSize: 12,
+            fontSize: 12.sp,
             color: const Color(0xFF718096),
           ),
         ),

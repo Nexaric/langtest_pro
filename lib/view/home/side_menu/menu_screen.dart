@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:glassmorphism/glassmorphism.dart';
-import 'package:langtest_pro/view/profile/profile_screen.dart';
-import 'package:langtest_pro/view/subscriptions/subscription_screen.dart';
-import 'package:langtest_pro/view/home/side_menu/share_app.dart';
-import 'package:langtest_pro/view/home/side_menu/rate_our_app.dart';
-import 'package:langtest_pro/view/home/side_menu/about_us.dart';
-import 'package:langtest_pro/view/home/home_screen.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({super.key});
@@ -19,7 +16,7 @@ class MenuScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
+            colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -34,7 +31,7 @@ class MenuScreen extends StatelessWidget {
                   child: GlassmorphicContainer(
                     width: MediaQuery.of(context).size.width * 0.75,
                     height: MediaQuery.of(context).size.height,
-                    borderRadius: 20,
+                    borderRadius: 20.r,
                     blur: 20,
                     alignment: Alignment.center,
                     border: 2,
@@ -53,47 +50,47 @@ class MenuScreen extends StatelessWidget {
                       ],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20.sp),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildMenuHeader(),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24.h),
                           _buildMenuOption(
                             context,
                             "🏠 Home",
                             Icons.home_filled,
-                             HomeScreen(),
+                            RoutesName.homeScreen,
                           ),
                           _buildMenuOption(
                             context,
                             "👤 My Profile",
                             Icons.person,
-                            const ProfileScreen(),
+                            RoutesName.profileScreen,
                           ),
                           _buildMenuOption(
                             context,
                             "📜 Subscriptions",
                             Icons.subscriptions,
-                            const SubscriptionScreen(),
+                            RoutesName.subscriptionScreen,
                           ),
                           _buildMenuOption(
                             context,
                             "📤 Share App",
                             Icons.share,
-                            const ShareAppScreen(),
+                            RoutesName.shareAppScreen,
                           ),
                           _buildMenuOption(
                             context,
                             "⭐ Rate Our App",
                             Icons.star_rate,
-                            const RateOurAppScreen(),
+                            RoutesName.rateOurAppScreen,
                           ),
                           _buildMenuOption(
                             context,
                             "ℹ About Us",
                             Icons.info_outline,
-                            const AboutUsScreen(),
+                            RoutesName.aboutUsScreen,
                           ),
                         ],
                       ),
@@ -102,16 +99,16 @@ class MenuScreen extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: MediaQuery.of(context).size.width * 0.75 - 20,
+                left: MediaQuery.of(context).size.width * 0.75 - 20.w,
                 top: MediaQuery.of(context).size.height * 0.45,
                 child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () => Get.back(),
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: 40.w,
+                    height: 40.h,
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20.r),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
@@ -120,10 +117,10 @@ class MenuScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_forward_ios,
                       color: Colors.white,
-                      size: 20,
+                      size: 20.sp,
                     ),
                   ),
                 ),
@@ -140,25 +137,28 @@ class MenuScreen extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            radius: 30,
+            radius: 30.r,
             backgroundColor: Colors.white.withOpacity(0.2),
             backgroundImage: const AssetImage("assets/profile/avatar.png"),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Hello, User!",
                 style: GoogleFonts.poppins(
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
               ),
               Text(
                 "View Profile",
-                style: GoogleFonts.poppins(fontSize: 14, color: Colors.white70),
+                style: GoogleFonts.poppins(
+                  fontSize: 14.sp,
+                  color: Colors.white70,
+                ),
               ),
             ],
           ),
@@ -171,35 +171,21 @@ class MenuScreen extends StatelessWidget {
     BuildContext context,
     String title,
     IconData icon,
-    Widget screen,
+    String route,
   ) {
     return BounceInLeft(
       child: ListTile(
-        leading: Icon(icon, color: Colors.white, size: 24),
+        leading: Icon(icon, color: Colors.white, size: 24.sp),
         title: Text(
           title,
           style: GoogleFonts.poppins(
-            fontSize: 16,
+            fontSize: 16.sp,
             color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
         ),
         onTap: () {
-          Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => screen,
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              transitionDuration: const Duration(milliseconds: 300),
-            ),
-          );
+          Get.offNamed(route);
         },
       ),
     );

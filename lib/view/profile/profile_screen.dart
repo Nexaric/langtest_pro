@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/view/profile/Help%20&%20Support/help_support.dart';
-import 'package:langtest_pro/view/profile/Help%20&%20Support/report_problem.dart';
-import 'package:langtest_pro/view/profile/Help%20&%20Support/terms_policies.dart';
-import 'package:langtest_pro/view/profile/my_courses.dart';
-import 'package:langtest_pro/view/profile/notifications_settings.dart';
-import 'edit_profile.dart';
+import 'package:get/get.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -25,7 +22,7 @@ class ProfileScreen extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 220,
+              expandedHeight: 220.h,
               floating: false,
               pinned: true,
               backgroundColor: Colors.transparent,
@@ -35,26 +32,26 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30.h),
                         Bounce(
                           infinite: true,
                           from: 10,
                           duration: const Duration(seconds: 2),
                           child: ZoomIn(
                             child: Container(
-                              width: 100,
-                              height: 100,
+                              width: 100.w,
+                              height: 100.h,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: Colors.white.withOpacity(0.5),
-                                  width: 3,
+                                  width: 3.w,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 10,
-                                    spreadRadius: 2,
+                                    blurRadius: 10.w,
+                                    spreadRadius: 2.w,
                                   ),
                                 ],
                               ),
@@ -67,12 +64,12 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         FadeInDown(
                           child: Text(
                             "John Doe",
                             style: GoogleFonts.poppins(
-                              fontSize: 22,
+                              fontSize: 22.sp,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -82,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
                           child: Text(
                             "johndoe@email.com",
                             style: GoogleFonts.poppins(
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               color: Colors.white.withOpacity(0.9),
                             ),
                           ),
@@ -95,11 +92,11 @@ class ProfileScreen extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 20,
-                  left: 20,
-                  right: 20,
-                  bottom: 20,
+                padding: EdgeInsets.only(
+                  top: 20.h,
+                  left: 20.w,
+                  right: 20.w,
+                  bottom: 20.h,
                 ),
                 child: Column(
                   children: [
@@ -112,58 +109,39 @@ class ProfileScreen extends StatelessWidget {
                               label: "Edit",
                               color: Colors.white,
                               iconColor: const Color(0xFF3E1E68),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const EditProfileScreen(),
-                                  ),
-                                );
-                              },
+                              onTap:
+                                  () =>
+                                      Get.toNamed(RoutesName.editProfileScreen),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12.w),
                           Expanded(
                             child: _buildQuickAction(
                               icon: Icons.settings,
                               label: "Settings",
                               color: Colors.white,
                               iconColor: const Color(0xFF3E1E68),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            const NotificationSettingsScreen(),
+                              onTap:
+                                  () => Get.toNamed(
+                                    RoutesName.notificationSettingsScreen,
                                   ),
-                                );
-                              },
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12.w),
                           Expanded(
                             child: _buildQuickAction(
                               icon: Icons.book,
                               label: "Courses",
                               color: Colors.white,
                               iconColor: const Color(0xFF3E1E68),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => const MyCoursesScreen(),
-                                  ),
-                                );
-                              },
+                              onTap:
+                                  () => Get.toNamed(RoutesName.myCoursesScreen),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: 30.h),
                     SlideInRight(
                       child: Column(
                         children: [
@@ -175,74 +153,62 @@ class ProfileScreen extends StatelessWidget {
                                 title: "Help Center",
                                 subtitle: "Get assistance",
                                 color: const Color(0xFF9C27B0),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const HelpSupportScreen(),
+                                onTap:
+                                    () => Get.toNamed(
+                                      RoutesName.helpSupportScreen,
                                     ),
-                                  );
-                                },
                               ),
                               _buildListTile(
                                 icon: Icons.privacy_tip,
                                 title: "Privacy Policy",
                                 subtitle: "Read our terms",
                                 color: const Color(0xFF3F51B5),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const TermsPoliciesScreen(),
+                                onTap:
+                                    () => Get.toNamed(
+                                      RoutesName.termsPoliciesScreen,
                                     ),
-                                  );
-                                },
                               ),
                               _buildListTile(
                                 icon: Icons.report,
                                 title: "Report Issue",
                                 subtitle: "Found a problem?",
                                 color: const Color(0xFFF44336),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              const ReportProblemScreen(),
+                                onTap:
+                                    () => Get.toNamed(
+                                      RoutesName.reportProblemScreen,
                                     ),
-                                  );
-                                },
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    SizedBox(height: 30.h),
                     FadeInUp(
                       child: SizedBox(
                         width: double.infinity,
                         child: OutlinedButton(
                           onPressed: () {
                             // Handle logout
+                            Get.snackbar(
+                              'Logout',
+                              'Logged out successfully!',
+                              backgroundColor: const Color(0xFF3E1E68),
+                              colorText: Colors.white,
+                            );
                           },
                           style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            padding: EdgeInsets.symmetric(vertical: 16.h),
                             side: const BorderSide(color: Colors.white),
                             backgroundColor: Colors.white.withOpacity(0.1),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12.r),
                             ),
                           ),
                           child: Text(
                             "Logout",
                             style: GoogleFonts.poppins(
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
                             ),
@@ -270,26 +236,26 @@ class ProfileScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(vertical: 16.h),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              blurRadius: 10.w,
+              offset: Offset(0, 4.h),
             ),
           ],
         ),
         child: Column(
           children: [
-            Icon(icon, color: iconColor, size: 24),
-            const SizedBox(height: 8),
+            Icon(icon, color: iconColor, size: 24.sp),
+            SizedBox(height: 8.h),
             Text(
               label,
               style: GoogleFonts.poppins(
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
                 color: iconColor,
               ),
@@ -305,16 +271,16 @@ class ProfileScreen extends StatelessWidget {
     required List<Widget> children,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 10.h),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.w),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            blurRadius: 15.w,
+            offset: Offset(0, 5.h),
           ),
         ],
       ),
@@ -322,11 +288,11 @@ class ProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
             child: Text(
               title,
               style: GoogleFonts.poppins(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
@@ -348,18 +314,18 @@ class ProfileScreen extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: Container(
-        width: 40,
-        height: 40,
+        width: 40.w,
+        height: 40.h,
         decoration: BoxDecoration(
           color: color.withOpacity(0.2),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: color, size: 20),
+        child: Icon(icon, color: color, size: 20.sp),
       ),
       title: Text(
         title,
         style: GoogleFonts.poppins(
-          fontSize: 15,
+          fontSize: 15.sp,
           fontWeight: FontWeight.w500,
           color: Colors.white,
         ),
@@ -367,12 +333,16 @@ class ProfileScreen extends StatelessWidget {
       subtitle: Text(
         subtitle,
         style: GoogleFonts.poppins(
-          fontSize: 12,
+          fontSize: 12.sp,
           color: Colors.white.withOpacity(0.7),
         ),
       ),
-      trailing: Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.6)),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      trailing: Icon(
+        Icons.chevron_right,
+        color: Colors.white.withOpacity(0.6),
+        size: 20.sp,
+      ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
     );
   }
 }
