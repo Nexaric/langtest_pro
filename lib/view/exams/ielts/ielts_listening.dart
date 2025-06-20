@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
-import 'package:langtest_pro/view/exams/ielts/listening/feedback.dart';
-import 'package:langtest_pro/view/exams/ielts/listening/practice_tests/practice_test_screen.dart';
-import 'package:langtest_pro/view/exams/ielts/listening/strategies_tips.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/controller/listening_progress_provider.dart';
 
@@ -35,7 +31,7 @@ class IeltsListeningScreen extends StatelessWidget {
                     size: 20,
                     color: Colors.white,
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Get.back(),
                 )
                 : null,
       ),
@@ -80,13 +76,7 @@ class IeltsListeningScreen extends StatelessWidget {
                     FadeInUp(
                       child: GestureDetector(
                         onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const AudioLessonsScreen(),
-                              ),
-                            ),
+                            () => Get.offNamed(RoutesName.audioLessonsScreen),
                         child: _buildFeatureCard(
                           Icons.headset_rounded,
                           "Audio Lessons",
@@ -99,13 +89,7 @@ class IeltsListeningScreen extends StatelessWidget {
                       delay: const Duration(milliseconds: 50),
                       child: GestureDetector(
                         onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const PracticeTestScreen(),
-                              ),
-                            ),
+                            () => Get.offNamed(RoutesName.practiceTestScreen),
                         child: _buildFeatureCard(
                           Icons.quiz_rounded,
                           "Practice Tests",
@@ -117,13 +101,7 @@ class IeltsListeningScreen extends StatelessWidget {
                     FadeInUp(
                       delay: const Duration(milliseconds: 100),
                       child: GestureDetector(
-                        onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const FeedbackScreen(),
-                              ),
-                            ),
+                        onTap: () => Get.offNamed(RoutesName.feedbackScreen),
                         child: _buildFeatureCard(
                           Icons.feedback_rounded,
                           "Feedback",
@@ -136,12 +114,7 @@ class IeltsListeningScreen extends StatelessWidget {
                       delay: const Duration(milliseconds: 150),
                       child: GestureDetector(
                         onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => StrategiesTipsScreen(),
-                              ),
-                            ),
+                            () => Get.offNamed(RoutesName.strategiesTipsScreen),
                         child: _buildFeatureCard(
                           Icons.lightbulb_rounded,
                           "Tips",
@@ -280,4 +253,11 @@ class IeltsListeningScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class RoutesName {
+  static const String audioLessonsScreen = '/audio_lessons';
+  static const String practiceTestScreen = '/practice_test';
+  static const String feedbackScreen = '/feedback';
+  static const String strategiesTipsScreen = '/strategies_tips';
 }
