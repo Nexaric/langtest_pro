@@ -3,22 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_list_screen.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_data.dart';
 import 'package:lottie/lottie.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_1.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_2.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_3.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_4.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_5.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_6.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_7.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_1.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_2.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_3.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_4.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_5.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_6.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_7.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_list_screen.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_screen.dart';
 
 class WritingResultScreen extends StatelessWidget {
   final double score;
@@ -37,168 +25,18 @@ class WritingResultScreen extends StatelessWidget {
   });
 
   Widget getCurrentLessonWidget() {
-    switch (lessonData['id']) {
-      case 'formal_letter_1':
-        return FormalLetterLesson1(lessonData: lessonData);
-      case 'formal_letter_2':
-        return FormalLetterLesson2(lessonData: lessonData);
-      case 'formal_letter_3':
-        return FormalLetterLesson3(lessonData: lessonData);
-      case 'formal_letter_4':
-        return FormalLetterLesson4(lessonData: lessonData);
-      case 'formal_letter_5':
-        return FormalLetterLesson5(lessonData: lessonData);
-      case 'formal_letter_6':
-        return FormalLetterLesson6(lessonData: lessonData);
-      case 'formal_letter_7':
-        return FormalLetterLesson7(lessonData: lessonData);
-      case 'informal_letter_1':
-        return InformalLetterLesson1(lessonData: lessonData);
-      case 'informal_letter_2':
-        return InformalLetterLesson2(lessonData: lessonData);
-      case 'informal_letter_3':
-        return InformalLetterLesson3(lessonData: lessonData);
-      case 'informal_letter_4':
-        return InformalLetterLesson4(lessonData: lessonData);
-      case 'informal_letter_5':
-        return InformalLetterLesson5(lessonData: lessonData);
-      case 'informal_letter_6':
-        return InformalLetterLesson6(lessonData: lessonData);
-      case 'informal_letter_7':
-        return InformalLetterLesson7(lessonData: lessonData);
-      default:
-        return Container();
-    }
+    return LetterScreen(lessonData: lessonData);
   }
 
   Widget? getNextLessonWidget() {
-    final currentId = lessonData['id'] as String;
-    final lessonNumber = int.parse(currentId.split('_').last);
-    final isFormal = currentId.startsWith('formal_letter_');
-
-    if (isFormal) {
-      if (lessonNumber < 7) {
-        return _getFormalLessonWidget(lessonNumber + 1);
-      } else {
-        return InformalLetterLesson1(
-          lessonData: {
-            'id': 'informal_letter_1',
-            'title': 'Inviting a Friend',
-            'subtitle': 'Write a friendly invitation letter.',
-            'duration': '15 min',
-            'intId': 8,
-          },
-        );
-      }
-    } else {
-      if (lessonNumber < 7) {
-        return _getInformalLessonWidget(lessonNumber + 1);
-      } else {
-        return null; // No next lesson after informal_letter_7
-      }
+    final currentIntId = lessonData['intId'] as int;
+    if (currentIntId < letterLessons.length) {
+      final nextLesson = letterLessons.firstWhere(
+        (lesson) => lesson['intId'] == currentIntId + 1,
+      );
+      return LetterScreen(lessonData: nextLesson);
     }
-  }
-
-  Widget _getFormalLessonWidget(int lessonNumber) {
-    final lessonDataMap = {
-      'id': 'formal_letter_$lessonNumber',
-      'title':
-          lessonNumber == 2
-              ? 'Request for Information'
-              : lessonNumber == 3
-              ? 'Job Application'
-              : lessonNumber == 4
-              ? 'Reporting a Problem'
-              : lessonNumber == 5
-              ? 'Making a Recommendation'
-              : lessonNumber == 6
-              ? 'Requesting Permission'
-              : 'Giving Feedback',
-      'subtitle':
-          lessonNumber == 2
-              ? 'Practice requesting information formally.'
-              : lessonNumber == 3
-              ? 'Craft a professional job application letter.'
-              : lessonNumber == 4
-              ? 'Report issues in a formal tone.'
-              : lessonNumber == 5
-              ? 'Write a formal recommendation letter.'
-              : lessonNumber == 6
-              ? 'Request permission formally.'
-              : 'Provide formal feedback effectively.',
-      'duration': lessonNumber == 3 ? '25 min' : '20 min',
-      'intId': lessonNumber,
-    };
-    switch (lessonNumber) {
-      case 2:
-        return FormalLetterLesson2(lessonData: lessonDataMap);
-      case 3:
-        return FormalLetterLesson3(lessonData: lessonDataMap);
-      case 4:
-        return FormalLetterLesson4(lessonData: lessonDataMap);
-      case 5:
-        return FormalLetterLesson5(lessonData: lessonDataMap);
-      case 6:
-        return FormalLetterLesson6(lessonData: lessonDataMap);
-      case 7:
-        return FormalLetterLesson7(lessonData: lessonDataMap);
-      default:
-        return Container();
-    }
-  }
-
-  Widget _getInformalLessonWidget(int lessonNumber) {
-    final lessonDataMap = {
-      'id': 'informal_letter_$lessonNumber',
-      'title':
-          lessonNumber == 1
-              ? 'Inviting a Friend'
-              : lessonNumber == 2
-              ? 'Thanking a Friend'
-              : lessonNumber == 3
-              ? 'Apologizing'
-              : lessonNumber == 4
-              ? 'Giving Advice'
-              : lessonNumber == 5
-              ? 'Sharing News'
-              : lessonNumber == 6
-              ? 'Requesting a Favor'
-              : 'Reconnecting with an Old Friend',
-      'subtitle':
-          lessonNumber == 1
-              ? 'Write a friendly invitation letter.'
-              : lessonNumber == 2
-              ? 'Express gratitude in an informal letter.'
-              : lessonNumber == 3
-              ? 'Write an informal apology letter.'
-              : lessonNumber == 4
-              ? 'Offer advice in a friendly tone.'
-              : lessonNumber == 5
-              ? 'Share personal updates informally.'
-              : lessonNumber == 6
-              ? 'Ask for a favor in an informal way.'
-              : 'Reconnect with a friend informally.',
-      'duration': '15 min',
-      'intId': lessonNumber + 7,
-    };
-    switch (lessonNumber) {
-      case 1:
-        return InformalLetterLesson1(lessonData: lessonDataMap);
-      case 2:
-        return InformalLetterLesson2(lessonData: lessonDataMap);
-      case 3:
-        return InformalLetterLesson3(lessonData: lessonDataMap);
-      case 4:
-        return InformalLetterLesson4(lessonData: lessonDataMap);
-      case 5:
-        return InformalLetterLesson5(lessonData: lessonDataMap);
-      case 6:
-        return InformalLetterLesson6(lessonData: lessonDataMap);
-      case 7:
-        return InformalLetterLesson7(lessonData: lessonDataMap);
-      default:
-        return Container();
-    }
+    return null;
   }
 
   void _showCompletionDialog(BuildContext context) {
@@ -221,13 +59,13 @@ class WritingResultScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Lottie.asset(
-                  'assets/animations/success.json', // Using success.json for celebration
+                  'assets/animations/success.json',
                   height: 120,
                   repeat: false,
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "You've completed all 14 letter lessons!",
+                  "You've completed all ${letterLessons.length} letter lessons!",
                   style: GoogleFonts.poppins(fontSize: 16, height: 1.5),
                   textAlign: TextAlign.center,
                 ),
@@ -245,7 +83,7 @@ class WritingResultScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const LetterListScreen(),
@@ -272,8 +110,7 @@ class WritingResultScreen extends StatelessWidget {
     final isLetterLesson = taskType == "Letter";
     final points = isLetterLesson && wordCount > 0 ? wordCount ~/ 5 : 0;
 
-    // Show completion dialog for the 14th lesson
-    if (isLetterLesson && lessonData['intId'] == 14) {
+    if (isLetterLesson && lessonData['intId'] == letterLessons.length) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showCompletionDialog(context);
       });
@@ -295,7 +132,6 @@ class WritingResultScreen extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Background elements
             Positioned(
               top: -50,
               right: -50,
@@ -315,11 +151,8 @@ class WritingResultScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Main content
             Column(
               children: [
-                // Top bar
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 40, 16, 16),
                   decoration: const BoxDecoration(
@@ -347,12 +180,10 @@ class WritingResultScreen extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(width: 48), // For balance
+                      const SizedBox(width: 48),
                     ],
                   ),
                 ),
-
-                // Main content
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
@@ -360,8 +191,6 @@ class WritingResultScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const SizedBox(height: 24),
-
-                        // Score card with glassmorphism
                         FadeInUp(
                           delay: const Duration(milliseconds: 100),
                           child: GlassCard(
@@ -380,8 +209,6 @@ class WritingResultScreen extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(height: 16),
-
-                                  // Animated score display
                                   Stack(
                                     alignment: Alignment.center,
                                     children: [
@@ -424,10 +251,7 @@ class WritingResultScreen extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-
                                   const SizedBox(height: 24),
-
-                                  // Task info
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
@@ -521,10 +345,7 @@ class WritingResultScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 24),
-
-                        // Feedback section
                         FadeInUp(
                           delay: const Duration(milliseconds: 200),
                           child: GlassCard(
@@ -566,10 +387,7 @@ class WritingResultScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 32),
-
-                        // Score interpretation
                         if (isHighScore)
                           FadeInUp(
                             delay: const Duration(milliseconds: 300),
@@ -638,10 +456,7 @@ class WritingResultScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-
                         const SizedBox(height: 32),
-
-                        // Action buttons
                         FadeInUp(
                           delay: const Duration(milliseconds: 400),
                           child: Row(
@@ -651,14 +466,14 @@ class WritingResultScreen extends StatelessWidget {
                                   onPressed: () {
                                     final nextLesson = getNextLessonWidget();
                                     if (nextLesson != null) {
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) => nextLesson,
                                         ),
                                       );
                                     } else {
-                                      Navigator.pushReplacement(
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder:
@@ -686,7 +501,8 @@ class WritingResultScreen extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        lessonData['intId'] == 14
+                                        lessonData['intId'] ==
+                                                letterLessons.length
                                             ? "Back to Letter List"
                                             : "Next Lesson",
                                         style: GoogleFonts.poppins(
@@ -701,14 +517,12 @@ class WritingResultScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-
                         const SizedBox(height: 16),
-
                         FadeInUp(
                           delay: const Duration(milliseconds: 500),
                           child: TextButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
+                              Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => getCurrentLessonWidget(),
@@ -737,7 +551,6 @@ class WritingResultScreen extends StatelessWidget {
   }
 }
 
-// Glassmorphism card widget
 class GlassCard extends StatelessWidget {
   final Widget child;
   final double borderRadius;

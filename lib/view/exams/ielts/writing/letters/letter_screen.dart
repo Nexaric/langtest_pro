@@ -1,28 +1,30 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/writing_result.dart';
+import 'letter_data.dart';
 
-class FormalLetterLesson6 extends StatefulWidget {
+class LetterScreen extends StatefulWidget {
   final Map<String, dynamic> lessonData;
 
-  const FormalLetterLesson6({super.key, required this.lessonData});
+  const LetterScreen({super.key, required this.lessonData});
 
   @override
-  State<FormalLetterLesson6> createState() => _FormalLetterLesson6State();
+  State<LetterScreen> createState() => _LetterScreenState();
 }
 
-class _FormalLetterLesson6State extends State<FormalLetterLesson6>
+class _LetterScreenState extends State<LetterScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   // Controllers
   final TextEditingController _letterController = TextEditingController();
+  final WritingProgressController _progressController =
+      Get.find<WritingProgressController>();
 
   // Animation Controllers
   late final AnimationController _saveAnimationController;
@@ -41,57 +43,17 @@ class _FormalLetterLesson6State extends State<FormalLetterLesson6>
   late File _letterFile;
 
   // Task content
-  final Map<String, dynamic> _task = {
-    'title': 'Requesting Information',
-    'icon': Icons.edit,
-    'question':
-        'You are interested in attending a training course offered by a company. Write a letter to the company requesting more information about the course details, including dates, costs, and content.',
-    'sampleAnswer': '''
-📝 Sample Answer
-
-Dear Sir/Madam,
-
-I am writing to inquire about the details of the Project Management Training Course advertised on your website. I am keen to enhance my professional skills and believe this course would be highly beneficial.
-
-Could you please provide further information regarding the course schedule, including start and end dates? Additionally, I would appreciate details on the total cost, including any available discounts, and an overview of the course content.
-
-Please send the information to my email address or contact me at 01234 567890. I look forward to your response.
-
-Yours faithfully,
-James Carter
-
-(105 words)
-''',
-    'tips': '''
-💡 Expert Tips
-
-1. Structure:
-   - Sender Address: Your address at the top
-   - Date: Below your address
-   - Receiver Address: Company name or department
-   - Salutation: Use "Dear Sir/Madam" or specific contact
-   - Body: State purpose, request details, provide contact info
-   - Closing: Use "Yours faithfully" or "Yours sincerely"
-
-2. Tone:
-   - Be polite and professional
-   - Avoid vague or demanding language
-
-3. Content:
-   - Clearly state the course or topic of interest
-   - Specify the information needed (e.g., dates, costs)
-   - Include your contact details for follow-up
-
-4. Length:
-   - Aim for 100-150 words
-   - Be concise but clear
-''',
-  };
+  late Map<String, dynamic> _task;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    // Initialize task data
+    _task = letterLessons.firstWhere(
+      (lesson) => lesson['id'] == widget.lessonData['id'],
+    );
 
     // Initialize animation controllers
     _saveAnimationController = AnimationController(
@@ -118,7 +80,7 @@ James Carter
     try {
       final directory = await getApplicationDocumentsDirectory();
       _storagePath = directory.path;
-      _letterFile = File('$_storagePath/formal_letter_6.json');
+      _letterFile = File('$_storagePath/${_task['id']}.json');
     } catch (e) {
       debugPrint('Error initializing storage: $e');
     }
@@ -191,7 +153,7 @@ James Carter
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to save response: $e'),
+            content: Text('Error saving response: $e'),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
@@ -232,9 +194,13 @@ James Carter
       await _saveResponse();
 
       final score = _calculateScore(_letterController.text);
-      Get.find<WritingProgressController>().completeLetterLesson(
-        widget.lessonData['id'],
-      );
+      if (_task['type'] == 'Formal') {
+        _progressController.completeLetterLesson(widget.lessonData['id']);
+      } else {
+        _progressController.completeLesson(
+          _parseLessonId(widget.lessonData['id']),
+        );
+      }
 
       await Future.delayed(const Duration(milliseconds: 500));
 
@@ -249,6 +215,7 @@ James Carter
                 score: score,
                 feedback: _generateFeedback(score),
                 taskType: widget.lessonData['title'],
+                wordCount: _wordCount,
                 lessonData: widget.lessonData,
               ),
           transitionsBuilder: (_, animation, __, child) {
@@ -289,21 +256,41 @@ James Carter
   }
 
   double _calculateScore(String text) {
-    final wordCount = text.split(' ').length;
+    final wordCount = _countWords(text);
     final sentenceCount = text.split('.').length - 1;
-    final wordScore = (wordCount / 100).clamp(0.0, 1.0) * 3;
+    final targetWords = _task['type'] == 'Formal' ? 100 : 80;
+    final wordScore = (wordCount / targetWords).clamp(0.0, 1.0) * 3;
     final sentenceScore = (sentenceCount / 4).clamp(0.0, 1.0) * 2;
     return 4.0 + wordScore + sentenceScore + (Random().nextDouble() * 1.5);
   }
 
   String _generateFeedback(double score) {
-    if (score >= 8.0) {
-      return "Excellent inquiry letter! Your request is clear, polite, and well-structured.";
-    } else if (score >= 6.0) {
-      return "Good effort. Specify more details or maintain a formal tone.";
+    if (_task['type'] == 'Formal') {
+      if (score >= 8.0) {
+        return "Excellent formal letter! Your tone is professional, and the content is clear and well-structured.";
+      } else if (score >= 6.0) {
+        return "Good effort. Ensure a formal tone and include specific details for clarity.";
+      } else {
+        return "Needs improvement. Focus on formal language and detailed explanations.";
+      }
     } else {
-      return "Needs improvement. Focus on clarity and providing specific requests.";
+      if (score >= 8.0) {
+        return "Excellent informal letter! Your tone is warm, engaging, and includes relevant details.";
+      } else if (score >= 6.0) {
+        return "Good effort. Add a more personal touch or include more specific details.";
+      } else {
+        return "Needs improvement. Use a friendlier tone and provide clear details.";
+      }
     }
+  }
+
+  int _parseLessonId(dynamic id) {
+    if (id is int) return id;
+    if (id is String) {
+      final match = RegExp(r'\d+').firstMatch(id);
+      return match != null ? int.parse(match.group(0)!) : 8;
+    }
+    return 8;
   }
 
   Future<void> _deleteResponse() async {
@@ -364,7 +351,7 @@ James Carter
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title at the top
+          // Title
           Text(
             _task['title'],
             style: GoogleFonts.poppins(
@@ -501,9 +488,7 @@ James Carter
                     children: [
                       Tooltip(
                         message:
-                            'Word count: $_wordCount\n'
-                            'Characters: ${_letterController.text.length}\n'
-                            'Last saved: ${_getLastModifiedTime()}',
+                            'Word count: $_wordCount\nCharacters: ${_letterController.text.length}\nLast saved: ${_getLastModifiedTime()}',
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -511,13 +496,15 @@ James Carter
                           ),
                           decoration: BoxDecoration(
                             color:
-                                _wordCount >= 100
+                                _wordCount >=
+                                        (_task['type'] == 'Formal' ? 100 : 80)
                                     ? Colors.green[50]
                                     : Colors.orange[50],
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color:
-                                  _wordCount >= 100
+                                  _wordCount >=
+                                          (_task['type'] == 'Formal' ? 100 : 80)
                                       ? Colors.green[100]!
                                       : Colors.orange[100]!,
                             ),
@@ -529,7 +516,10 @@ James Carter
                                 Icons.text_fields,
                                 size: 14,
                                 color:
-                                    _wordCount >= 100
+                                    _wordCount >=
+                                            (_task['type'] == 'Formal'
+                                                ? 100
+                                                : 80)
                                         ? Colors.green[700]
                                         : Colors.orange[700],
                               ),
@@ -539,16 +529,22 @@ James Carter
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.bold,
                                   color:
-                                      _wordCount >= 100
+                                      _wordCount >=
+                                              (_task['type'] == 'Formal'
+                                                  ? 100
+                                                  : 80)
                                           ? Colors.green[700]
                                           : Colors.orange[700],
                                 ),
                               ),
                               Text(
-                                '/100',
+                                '/${_task['type'] == 'Formal' ? '100' : '80'}',
                                 style: GoogleFonts.poppins(
                                   color:
-                                      _wordCount >= 100
+                                      _wordCount >=
+                                              (_task['type'] == 'Formal'
+                                                  ? 100
+                                                  : 80)
                                           ? Colors.green[700]
                                           : Colors.orange[700],
                                 ),
@@ -592,7 +588,6 @@ James Carter
             spacing: 12,
             runSpacing: 12,
             children: [
-              // Tips Button
               _buildActionButton(
                 icon: Icons.lightbulb_outline,
                 label: _showTips ? 'Hide Tips' : 'Show Tips',
@@ -604,8 +599,6 @@ James Carter
                   });
                 },
               ),
-
-              // Sample Answer Button
               _buildActionButton(
                 icon: Icons.visibility_outlined,
                 label: _showSample ? 'Hide Sample' : 'Show Sample Answer',
@@ -617,8 +610,6 @@ James Carter
                   });
                 },
               ),
-
-              // Submit Button
               ElevatedButton(
                 onPressed: _isSubmitting ? null : _submitResponse,
                 style: ElevatedButton.styleFrom(
@@ -709,12 +700,10 @@ James Carter
   String _getLastModifiedTime() {
     try {
       if (!_letterFile.existsSync()) return 'Not saved yet';
-
       final stat = _letterFile.statSync();
       final modified = stat.modified;
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
-
       if (modified.isAfter(today)) {
         return 'Today at ${modified.hour}:${modified.minute.toString().padLeft(2, '0')}';
       } else {
@@ -794,7 +783,7 @@ James Carter
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: Text(
-          'IELTS Writing: Formal Letter 6',
+          'IELTS Writing: ${_task['type']} Letter ${widget.lessonData['intId'] - (_task['type'] == 'Formal' ? 0 : 7)}',
           style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,

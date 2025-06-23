@@ -62,10 +62,7 @@ class HelpSupportScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16.h),
-                _buildFAQTile(
-                  "How to reset my password?",
-                  "Go to settings → Change Password.",
-                ),
+
                 _buildFAQTile(
                   "How do I access my purchased courses?",
                   "Navigate to 'My Courses' in the profile section.",
@@ -91,16 +88,6 @@ class HelpSupportScreen extends StatelessWidget {
                   Icons.email,
                   "Email Us",
                   "support@langtestpro.com",
-                ),
-                _buildSupportOption(
-                  Icons.call,
-                  "Call Support",
-                  "+1 800 123 4567",
-                ),
-                _buildSupportOption(
-                  Icons.chat,
-                  "Live Chat",
-                  "Chat with our support team",
                 ),
                 SizedBox(height: 30.h),
                 FadeInRight(

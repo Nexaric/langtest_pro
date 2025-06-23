@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_1.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_2.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_3.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_4.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_5.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_6.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/formal_letter/formal_letter_7.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_1.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_2.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_3.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_4.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_5.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_6.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/informal_letter/informal_letter_7.dart';
-import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_data.dart';
+import 'package:lottie/lottie.dart';
 import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_screen.dart';
 
 class LetterListScreen extends StatelessWidget {
   const LetterListScreen({super.key});
@@ -84,7 +72,7 @@ class LetterListScreen extends StatelessWidget {
                                 backgroundColor: theme.colorScheme.primary
                                     .withOpacity(0.2),
                                 label: Text(
-                                  "${(completedLetterLessons / 14 * 100).round()}% Complete",
+                                  "${(completedLetterLessons / letterLessons.length * 100).round()}% Complete",
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     color: theme.colorScheme.primary,
@@ -112,7 +100,8 @@ class LetterListScreen extends StatelessWidget {
                                 width:
                                     MediaQuery.of(context).size.width *
                                     0.9 *
-                                    (completedLetterLessons / 14),
+                                    (completedLetterLessons /
+                                        letterLessons.length),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
@@ -145,7 +134,7 @@ class LetterListScreen extends StatelessWidget {
                           _buildStatCard(
                             context,
                             "Next Letter",
-                            completedLetterLessons < 14
+                            completedLetterLessons < letterLessons.length
                                 ? "Letter ${completedLetterLessons + 1}"
                                 : "All Done!",
                             Iconsax.arrow_up,
@@ -161,30 +150,23 @@ class LetterListScreen extends StatelessWidget {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  _buildSectionHeader(
-                    context,
-                    "✍️ Letter Writing Lessons",
-                    "7 Formal + 7 Informal Letters",
-                  ),
-                  ...List.generate(14, (index) {
-                    final letterId = index + 1;
-                    return FadeInUp(
-                      delay: Duration(milliseconds: 100 * index),
-                      child: _buildLetterCard(
-                        context,
-                        letterId,
-                        _getLetterTitle(letterId),
-                        _getLetterSubtitle(letterId),
-                        letterId <=
-                            completedLetterLessons + 1, // Sequential unlocking
-                        progressController.isLetterLessonCompleted(letterId),
-                        _getLetterIcon(letterId),
-                        progressController,
-                      ),
-                    );
-                  }),
-                ]),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final lesson = letterLessons[index];
+                  final letterId = lesson['intId'] as int;
+                  return FadeInUp(
+                    delay: Duration(milliseconds: 100 * index),
+                    child: _buildLetterCard(
+                      context,
+                      letterId,
+                      lesson['title'] as String,
+                      lesson['question'] as String,
+                      letterId <= completedLetterLessons + 1,
+                      progressController.isLetterLessonCompleted(letterId),
+                      lesson['icon'] as IconData,
+                      progressController,
+                    ),
+                  );
+                }, childCount: letterLessons.length),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
@@ -455,14 +437,26 @@ class LetterListScreen extends StatelessWidget {
     WritingProgressController controller,
     bool isCompleted,
   ) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => _getLetterScreen(letterId)),
-    ).then((_) {
-      if (controller.isLetterLessonCompleted(letterId) && !isCompleted) {
-        _showLetterCompleteDialog(context, letterId);
-      }
-    });
+    final lesson = letterLessons.firstWhere(
+      (lesson) => lesson['intId'] == letterId,
+      orElse: () => <String, dynamic>{},
+    );
+    if (lesson.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LetterScreen(lessonData: lesson),
+        ),
+      ).then((_) {
+        if (controller.isLetterLessonCompleted(letterId) && !isCompleted) {
+          _showLetterCompleteDialog(context, letterId);
+        }
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: Lesson $letterId not found')),
+      );
+    }
   }
 
   void _showLetterCompleteDialog(BuildContext context, int letterId) {
@@ -487,7 +481,7 @@ class LetterListScreen extends StatelessWidget {
                   style: GoogleFonts.poppins(),
                   textAlign: TextAlign.center,
                 ),
-                if (letterId < 14)
+                if (letterId < letterLessons.length)
                   Text(
                     "Letter ${letterId + 1} is now unlocked!",
                     style: GoogleFonts.poppins(
@@ -529,7 +523,7 @@ class LetterListScreen extends StatelessWidget {
                     _buildAchievementItem(
                       context,
                       "Letter Beginner",
-                      "Complete Letter 1: Formal Complaint",
+                      "Complete Letter 1: Complaint About Product",
                       completedLetterLessons >= 1,
                       Iconsax.edit_2,
                     ),
@@ -543,7 +537,7 @@ class LetterListScreen extends StatelessWidget {
                     _buildAchievementItem(
                       context,
                       "Informal Letter Starter",
-                      "Complete Letter 8: Informal Invitation",
+                      "Complete Letter 8: Inviting a Friend",
                       completedLetterLessons >= 8,
                       Iconsax.star,
                     ),
@@ -611,114 +605,5 @@ class LetterListScreen extends StatelessWidget {
               )
               : null,
     );
-  }
-
-  String _getLetterTitle(int letterId) {
-    const titles = [
-      "Formal: Complaint About Product",
-      "Formal: Request for Information",
-      "Formal: Job Application",
-      "Formal: Course Inquiry",
-      "Formal: Complaint About Service",
-      "Formal: Meeting Request",
-      "Formal: Apology for Delay",
-      "Informal: Inviting a Friend",
-      "Informal: Thanking a Friend",
-      "Informal: Apologizing",
-      "Informal: Giving Advice",
-      "Informal: Sharing News",
-      "Informal: Making Plans",
-      "Informal: Catch-up Letter",
-    ];
-    return titles[letterId - 1];
-  }
-
-  String _getLetterSubtitle(int letterId) {
-    const subtitles = [
-      "Write a formal complaint",
-      "Request detailed information",
-      "Apply for a position",
-      "Inquire about a course",
-      "Address poor service",
-      "Arrange a formal meeting",
-      "Apologize formally",
-      "Invite a friend to a party",
-      "Thank a friend for help",
-      "Apologize for missing an event",
-      "Advise a friend on moving",
-      "Share news about a new job",
-      "Suggest a weekend trip",
-      "Catch up with a friend",
-    ];
-    return subtitles[letterId - 1];
-  }
-
-  IconData _getLetterIcon(int letterId) {
-    const icons = [
-      Iconsax.message_minus, // Formal Complaint
-      Iconsax.info_circle, // Formal Request
-      Iconsax.briefcase, // Formal Application
-      Iconsax.book, // Formal Inquiry
-      Iconsax.message_remove, // Formal Complaint
-      Iconsax.calendar_1, // Formal Request
-      Iconsax.message_text, // Formal Apology
-      Iconsax.card, // Informal Invitation
-      Iconsax.heart, // Informal Thank You
-      Iconsax.message_edit, // Informal Apology
-      Iconsax.message_question, // Informal Advice
-      Iconsax.messages_1, // Informal Sharing News
-      Iconsax.map, // Informal Making Plans
-      Iconsax.message_2, // Informal Catch-up Letter
-    ];
-    return icons[letterId - 1];
-  }
-
-  Widget _getLetterScreen(int letterId) {
-    final lessonData = {'id': letterId, 'title': _getLetterTitle(letterId)};
-    switch (letterId) {
-      case 1:
-        return FormalLetterLesson1(lessonData: lessonData);
-      case 2:
-        return FormalLetterLesson2(lessonData: lessonData);
-      case 3:
-        return FormalLetterLesson3(lessonData: lessonData);
-      case 4:
-        return FormalLetterLesson4(lessonData: lessonData);
-      case 5:
-        return FormalLetterLesson5(lessonData: lessonData);
-      case 6:
-        return FormalLetterLesson6(lessonData: lessonData);
-      case 7:
-        return FormalLetterLesson7(lessonData: lessonData);
-      case 8:
-        return InformalLetterLesson1(lessonData: lessonData);
-      case 9:
-        return InformalLetterLesson2(lessonData: lessonData);
-      case 10:
-        return InformalLetterLesson3(lessonData: lessonData);
-      case 11:
-        return InformalLetterLesson4(lessonData: lessonData);
-      case 12:
-        return InformalLetterLesson5(lessonData: lessonData);
-      case 13:
-        return InformalLetterLesson6(lessonData: lessonData);
-      case 14:
-        return InformalLetterLesson7(lessonData: lessonData);
-      default:
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              "Letter $letterId",
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-            ),
-          ),
-          body: Center(
-            child: Text(
-              "Letter $letterId: ${_getLetterTitle(letterId)}",
-              style: GoogleFonts.poppins(fontSize: 18),
-            ),
-          ),
-        );
-    }
   }
 }

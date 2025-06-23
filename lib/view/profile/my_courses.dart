@@ -10,13 +10,6 @@ import '../exams/toefl/toefl_screen.dart';
 
 class MyCoursesController extends GetxController {
   var purchasedCourses = <String>[].obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    // Simulate loading purchased courses
-    // purchasedCourses.addAll(['IELTS', 'TOEFL']);
-  }
 }
 
 class MyCoursesScreen extends StatelessWidget {

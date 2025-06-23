@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/profile/profile_screen.dart';
-import 'package:langtest_pro/view/subscriptions/subscription_screen.dart';
 
 class SubscriptionStatusScreen extends StatefulWidget {
   const SubscriptionStatusScreen({super.key});

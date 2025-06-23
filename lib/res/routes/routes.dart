@@ -7,8 +7,6 @@ import 'package:langtest_pro/view/home/side_menu/rate_our_app.dart';
 import 'package:langtest_pro/view/home/side_menu/share_app.dart';
 import 'package:langtest_pro/view/profile/edit_profile.dart';
 import 'package:langtest_pro/view/profile/my_courses.dart';
-import 'package:langtest_pro/view/profile/notifications_settings.dart';
-import 'package:langtest_pro/view/profile/preferences_screen.dart';
 import 'package:langtest_pro/view/profile/profile_screen.dart';
 import 'package:langtest_pro/view/profile/Help%20&%20Support/help_support.dart';
 import 'package:langtest_pro/view/profile/Help%20&%20Support/report_problem.dart';
@@ -52,14 +50,6 @@ class AppRoutes {
     GetPage(
       name: RoutesName.myCoursesScreen,
       page: () => const MyCoursesScreen(),
-    ),
-    GetPage(
-      name: RoutesName.notificationSettingsScreen,
-      page: () => const NotificationSettingsScreen(),
-    ),
-    GetPage(
-      name: RoutesName.preferencesScreen,
-      page: () => const PreferencesScreen(),
     ),
     GetPage(
       name: RoutesName.helpSupportScreen,

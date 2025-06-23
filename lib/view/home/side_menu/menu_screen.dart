@@ -82,12 +82,6 @@ class MenuScreen extends StatelessWidget {
                           ),
                           _buildMenuOption(
                             context,
-                            "⭐ Rate Our App",
-                            Icons.star_rate,
-                            RoutesName.rateOurAppScreen,
-                          ),
-                          _buildMenuOption(
-                            context,
                             "ℹ About Us",
                             Icons.info_outline,
                             RoutesName.aboutUsScreen,

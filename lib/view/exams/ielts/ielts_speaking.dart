@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/view/exams/ielts/speaking/part1_introduction_interview.dart';
-import 'package:langtest_pro/view/exams/ielts/speaking/part2_cue_card.dart';
-import 'package:langtest_pro/view/exams/ielts/speaking/part3_discussion.dart';
 
 class IeltsSpeakingScreen extends StatelessWidget {
   const IeltsSpeakingScreen({super.key});
@@ -49,30 +46,6 @@ class IeltsSpeakingScreen extends StatelessWidget {
                 // Header Section
                 FadeInDown(child: _buildHeader()),
 
-                const SizedBox(height: 20),
-
-                // Speaking Sections (Modern Cards)
-                _buildSectionCard(
-                  context,
-                  "🗣 Part 1: Introduction & Interview",
-                  "Practice answering common personal questions.",
-                  Colors.blue,
-                  Part1IntroductionInterviewScreen(), // Navigation to Part 1
-                ),
-                _buildSectionCard(
-                  context,
-                  "🎤 Part 2: Cue Card",
-                  "Prepare and speak on a given topic within 2 minutes.",
-                  Colors.green,
-                  Part2CueCardScreen(), // Navigation to Part 2
-                ),
-                _buildSectionCard(
-                  context,
-                  "💬 Part 3: Discussion",
-                  "Discuss abstract ideas related to Part 2 topic.",
-                  Colors.orange,
-                  Part3DiscussionScreen(), // Navigation to Part 3
-                ),
                 const SizedBox(height: 20),
 
                 // AI Speaking Practice Button
