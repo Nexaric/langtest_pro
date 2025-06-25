@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/core/loading/internet_signel_low.dart';
@@ -12,7 +13,6 @@ import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'audio_result.dart';
 import 'questions/question_manager.dart';
-import '../../../../../controller/listening_progress_provider.dart';
 
 class AudioScreen extends StatefulWidget {
   final Map<String, dynamic> lesson;
@@ -72,41 +72,36 @@ class _AudioScreenState extends State<AudioScreen> {
   }
 
   Future<void> _loadAudio() async {
-    await fetchAudioFromSupabase(
-      'lesson${widget.lesson["lessonId"]}.mp3',
-    );
+    await fetchAudioFromSupabase('lesson${widget.lesson["lessonId"]}.mp3');
     _initAudio();
     _loadQuestions();
   }
 
+  Future<void> fetchAudioFromSupabase(String firebasePath) async {
+    try {
+      debugPrint('Fetching audio from Supabase: $firebasePath');
+      final response = await Supabase.instance.client.storage
+          .from('audio')
+          .download(firebasePath);
 
+      // Save the response (bytes) to a temp file
+      final bytes = response;
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${firebasePath.split('/').last}');
+      await file.writeAsBytes(bytes);
 
-Future<void> fetchAudioFromSupabase(String firebasePath) async {
-  try {
-    debugPrint('Fetching audio from Supabase: $firebasePath');
-    final response = await Supabase.instance.client.storage
-        .from('audio')
-        .download(firebasePath);
-
-    // Save the response (bytes) to a temp file
-    final bytes = response;
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/${firebasePath.split('/').last}');
-    await file.writeAsBytes(bytes);
-
-    setState(() {
-      audioPath = file.path; // Use this path in your audio player
-      _isAudioLoading = false;
-    });
-  } catch (e) {
-    print('Error fetching audio: $e');
-    setState(() {
-      _isAudioLoading = false;
-    });
-    rethrow;
+      setState(() {
+        audioPath = file.path; // Use this path in your audio player
+        _isAudioLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching audio: $e');
+      setState(() {
+        _isAudioLoading = false;
+      });
+      rethrow;
+    }
   }
-}
-
 
   Future<void> _initAudio() async {
     try {

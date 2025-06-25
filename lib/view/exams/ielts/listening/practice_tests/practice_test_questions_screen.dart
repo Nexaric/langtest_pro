@@ -6,10 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
 import 'package:langtest_pro/core/loading/internet_signel_low.dart';
 import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:langtest_pro/controller/listening_progress_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'practice_test_result.dart';
 import 'practice_test_timer.dart';
@@ -158,28 +158,28 @@ class _PracticeTestQuestionsScreenState
     return audioPaths[part]!;
   }
 
- Future<String> fetchAudioFromSupabase(String supabasePath) async {
-  try {
-    // Download file bytes from Supabase
-    final bytes = await Supabase.instance.client.storage
-        .from('audio') // your bucket name
-        .download(supabasePath); // e.g., 'folder/filename.mp3'
+  Future<String> fetchAudioFromSupabase(String supabasePath) async {
+    try {
+      // Download file bytes from Supabase
+      final bytes = await Supabase.instance.client.storage
+          .from('audio') // your bucket name
+          .download(supabasePath); // e.g., 'folder/filename.mp3'
 
-    // Prepare to store the file locally
-    final dir = await getTemporaryDirectory();
-    final fileName = supabasePath.split('/').last;
-    final file = File('${dir.path}/$fileName');
+      // Prepare to store the file locally
+      final dir = await getTemporaryDirectory();
+      final fileName = supabasePath.split('/').last;
+      final file = File('${dir.path}/$fileName');
 
-    // Write bytes to the file
-    await file.writeAsBytes(bytes);
+      // Write bytes to the file
+      await file.writeAsBytes(bytes);
 
-    debugPrint("Audio path: ${file.path}");
-    return file.path;
-  } catch (e) {
-    debugPrint('Error fetching audio: $e');
-    rethrow;
+      debugPrint("Audio path: ${file.path}");
+      return file.path;
+    } catch (e) {
+      debugPrint('Error fetching audio: $e');
+      rethrow;
+    }
   }
-}
 
   List<Map<String, dynamic>> _getRandomQuestionsForPart(String part) {
     final allQuestions = {

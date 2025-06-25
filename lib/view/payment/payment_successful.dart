@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart'; // Add for date formatting
 import 'package:langtest_pro/res/routes/routes_name.dart';
 
 class PaymentSuccessfulScreen extends StatelessWidget {
@@ -9,11 +10,20 @@ class PaymentSuccessfulScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        Get.arguments ??
+        {
+          'price': '₹99',
+          'plan': 'Monthly',
+          'duration': const Duration(days: 30),
+        };
+    final DateTime? newExpiryDate = args['newExpiryDate']; // Add newExpiryDate
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 2), () {
         Get.offNamed(
           RoutesName.subscriptionStatusScreen,
-          arguments: Get.arguments, // Pass plan details
+          arguments: args, // Pass all arguments including newExpiryDate
         );
       });
     });
@@ -51,6 +61,17 @@ class PaymentSuccessfulScreen extends StatelessWidget {
                     color: Colors.white70,
                   ),
                 ),
+                if (newExpiryDate != null) // Display new expiry date
+                  Padding(
+                    padding: EdgeInsets.only(top: 5.h),
+                    child: Text(
+                      "New Expiry: ${DateFormat('MMM d, y').format(newExpiryDate)}",
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14.sp,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ),
                 SizedBox(height: 5.h),
                 Text(
                   "Redirecting to Subscription Status...",

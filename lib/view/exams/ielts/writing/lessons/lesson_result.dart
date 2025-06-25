@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:langtest_pro/controller/writing/writing_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/lesson_list_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_screen.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
 
 class LessonResult extends StatefulWidget {
   final int academicWordCount;

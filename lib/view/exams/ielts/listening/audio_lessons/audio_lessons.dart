@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
 import 'audio_screen.dart';
-import '../../../../../controller/listening_progress_provider.dart';
 
 class AudioLessonsScreen extends StatefulWidget {
   const AudioLessonsScreen({super.key});
@@ -627,7 +627,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                               },
                               onComplete: () async {
                                 await progressController.completeLesson();
-                               // Trigger UI rebuild to update isLocked states
+                                // Trigger UI rebuild to update isLocked states
                               },
                               onProgressUpdate: (progress) {
                                 progressController.updateProgress(progress);

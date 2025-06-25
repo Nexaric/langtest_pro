@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:langtest_pro/controller/listening_progress_provider.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
+import 'package:langtest_pro/controller/reading/reading_controller.dart';
 import 'package:langtest_pro/controller/speaking_progress_provider.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/controller/writing/writing_controller.dart';
 import '../../core/widgets/progress_bar.dart';
 
 class DashboardScreen extends StatelessWidget {

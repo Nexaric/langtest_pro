@@ -159,10 +159,12 @@ class SubscriptionStatusContent extends StatelessWidget {
     final String currentPrice = args['price'] ?? '₹99';
     final Duration duration = args['duration'] ?? const Duration(days: 30);
     final bool isLifetime = duration.inDays > 365 * 50;
+    final DateTime? newExpiryDate = args['newExpiryDate']; // Add newExpiryDate
     final DateTime expiryDate =
-        isLifetime
+        newExpiryDate ?? // Use newExpiryDate if available
+        (isLifetime
             ? DateTime.now().add(const Duration(days: 365 * 100))
-            : DateTime.now().add(duration);
+            : DateTime.now().add(duration));
     const bool isActive = true;
 
     final List<Map<String, dynamic>> plans = [
@@ -210,9 +212,15 @@ class SubscriptionStatusContent extends StatelessWidget {
         newIsLifetime = false;
       }
 
+      // Pass newExpiryDate to payment screen
       Get.toNamed(
         RoutesName.paymentScreen,
-        arguments: {'price': newPrice, 'plan': newPlan, 'duration': duration},
+        arguments: {
+          'price': newPrice,
+          'plan': newPlan,
+          'duration': duration,
+          'newExpiryDate': newExpiryDate, // Add to arguments
+        },
       );
     }
 
@@ -459,5 +467,14 @@ class SubscriptionStatusContent extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Home Content'));
   }
 }

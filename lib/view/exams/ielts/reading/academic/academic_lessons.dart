@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading/reading_controller.dart';
 import 'lesson_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 

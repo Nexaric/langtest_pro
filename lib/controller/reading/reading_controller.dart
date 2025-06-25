@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:langtest_pro/repo/reading/reading_auth_facade.dart';
+import 'package:langtest_pro/repo/reading/reading_impl.dart';
 
 class ReadingProgressController extends GetxController {
   static const int totalAcademicLessons = 40;
@@ -13,6 +16,9 @@ class ReadingProgressController extends GetxController {
   final _generalLessonScores = <int, String>{}.obs;
   final _isLoading = false.obs;
   final _errorMessage = Rx<String?>(null);
+
+  final IReadingFacade _facade = ReadingImpl();
+  final String? _userId = Supabase.instance.client.auth.currentUser?.id;
 
   int get completedAcademicLessons => _completedAcademicLessons.value;
   int get completedGeneralLessons => _completedGeneralLessons.value;
@@ -31,7 +37,7 @@ class ReadingProgressController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadProgress();
+    if (_userId != null) _loadProgress();
   }
 
   Future<void> _loadProgress() async {
@@ -75,34 +81,39 @@ class ReadingProgressController extends GetxController {
         }
       }
 
-      _isLoading.value = false;
-      _errorMessage.value = null;
+      if (_userId != null)
+        await _facade.loadProgress(uid: _userId!, controller: this);
     } catch (e) {
       _isLoading.value = false;
       _errorMessage.value = 'Failed to load progress: $e';
       print('Load progress error: $e');
+    } finally {
+      _isLoading.value = false;
+      update();
     }
   }
 
+  // Add public loadProgress method
+  Future<void> loadProgress() async {
+    await _loadProgress();
+  }
+
   Future<void> restoreFromCloud() async {
+    if (_userId == null) return;
+
     _isLoading.value = true;
     try {
-      // Simulate cloud sync (replace with actual cloud API call)
-      await Future.delayed(const Duration(seconds: 1));
-      // Example: Fetch data from cloud and update local state
-      // final cloudData = await YourCloudService.fetchProgress();
-      // _completedAcademicLessons.value = cloudData['academic'] ?? 0;
-      // _completedGeneralLessons.value = cloudData['general'] ?? 0;
-      // _currentLessonProgress.value = cloudData['progress'] ?? 0.0;
-      // ... update scores similarly
-      _isLoading.value = false;
-      _errorMessage.value = null;
+      await _facade.loadProgress(uid: _userId!, controller: this);
+      await _saveProgress();
       Get.snackbar('Success', 'Progress restored from cloud');
     } catch (e) {
       _isLoading.value = false;
       _errorMessage.value = 'Failed to sync progress: $e';
       print('Cloud sync error: $e');
       Get.snackbar('Error', 'Failed to sync progress: $e');
+    } finally {
+      _isLoading.value = false;
+      update();
     }
   }
 
@@ -110,6 +121,7 @@ class ReadingProgressController extends GetxController {
     required int lessonId,
     required String score,
   }) async {
+    if (_userId == null) return;
     if (lessonId < 1 || lessonId > totalAcademicLessons) {
       _errorMessage.value = 'Invalid academic lesson ID: $lessonId';
       return;
@@ -128,6 +140,7 @@ class ReadingProgressController extends GetxController {
     required int lessonId,
     required String score,
   }) async {
+    if (_userId == null) return;
     if (lessonId < 1 || lessonId > totalGeneralLessons) {
       _errorMessage.value = 'Invalid general lesson ID: $lessonId';
       return;
@@ -150,11 +163,14 @@ class ReadingProgressController extends GetxController {
   }
 
   void updateProgress(double progress) {
+    if (_userId == null) return;
     _currentLessonProgress.value = progress.clamp(0.0, 1.0);
     _saveProgress();
   }
 
   Future<void> _saveProgress() async {
+    if (_userId == null) return;
+
     _isLoading.value = true;
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -180,16 +196,21 @@ class ReadingProgressController extends GetxController {
               .toList();
       await prefs.setStringList('academicLessonScores', academicScores);
       await prefs.setStringList('generalLessonScores', generalScores);
-      _isLoading.value = false;
-      _errorMessage.value = null;
+
+      await _facade.syncProgress(uid: _userId!, controller: this);
     } catch (e) {
       _isLoading.value = false;
       _errorMessage.value = 'Failed to save progress: $e';
       print('Save progress error: $e');
+    } finally {
+      _isLoading.value = false;
+      update();
     }
   }
 
   Future<void> resetProgress() async {
+    if (_userId == null) return;
+
     _completedAcademicLessons.value = 0;
     _completedGeneralLessons.value = 0;
     _currentLessonProgress.value = 0.0;
