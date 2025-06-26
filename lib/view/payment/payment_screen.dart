@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart'; // Add for date formatting
 import 'package:langtest_pro/res/routes/routes_name.dart';
 
 class PaymentScreen extends StatelessWidget {
@@ -18,7 +17,6 @@ class PaymentScreen extends StatelessWidget {
           'duration': const Duration(days: 30),
         };
     final String price = args['price'];
-    final DateTime? newExpiryDate = args['newExpiryDate']; // Add newExpiryDate
     final TextEditingController upiIdController = TextEditingController(
       text: 'gauravkumar@okhdfcbank',
     );
@@ -144,12 +142,7 @@ class PaymentScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              _buildBottomBar(
-                context,
-                price,
-                newExpiryDate,
-                isLoading,
-              ), // Update parameter
+              _buildBottomBar(context, price, isLoading),
             ],
           ),
         ),
@@ -192,7 +185,6 @@ class PaymentScreen extends StatelessWidget {
   Widget _buildBottomBar(
     BuildContext context,
     String price,
-    DateTime? newExpiryDate, // Add newExpiryDate parameter
     ValueNotifier<bool> isLoading,
   ) {
     return Container(
@@ -222,14 +214,6 @@ class PaymentScreen extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
-              if (newExpiryDate != null) // Display new expiry date
-                Text(
-                  'New Expiry: ${DateFormat('MMM d, y').format(newExpiryDate)}',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14.sp,
-                    color: Colors.grey,
-                  ),
-                ),
               GestureDetector(
                 onTap: () {},
                 child: Row(

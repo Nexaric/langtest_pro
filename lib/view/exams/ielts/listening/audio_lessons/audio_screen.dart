@@ -1,28 +1,28 @@
-// lib/exams/ielts/listening/audio_lessons/audio_screen.dart
+// lib/view/exams/ielts/listening/audio_lessons/audio_screen.dart
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/controller/listening/listening_controller.dart';
+import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/core/loading/internet_signel_low.dart';
 import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:langtest_pro/controller/listening_controller.dart';
 import 'audio_result.dart';
 import 'questions/question_manager.dart';
 
 class AudioScreen extends StatefulWidget {
   final Map<String, dynamic> lesson;
   final VoidCallback onComplete;
-  final Function(double)? onProgressUpdate;
 
   const AudioScreen({
     required this.lesson,
     required this.onComplete,
-    this.onProgressUpdate,
     super.key,
   });
 
@@ -32,8 +32,7 @@ class AudioScreen extends StatefulWidget {
 
 class _AudioScreenState extends State<AudioScreen> {
   bool _isAudioLoading = true;
-  String audioUrl = '';
-  late String audioPath = '';
+  String audioPath = '';
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
   Duration _duration = Duration.zero;
@@ -50,21 +49,31 @@ class _AudioScreenState extends State<AudioScreen> {
   bool _isTransitioning = false;
   List<Map<String, dynamic>> _currentQuestions = [];
   List<String?> _userAnswers = [];
+  final ListeningProgressController _progressController = Get.find();
 
-  // Gradient colors for full-screen background
   final Color _gradientStart = const Color(0xFF3E1E68);
   final Color _gradientEnd = const Color.fromARGB(255, 84, 65, 228);
-
-  // String get audioFilePath => 'audio/lesson${widget.lesson["lessonId"]}.mp3';
 
   @override
   void initState() {
     super.initState();
     _loadAudio();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_isInitialized) {
+        final lessonId = widget.lesson["lessonId"] as int;
+        _progressController.updateLessonProgress(
+          lessonId.toString(),
+          'audio_started',
+        );
+      }
+    });
   }
 
   void _loadQuestions() {
-    final lessonId = widget.lesson["lessonId"];
+    if (widget.lesson["isIntroduction"] == true) {
+      return; // Skip questions for lesson 1
+    }
+    final lessonId = widget.lesson["lessonId"] as int;
     setState(() {
       _currentQuestions = QuestionManager.getQuestionsForLesson(lessonId);
       _userAnswers = List<String?>.filled(_currentQuestions.length, null);
@@ -72,8 +81,9 @@ class _AudioScreenState extends State<AudioScreen> {
   }
 
   Future<void> _loadAudio() async {
-    await fetchAudioFromSupabase('lesson${widget.lesson["lessonId"]}.mp3');
-    _initAudio();
+    final lessonId = widget.lesson["lessonId"] as int;
+    await fetchAudioFromSupabase('lesson$lessonId.mp3');
+    await _initAudio();
     _loadQuestions();
   }
 
@@ -84,20 +94,20 @@ class _AudioScreenState extends State<AudioScreen> {
           .from('audio')
           .download(firebasePath);
 
-      // Save the response (bytes) to a temp file
       final bytes = response;
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/${firebasePath.split('/').last}');
       await file.writeAsBytes(bytes);
 
       setState(() {
-        audioPath = file.path; // Use this path in your audio player
+        audioPath = file.path;
         _isAudioLoading = false;
       });
     } catch (e) {
       print('Error fetching audio: $e');
       setState(() {
         _isAudioLoading = false;
+        _errorMessage = 'Failed to fetch audio: $e';
       });
       rethrow;
     }
@@ -161,11 +171,6 @@ class _AudioScreenState extends State<AudioScreen> {
     _audioPlayer.onPositionChanged.listen((position) {
       if (mounted && !_isSeeking) {
         setState(() => _position = position);
-
-        if (_duration.inMilliseconds > 0) {
-          final progress = position.inMilliseconds / _duration.inMilliseconds;
-          widget.onProgressUpdate?.call(progress);
-        }
       }
     });
 
@@ -176,18 +181,33 @@ class _AudioScreenState extends State<AudioScreen> {
         });
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
-            setState(() {
-              showQuestions = widget.lesson["lessonId"] != 1;
-              _isPlaying = false;
-              _isTransitioning = false;
-              if (widget.lesson["lessonId"] == 1) {
-                final progressController =
-                    Get.find<ListeningProgressController>();
-                progressController.completeLesson();
-                widget.onComplete();
-                Navigator.pop(context);
-              }
-            });
+            final lessonId = widget.lesson["lessonId"] as int;
+            if (widget.lesson["isIntroduction"] == true) {
+              // Mark lesson 1 as completed
+              _progressController.updateLessonProgress(
+                lessonId.toString(),
+                'lesson_completed',
+              );
+              widget.onComplete();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AudioLessonsScreen(),
+                ),
+                (Route<dynamic> route) => route.isFirst,
+              );
+            } else {
+              // Show questions for lessons 2-50
+              setState(() {
+                showQuestions = true;
+                _isPlaying = false;
+                _isTransitioning = false;
+                _progressController.updateLessonProgress(
+                  lessonId.toString(),
+                  'question_opened',
+                );
+              });
+            }
           }
         });
       }
@@ -295,7 +315,7 @@ class _AudioScreenState extends State<AudioScreen> {
       } else {
         final correctAnswers = _score;
         final wrongAnswers = _currentQuestions.length - _score;
-        final lessonId = widget.lesson["lessonId"];
+        final lessonId = widget.lesson["lessonId"] as int;
 
         Navigator.push(
           context,
@@ -307,14 +327,7 @@ class _AudioScreenState extends State<AudioScreen> {
                   correctAnswers: correctAnswers,
                   wrongAnswers: wrongAnswers,
                   lessonId: lessonId,
-                  onComplete: () {
-                    if (QuestionManager.isLessonPassed(_score, lessonId)) {
-                      final progressController =
-                          Get.find<ListeningProgressController>();
-                      progressController.completeLesson();
-                      widget.onComplete();
-                    }
-                  },
+                  onComplete: widget.onComplete,
                 ),
           ),
         );
@@ -333,13 +346,10 @@ class _AudioScreenState extends State<AudioScreen> {
         _currentQuestions.isNotEmpty
             ? _currentQuestions[_currentQuestionIndex]
             : null;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final topPadding = MediaQuery.of(context).padding.top;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       body:
-          //hello
           _isAudioLoading
               ? Center(
                 child: CircularProgressIndicator(
@@ -356,27 +366,43 @@ class _AudioScreenState extends State<AudioScreen> {
                 ),
                 child: Column(
                   children: [
-                    // Custom top bar
                     Container(
-                      padding: EdgeInsets.fromLTRB(16, topPadding + 16, 16, 16),
+                      padding: EdgeInsets.fromLTRB(
+                        16.w,
+                        MediaQuery.of(context).padding.top + 16.h,
+                        16.w,
+                        16.h,
+                      ),
                       child: Row(
                         children: [
                           IconButton(
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.arrow_back,
                               color: Colors.white,
+                              size: 24.sp,
                             ),
                             onPressed: () => Navigator.pop(context),
                           ),
                           Expanded(
                             child: Text(
-                              widget.lesson["title"],
+                              widget.lesson["isIntroduction"] == true
+                                  ? "Introduction: ${widget.lesson["title"].toString().split(":").length > 1 ? widget.lesson["title"].toString().split(":")[1].trim() : widget.lesson["title"]}"
+                                  : widget.lesson["title"],
                               style: GoogleFonts.poppins(
-                                fontSize: 18,
+                                fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
                               overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Obx(
+                            () => Text(
+                              '${(_progressController.getProgress((widget.lesson["lessonId"] as int).toString()) * 100).toStringAsFixed(0)}%',
+                              style: GoogleFonts.poppins(
+                                fontSize: 14.sp,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ],
@@ -392,25 +418,26 @@ class _AudioScreenState extends State<AudioScreen> {
                                 onRetry: _initAudio,
                               )
                               : _isTransitioning
-                              ? const Center(
+                              ? Center(
                                 child: CircularProgressIndicator(
                                   color: Colors.white,
+                                  strokeWidth: 4.w,
                                 ),
                               )
                               : !showQuestions
                               ? SingleChildScrollView(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(20),
+                                  padding: EdgeInsets.all(20.w),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       FadeIn(
                                         child: Container(
-                                          width: screenWidth * 0.8,
-                                          height: screenWidth * 0.8,
+                                          width: 0.8.sw,
+                                          height: 0.8.sw,
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
-                                              20,
+                                              20.r,
                                             ),
                                             gradient: const LinearGradient(
                                               colors: [
@@ -425,8 +452,8 @@ class _AudioScreenState extends State<AudioScreen> {
                                                 color: Colors.black.withOpacity(
                                                   0.3,
                                                 ),
-                                                blurRadius: 20,
-                                                offset: const Offset(0, 10),
+                                                blurRadius: 20.r,
+                                                offset: Offset(0, 10.h),
                                               ),
                                             ],
                                           ),
@@ -434,16 +461,19 @@ class _AudioScreenState extends State<AudioScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              const Icon(
+                                              Icon(
                                                 Icons.headphones,
-                                                size: 80,
+                                                size: 80.sp,
                                                 color: Colors.white,
                                               ),
-                                              const SizedBox(height: 20),
+                                              SizedBox(height: 20.h),
                                               Text(
-                                                widget.lesson["title"],
+                                                widget.lesson["isIntroduction"] ==
+                                                        true
+                                                    ? "Introduction"
+                                                    : widget.lesson["title"],
                                                 style: GoogleFonts.poppins(
-                                                  fontSize: 22,
+                                                  fontSize: 22.sp,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
                                                 ),
@@ -453,10 +483,10 @@ class _AudioScreenState extends State<AudioScreen> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 40),
+                                      SizedBox(height: 40.h),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 20.w,
                                         ),
                                         child: Row(
                                           mainAxisAlignment:
@@ -465,24 +495,24 @@ class _AudioScreenState extends State<AudioScreen> {
                                             Text(
                                               _formatDuration(_position),
                                               style: GoogleFonts.poppins(
-                                                fontSize: 14,
+                                                fontSize: 14.sp,
                                                 color: Colors.white,
                                               ),
                                             ),
                                             Text(
                                               _formatDuration(_duration),
                                               style: GoogleFonts.poppins(
-                                                fontSize: 14,
+                                                fontSize: 14.sp,
                                                 color: Colors.white,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(height: 10),
+                                      SizedBox(height: 10.h),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 20.w,
                                         ),
                                         child: SliderTheme(
                                           data: SliderTheme.of(
@@ -494,13 +524,12 @@ class _AudioScreenState extends State<AudioScreen> {
                                             thumbColor: Colors.white,
                                             overlayColor: Colors.white
                                                 .withOpacity(0.2),
-                                            thumbShape:
-                                                const RoundSliderThumbShape(
-                                                  enabledThumbRadius: 8,
-                                                ),
+                                            thumbShape: RoundSliderThumbShape(
+                                              enabledThumbRadius: 8.r,
+                                            ),
                                             overlayShape:
-                                                const RoundSliderOverlayShape(
-                                                  overlayRadius: 16,
+                                                RoundSliderOverlayShape(
+                                                  overlayRadius: 16.r,
                                                 ),
                                           ),
                                           child: Slider(
@@ -534,25 +563,25 @@ class _AudioScreenState extends State<AudioScreen> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 20),
+                                      SizedBox(height: 20.h),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           IconButton(
-                                            icon: const Icon(
+                                            icon: Icon(
                                               Icons.replay_10,
-                                              size: 32,
+                                              size: 32.sp,
                                             ),
                                             color: Colors.white,
                                             onPressed: _skipBackward,
                                           ),
-                                          const SizedBox(width: 20),
+                                          SizedBox(width: 20.w),
                                           GestureDetector(
                                             onTap: _playPause,
                                             child: Container(
-                                              width: 70,
-                                              height: 70,
+                                              width: 70.w,
+                                              height: 70.h,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
                                                 gradient: const LinearGradient(
@@ -567,8 +596,8 @@ class _AudioScreenState extends State<AudioScreen> {
                                                   BoxShadow(
                                                     color: Colors.black
                                                         .withOpacity(0.3),
-                                                    blurRadius: 10,
-                                                    offset: const Offset(0, 5),
+                                                    blurRadius: 10.r,
+                                                    offset: Offset(0, 5.h),
                                                   ),
                                                 ],
                                               ),
@@ -576,16 +605,16 @@ class _AudioScreenState extends State<AudioScreen> {
                                                 _isPlaying
                                                     ? Icons.pause
                                                     : Icons.play_arrow,
-                                                size: 36,
+                                                size: 36.sp,
                                                 color: Colors.white,
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(width: 20),
+                                          SizedBox(width: 20.w),
                                           IconButton(
-                                            icon: const Icon(
+                                            icon: Icon(
                                               Icons.forward_10,
-                                              size: 32,
+                                              size: 32.sp,
                                             ),
                                             color: Colors.white,
                                             onPressed: _skipForward,
@@ -600,11 +629,13 @@ class _AudioScreenState extends State<AudioScreen> {
                                 child: Column(
                                   children: [
                                     Container(
-                                      margin: const EdgeInsets.all(16),
-                                      padding: const EdgeInsets.all(16),
+                                      margin: EdgeInsets.all(16.w),
+                                      padding: EdgeInsets.all(16.w),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(
+                                          15.r,
+                                        ),
                                         border: Border.all(
                                           color: Colors.white.withOpacity(0.2),
                                         ),
@@ -614,11 +645,13 @@ class _AudioScreenState extends State<AudioScreen> {
                                           Row(
                                             children: [
                                               Container(
-                                                width: 40,
-                                                height: 40,
+                                                width: 40.w,
+                                                height: 40.h,
                                                 decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(8),
+                                                      BorderRadius.circular(
+                                                        8.r,
+                                                      ),
                                                   gradient:
                                                       const LinearGradient(
                                                         colors: [
@@ -627,13 +660,13 @@ class _AudioScreenState extends State<AudioScreen> {
                                                         ],
                                                       ),
                                                 ),
-                                                child: const Icon(
+                                                child: Icon(
                                                   Icons.headphones,
                                                   color: Colors.white,
-                                                  size: 20,
+                                                  size: 20.sp,
                                                 ),
                                               ),
-                                              const SizedBox(width: 12),
+                                              SizedBox(width: 12.w),
                                               Expanded(
                                                 child: Column(
                                                   crossAxisAlignment:
@@ -643,7 +676,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                                       "Now Playing",
                                                       style:
                                                           GoogleFonts.poppins(
-                                                            fontSize: 12,
+                                                            fontSize: 12.sp,
                                                             color: Colors.white
                                                                 .withOpacity(
                                                                   0.7,
@@ -654,7 +687,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                                       widget.lesson["title"],
                                                       style:
                                                           GoogleFonts.poppins(
-                                                            fontSize: 14,
+                                                            fontSize: 14.sp,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             color: Colors.white,
@@ -671,37 +704,39 @@ class _AudioScreenState extends State<AudioScreen> {
                                                       ? Icons.pause
                                                       : Icons.play_arrow,
                                                   color: Colors.white,
-                                                  size: 20,
+                                                  size: 20.sp,
                                                 ),
                                                 onPressed: _playPause,
                                               ),
                                               _isReloading
-                                                  ? const Padding(
-                                                    padding: EdgeInsets.all(8),
+                                                  ? Padding(
+                                                    padding: EdgeInsets.all(
+                                                      8.w,
+                                                    ),
                                                     child: SizedBox(
-                                                      width: 20,
-                                                      height: 20,
+                                                      width: 20.w,
+                                                      height: 20.h,
                                                       child:
                                                           CircularProgressIndicator(
-                                                            strokeWidth: 2,
+                                                            strokeWidth: 2.w,
                                                             color: Colors.white,
                                                           ),
                                                     ),
                                                   )
                                                   : IconButton(
-                                                    icon: const Icon(
+                                                    icon: Icon(
                                                       Icons.replay,
                                                       color: Colors.white,
-                                                      size: 20,
+                                                      size: 20.sp,
                                                     ),
                                                     onPressed: _reloadAudio,
                                                   ),
                                             ],
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12.h),
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 8,
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 8.w,
                                             ),
                                             child: Row(
                                               mainAxisAlignment:
@@ -711,7 +746,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                                 Text(
                                                   _formatDuration(_position),
                                                   style: GoogleFonts.poppins(
-                                                    fontSize: 12,
+                                                    fontSize: 12.sp,
                                                     color: Colors.white
                                                         .withOpacity(0.7),
                                                   ),
@@ -719,7 +754,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                                 Text(
                                                   _formatDuration(_duration),
                                                   style: GoogleFonts.poppins(
-                                                    fontSize: 12,
+                                                    fontSize: 12.sp,
                                                     color: Colors.white
                                                         .withOpacity(0.7),
                                                   ),
@@ -727,7 +762,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                               ],
                                             ),
                                           ),
-                                          const SizedBox(height: 8),
+                                          SizedBox(height: 8.h),
                                           SliderTheme(
                                             data: SliderTheme.of(
                                               context,
@@ -738,13 +773,12 @@ class _AudioScreenState extends State<AudioScreen> {
                                               thumbColor: Colors.white,
                                               overlayColor: Colors.white
                                                   .withOpacity(0.2),
-                                              thumbShape:
-                                                  const RoundSliderThumbShape(
-                                                    enabledThumbRadius: 6,
-                                                  ),
+                                              thumbShape: RoundSliderThumbShape(
+                                                enabledThumbRadius: 6.r,
+                                              ),
                                               overlayShape:
-                                                  const RoundSliderOverlayShape(
-                                                    overlayRadius: 12,
+                                                  RoundSliderOverlayShape(
+                                                    overlayRadius: 12.r,
                                                   ),
                                             ),
                                             child: Slider(
@@ -780,13 +814,15 @@ class _AudioScreenState extends State<AudioScreen> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 20),
+                                    SizedBox(height: 20.h),
                                     Container(
                                       width: double.infinity,
-                                      padding: const EdgeInsets.all(20),
+                                      padding: EdgeInsets.all(20.w),
                                       decoration: BoxDecoration(
                                         color: Colors.white.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(
+                                          15.r,
+                                        ),
                                         border: Border.all(
                                           color: Colors.white.withOpacity(0.2),
                                         ),
@@ -798,24 +834,24 @@ class _AudioScreenState extends State<AudioScreen> {
                                           Text(
                                             "Question ${_currentQuestionIndex + 1} of ${_currentQuestions.length}",
                                             style: GoogleFonts.poppins(
-                                              fontSize: 16,
+                                              fontSize: 16.sp,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
                                             ),
                                           ),
-                                          const SizedBox(height: 12),
+                                          SizedBox(height: 12.h),
                                           Text(
                                             currentQuestion?["question"] ??
                                                 "Loading question...",
                                             style: GoogleFonts.poppins(
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               color: Colors.white.withOpacity(
                                                 0.9,
                                               ),
                                               height: 1.5,
                                             ),
                                           ),
-                                          const SizedBox(height: 20),
+                                          SizedBox(height: 20.h),
                                           ...?currentQuestion?["options"].asMap().entries.map((
                                             entry,
                                           ) {
@@ -824,10 +860,9 @@ class _AudioScreenState extends State<AudioScreen> {
                                             final isSelected =
                                                 _selectedAnswer == option;
                                             return Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 8,
-                                                  ),
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 8.h,
+                                              ),
                                               child: ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor:
@@ -837,14 +872,13 @@ class _AudioScreenState extends State<AudioScreen> {
                                                           : Colors.white
                                                               .withOpacity(0.1),
                                                   foregroundColor: Colors.white,
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        vertical: 12,
-                                                      ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12.h,
+                                                  ),
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          10,
+                                                          10.r,
                                                         ),
                                                     side: BorderSide(
                                                       color:
@@ -856,9 +890,9 @@ class _AudioScreenState extends State<AudioScreen> {
                                                                   ),
                                                     ),
                                                   ),
-                                                  minimumSize: const Size(
+                                                  minimumSize: Size(
                                                     double.infinity,
-                                                    50,
+                                                    50.h,
                                                   ),
                                                 ),
                                                 onPressed:
@@ -868,7 +902,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                                 child: Text(
                                                   "${String.fromCharCode(65 + index)}. $option",
                                                   style: GoogleFonts.poppins(
-                                                    fontSize: 14,
+                                                    fontSize: 14.sp,
                                                     fontWeight:
                                                         isSelected
                                                             ? FontWeight.w600
@@ -885,7 +919,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                               ),
                                             );
                                           }).toList(),
-                                          const SizedBox(height: 20),
+                                          SizedBox(height: 20.h),
                                           Align(
                                             alignment: Alignment.centerRight,
                                             child: ElevatedButton(
@@ -895,14 +929,15 @@ class _AudioScreenState extends State<AudioScreen> {
                                                         ? Colors.amber
                                                         : Colors.grey,
                                                 foregroundColor: Colors.black87,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 24,
-                                                      vertical: 12,
-                                                    ),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 24.w,
+                                                  vertical: 12.h,
+                                                ),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(10),
+                                                      BorderRadius.circular(
+                                                        10.r,
+                                                      ),
                                                 ),
                                               ),
                                               onPressed:
@@ -917,7 +952,7 @@ class _AudioScreenState extends State<AudioScreen> {
                                                     ? "Next"
                                                     : "Submit",
                                                 style: GoogleFonts.poppins(
-                                                  fontSize: 14,
+                                                  fontSize: 14.sp,
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),

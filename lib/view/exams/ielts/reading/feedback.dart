@@ -2,7 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading/reading_controller.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
 
 class FeedbackScreen extends StatelessWidget {
   const FeedbackScreen({super.key});

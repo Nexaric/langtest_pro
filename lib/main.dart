@@ -1,63 +1,63 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// lib/main.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:langtest_pro/controller/listening/listening_controller.dart';
-import 'package:langtest_pro/controller/reading/reading_controller.dart';
-import 'package:langtest_pro/controller/writing/writing_controller.dart';
-import 'package:langtest_pro/firebase_options.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/speaking_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:langtest_pro/controller/listening_controller.dart';
+import 'package:langtest_pro/controller/push_notification/notification_controller.dart';
 import 'package:langtest_pro/res/routes/routes.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-// Background FCM handler
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print("📩 Background FCM received: $message");
-}
 
 void main() async {
+  debugDisableShadows = false;
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  try {
+    await Firebase.initializeApp();
+    debugPrint('Firebase initialized successfully');
+  } catch (e) {
+    debugPrint('Firebase initialization error: $e');
+  }
 
   // Initialize Supabase
-  await Supabase.initialize(
-    url: 'https://xrcrymvcztdjduazxzzi.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3J5bXZjenRkamR1YXp4enppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MzI2OTYsImV4cCI6MjA2NTQwODY5Nn0.rRSGWB4aPkifmL8_z22B4OTu8Hv0opJc-YzrxH-qKpQ',
-    authOptions: const FlutterAuthClientOptions(
-      authFlowType: AuthFlowType.implicit,
-    ),
-  );
+  try {
+    await Supabase.initialize(
+      url: 'https://xrcrymvcztdjduazxzzi.supabase.co',
+      anonKey:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3J5bXZjenRkamR1YXp4enppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4MzI2OTYsImV4cCI6MjA2NTQwODY5Nn0.rRSGWB4aPkifmL8_z22B4OTu8Hv0opJc-YzrxH-qKpQ',
+      authOptions: FlutterAuthClientOptions(
+        authFlowType: AuthFlowType.implicit,
+      ),
+    );
+    debugPrint('Supabase initialized successfully');
+  } catch (e) {
+    debugPrint('Supabase initialization error: $e');
+  }
 
-  // Initialize Hive and controllers
+  // Initialize Hive and other services
   await initialise();
 
   runApp(const MyApp());
 }
 
 Future<void> initialise() async {
-  await Hive.initFlutter();
-  await Hive.openBox('listening_progress');
-  await Hive.openBox('reading_progress');
-  await Hive.openBox('writing_progress');
-
-  // Initialize controllers
-  final listeningController = Get.put(ListeningProgressController());
-  final readingController = Get.put(ReadingProgressController());
-  final writingController = Get.put(WritingProgressController());
-
-  // Load progress if user is logged in
-  final user = Supabase.instance.client.auth.currentUser;
-  if (user != null) {
-    await listeningController.loadProgress();
-    await readingController.loadProgress();
-    await writingController.loadProgress();
+  // Initialize Hive
+  try {
+    await Hive.initFlutter();
+    await Hive.openBox('listening_progress');
+    await Hive.openBox('reading_progress');
+    await Hive.openBox('writing_progress');
+    await Hive.openBox('speaking_progress');
+    debugPrint('Hive initialized successfully');
+  } catch (e) {
+    debugPrint('Hive initialization error: $e');
   }
 }
 
@@ -155,6 +155,22 @@ class MyApp extends StatelessWidget {
           ),
           getPages: AppRoutes.appRoutes(),
           initialRoute: RoutesName.splashScreen,
+          initialBinding: BindingsBuilder(() {
+            // Lazy initialize controllers to reduce main thread work
+            Get.lazyPut<ListeningProgressController>(
+              () => ListeningProgressController(),
+            );
+            Get.lazyPut<ReadingProgressController>(
+              () => ReadingProgressController(),
+            );
+            Get.lazyPut<WritingProgressController>(
+              () => WritingProgressController(),
+            );
+            Get.lazyPut<SpeakingProgressController>(
+              () => SpeakingProgressController(),
+            );
+            Get.lazyPut<NotificationController>(() => NotificationController());
+          }),
         );
       },
     );

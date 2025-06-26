@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/writing/writing_controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/writing_result.dart';
 import 'letter_data.dart';
 

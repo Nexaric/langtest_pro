@@ -1,5 +1,8 @@
+// lib/view/exams/ielts/listening/practice_test_timer.dart
+
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PracticeTestTimer {
   final Duration initialDuration;
@@ -47,7 +50,9 @@ class PracticeTestTimer {
     }
 
     _remainingTime -= const Duration(seconds: 1);
-    onTick?.call(_remainingTime);
+    if (onTick != null) {
+      onTick!(_remainingTime);
+    }
   }
 
   void dispose() {
@@ -76,7 +81,7 @@ class TimerDisplay extends StatelessWidget {
     return Text(
       _formatDuration(duration),
       style: TextStyle(
-        fontSize: 16,
+        fontSize: 16.sp,
         fontWeight: FontWeight.bold,
         color: isWarning ? Colors.red[300] : Colors.white,
       ),

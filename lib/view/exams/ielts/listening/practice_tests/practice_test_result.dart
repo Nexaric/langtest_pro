@@ -1,4 +1,7 @@
+// lib/view/exams/ielts/listening/practice_test_result.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:lottie/lottie.dart';
@@ -10,12 +13,14 @@ class PracticeTestResultScreen extends StatefulWidget {
   final int totalQuestions;
   final bool unlockedNextPart;
   final bool timeExpired;
+  final String part;
 
   const PracticeTestResultScreen({
     required this.score,
     required this.totalQuestions,
     required this.unlockedNextPart,
     required this.timeExpired,
+    required this.part,
     super.key,
   });
 
@@ -85,262 +90,274 @@ class _PracticeTestResultScreenState extends State<PracticeTestResultScreen>
 
   @override
   Widget build(BuildContext context) {
-    final percentage = (widget.score / widget.totalQuestions) * 100;
-    final backgroundColor =
-        widget.timeExpired
-            ? _timeExpiredColor
-            : _isPassed
-            ? _passColor
-            : _failColor;
-    final progressColor = _isPassed ? _passLight : _failLight;
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        final percentage = (widget.score / widget.totalQuestions) * 100;
+        final backgroundColor =
+            widget.timeExpired
+                ? _timeExpiredColor
+                : _isPassed
+                ? _passColor
+                : _failColor;
+        final progressColor = _isPassed ? _passLight : _failLight;
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Background gradient
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 1000),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    backgroundColor.withOpacity(0.8),
-                    backgroundColor.withOpacity(0.9),
-                    backgroundColor,
-                  ],
-                ),
-              ),
-            ),
-
-            // Confetti animation for success (only if passed and not time expired)
-            if (_isPassed && !widget.timeExpired)
-              Positioned(
-                top: MediaQuery.of(context).size.height * 0.15,
-                left: 0,
-                right: 0,
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: Lottie.asset(
-                    'assets/animations/confetti.json',
-                    fit: BoxFit.contain,
-                    repeat: false,
-                    controller: _controller,
+        return Scaffold(
+          backgroundColor: backgroundColor,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                // Background gradient
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 1000),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        backgroundColor.withOpacity(0.8),
+                        backgroundColor.withOpacity(0.9),
+                        backgroundColor,
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-            // Main content
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  // Header
-                  Row(
+                // Confetti animation for success (only if passed and not time expired)
+                if (_isPassed && !widget.timeExpired)
+                  Positioned(
+                    top: MediaQuery.of(context).size.height * 0.15,
+                    left: 0,
+                    right: 0,
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: Lottie.asset(
+                        'assets/animations/confetti.json',
+                        fit: BoxFit.contain,
+                        repeat: false,
+                        controller: _controller,
+                      ),
+                    ),
+                  ),
+
+                // Main content
+                Padding(
+                  padding: EdgeInsets.all(24.w),
+                  child: Column(
                     children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_rounded,
-                          color: Colors.white,
-                        ),
-                        onPressed: _redirectToPracticeTestScreen,
-                      ),
-                      const Spacer(),
-                      Text(
-                        'Test Results',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                        ),
-                      ),
-                      const Spacer(),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  // Progress circle
-                  FadeIn(
-                    delay: const Duration(milliseconds: 200),
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 20,
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
+                      // Header
+                      Row(
                         children: [
-                          SizedBox(
-                            width: 160,
-                            height: 160,
-                            child: CircularProgressIndicator(
-                              value: percentage / 100,
-                              strokeWidth: 12,
-                              backgroundColor: Colors.white.withOpacity(0.1),
-                              valueColor: AlwaysStoppedAnimation(progressColor),
+                          IconButton(
+                            icon: Icon(
+                              Icons.arrow_back_rounded,
+                              color: Colors.white,
+                              size: 24.sp,
+                            ),
+                            onPressed: _redirectToPracticeTestScreen,
+                          ),
+                          const Spacer(),
+                          Text(
+                            '${widget.part} Results',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18.sp,
                             ),
                           ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
+                          const Spacer(),
+                          SizedBox(width: 48.w),
+                        ],
+                      ),
+
+                      SizedBox(height: 40.h),
+
+                      // Progress circle
+                      FadeIn(
+                        delay: const Duration(milliseconds: 200),
+                        child: Container(
+                          padding: EdgeInsets.all(20.w),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.1),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                blurRadius: 20.r,
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
                             children: [
-                              Text(
-                                '${percentage.toStringAsFixed(0)}%',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                              SizedBox(
+                                width: 160.w,
+                                height: 160.h,
+                                child: CircularProgressIndicator(
+                                  value: percentage / 100,
+                                  strokeWidth: 12.w,
+                                  backgroundColor: Colors.white.withOpacity(
+                                    0.1,
+                                  ),
+                                  valueColor: AlwaysStoppedAnimation(
+                                    progressColor,
+                                  ),
                                 ),
                               ),
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '${percentage.toStringAsFixed(0)}%',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 36.sp,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${widget.score}/${widget.totalQuestions}',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18.sp,
+                                      color: Colors.white.withOpacity(0.8),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 40.h),
+
+                      // Pass/Fail/Time Expired status
+                      SlideInUp(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24.w,
+                            vertical: 12.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(24.r),
+                            border: Border.all(
+                              color: progressColor.withOpacity(0.6),
+                              width: 1.5.w,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10.r,
+                                offset: Offset(0, 4.h),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            widget.timeExpired
+                                ? 'TIME EXPIRED'
+                                : _isPassed
+                                ? 'PASSED'
+                                : 'FAILED',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: progressColor,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 40.h),
+
+                      // Stats cards
+                      if (_showContent) ...[
+                        FadeInLeft(
+                          delay: const Duration(milliseconds: 400),
+                          child: _buildStatCard(
+                            icon: Icons.check_circle_rounded,
+                            title: 'Correct Answers',
+                            value: _correctAnswers.toString(),
+                            color: _passLight,
+                          ),
+                        ),
+                        SizedBox(height: 16.h),
+                        FadeInRight(
+                          delay: const Duration(milliseconds: 500),
+                          child: _buildStatCard(
+                            icon: Icons.error_rounded,
+                            title: 'Wrong Answers',
+                            value: _wrongAnswers.toString(),
+                            color: _failLight,
+                          ),
+                        ),
+                      ],
+
+                      const Spacer(),
+
+                      // Feedback message
+                      if (_showContent)
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 600),
+                          child: Container(
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            child: Text(
+                              _getFeedbackMessage(
+                                widget.score,
+                                widget.totalQuestions,
+                                widget.unlockedNextPart,
+                                widget.timeExpired,
+                              ),
+                              style: GoogleFonts.poppins(
+                                fontSize: 16.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+
+                      SizedBox(height: 24.h),
+
+                      // Countdown
+                      if (_showContent)
+                        FadeIn(
+                          delay: const Duration(milliseconds: 700),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.timer_outlined,
+                                color: Colors.white,
+                                size: 18.sp,
+                              ),
+                              SizedBox(width: 8.w),
                               Text(
-                                '${widget.score}/${widget.totalQuestions}',
+                                'Returning in $_countdown seconds',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                    ],
                   ),
-
-                  const SizedBox(height: 40),
-
-                  // Pass/Fail/Time Expired status
-                  SlideInUp(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: progressColor.withOpacity(0.6),
-                          width: 1.5,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        widget.timeExpired
-                            ? 'TIME EXPIRED'
-                            : _isPassed
-                            ? 'PASSED'
-                            : 'FAILED',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: progressColor,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  // Stats cards
-                  if (_showContent) ...[
-                    FadeInLeft(
-                      delay: const Duration(milliseconds: 400),
-                      child: _buildStatCard(
-                        icon: Icons.check_circle_rounded,
-                        title: 'Correct Answers',
-                        value: _correctAnswers.toString(),
-                        color: _passLight,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    FadeInRight(
-                      delay: const Duration(milliseconds: 500),
-                      child: _buildStatCard(
-                        icon: Icons.error_rounded,
-                        title: 'Wrong Answers',
-                        value: _wrongAnswers.toString(),
-                        color: _failLight,
-                      ),
-                    ),
-                  ],
-
-                  const Spacer(),
-
-                  // Feedback message
-                  if (_showContent)
-                    FadeInUp(
-                      delay: const Duration(milliseconds: 600),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _getFeedbackMessage(
-                            widget.score,
-                            widget.totalQuestions,
-                            widget.unlockedNextPart,
-                            widget.timeExpired,
-                          ),
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-
-                  const SizedBox(height: 24),
-
-                  // Countdown
-                  if (_showContent)
-                    FadeIn(
-                      delay: const Duration(milliseconds: 700),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.timer_outlined,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Returning in $_countdown seconds',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -351,44 +368,44 @@ class _PracticeTestResultScreenState extends State<PracticeTestResultScreen>
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: Colors.white.withOpacity(0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 10.r,
+            offset: Offset(0, 4.h),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               color: color.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color),
+            child: Icon(icon, color: color, size: 24.sp),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
                 style: GoogleFonts.poppins(
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: Colors.white.withOpacity(0.8),
                 ),
               ),
               Text(
                 value,
                 style: GoogleFonts.poppins(
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
+import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/profile/profile_screen.dart';
 import 'package:langtest_pro/view/subscriptions/onetime_offer.dart';
 import 'package:langtest_pro/view/subscriptions/offer_timer_manager.dart';
@@ -17,6 +18,7 @@ class SubscriptionScreen extends StatelessWidget {
       initialPage: 1,
     ); // Subscription is index 1
     final notchController = NotchBottomBarController(index: 1);
+    final selectedPlanIndex = ValueNotifier<int>(0); // Default to Monthly plan
     final appBarTitle = ValueNotifier<String>('Subscription'); // Dynamic title
 
     void showOfferPopup() {
@@ -155,7 +157,7 @@ class SubscriptionContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedPlanIndex = ValueNotifier<int>(0); // Move here and use
+    final selectedPlanIndex = ValueNotifier<int>(0); // Default to Monthly plan
 
     return SingleChildScrollView(
       padding: EdgeInsets.only(bottom: 20.h),
@@ -384,14 +386,5 @@ class SubscriptionContent extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text('Home Content'));
   }
 }

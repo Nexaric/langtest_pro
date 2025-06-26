@@ -41,7 +41,8 @@
         <!-- Flutter plugin setup -->
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2" />
+            android:value="2" 
+            android:enableOnBackInvokedCallback="true"/>
     </application>
 
     <!-- Text processing visibility (required by Flutter engine) -->

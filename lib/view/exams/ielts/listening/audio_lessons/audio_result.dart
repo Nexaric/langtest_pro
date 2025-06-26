@@ -1,10 +1,13 @@
-// lib/exams/ielts/listening/audio_lessons/audio_result.dart
+// lib/view/exams/ielts/listening/audio_lessons/audio_result.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:lottie/lottie.dart';
+import 'package:get/get.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
+import 'package:langtest_pro/controller/listening_controller.dart';
 import 'questions/question_manager.dart';
 import 'dart:async';
 
@@ -37,17 +40,12 @@ class _AudioResultScreenState extends State<AudioResultScreen>
   bool _isPassed = false;
   int _countdown = 5;
   late Timer _timer;
+  final ListeningProgressController _progressController = Get.find();
 
-  // Color scheme
-  final Color _passColor = const Color(0xFF4CAF50); // Green 500
-  final Color _failColor = const Color(0xFFF44336); // Red 500
-  final Color _passLight = const Color.fromARGB(
-    255,
-    200,
-    230,
-    201,
-  ); // Green 300
-  final Color _failLight = const Color.fromARGB(255, 255, 205, 210); // Red 300
+  final Color _passColor = const Color(0xFF4CAF50);
+  final Color _failColor = const Color(0xFFF44336);
+  final Color _passLight = const Color.fromARGB(255, 200, 230, 201);
+  final Color _failLight = const Color.fromARGB(255, 255, 205, 210);
 
   @override
   void initState() {
@@ -58,7 +56,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
       duration: const Duration(milliseconds: 1500),
     );
 
-    // Start animations
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         _controller.forward();
@@ -66,7 +63,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
       }
     });
 
-    // Start countdown
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_countdown > 0) {
         if (mounted) {
@@ -111,7 +107,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
       body: SafeArea(
         child: Stack(
           children: [
-            // Background gradient
             AnimatedContainer(
               duration: const Duration(milliseconds: 1000),
               decoration: BoxDecoration(
@@ -127,14 +122,13 @@ class _AudioResultScreenState extends State<AudioResultScreen>
               ),
             ),
 
-            // Confetti animation for success
             if (_isPassed)
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.15,
+                top: 0.15.sh,
                 left: 0,
                 right: 0,
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: 0.7.sh,
                   child: Lottie.asset(
                     'assets/animations/confetti.json',
                     fit: BoxFit.contain,
@@ -144,52 +138,53 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                 ),
               ),
 
-            // Main content
             Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(24.w),
               child: Column(
                 children: [
-                  // Header
                   Row(
                     children: [
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.arrow_back_rounded,
                           color: Colors.white,
+                          size: 24.sp,
                         ),
                         onPressed: () {
                           _timer.cancel();
                           _navigateBackToLessons();
                         },
                       ),
-                      const Spacer(),
-                      Text(
-                        'Lesson ${widget.lessonId} Results',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
+                      Expanded(
+                        child: Obx(
+                          () => Text(
+                            'Lesson ${widget.lessonId} Results (${(_progressController.getProgress(widget.lessonId.toString()) * 100).toStringAsFixed(0)}%)',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 18.sp,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
-                      const Spacer(),
-                      const SizedBox(width: 48),
+                      SizedBox(width: 48.w),
                     ],
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
 
-                  // Progress circle
                   FadeIn(
                     delay: const Duration(milliseconds: 200),
                     child: Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20.w),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(0.1),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.3),
-                            blurRadius: 20,
+                            blurRadius: 20.r,
                           ),
                         ],
                       ),
@@ -197,11 +192,11 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                         alignment: Alignment.center,
                         children: [
                           SizedBox(
-                            width: 160,
-                            height: 160,
+                            width: 160.w,
+                            height: 160.h,
                             child: CircularProgressIndicator(
                               value: percentage / 100,
-                              strokeWidth: 12,
+                              strokeWidth: 12.w,
                               backgroundColor: Colors.white.withOpacity(0.1),
                               valueColor: AlwaysStoppedAnimation(progressColor),
                             ),
@@ -212,7 +207,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                               Text(
                                 '${percentage.toStringAsFixed(0)}%',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 36,
+                                  fontSize: 36.sp,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
@@ -220,7 +215,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                               Text(
                                 '${widget.score}/${widget.totalQuestions}',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 18,
+                                  fontSize: 18.sp,
                                   color: Colors.white.withOpacity(0.8),
                                 ),
                               ),
@@ -231,34 +226,33 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
 
-                  // Pass/Fail status
                   SlideInUp(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 24.w,
+                        vertical: 12.h,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(24.r),
                         border: Border.all(
                           color: progressColor.withOpacity(0.6),
-                          width: 1.5,
+                          width: 1.5.w,
                         ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            blurRadius: 10.r,
+                            offset: Offset(0, 4.h),
                           ),
                         ],
                       ),
                       child: Text(
                         _isPassed ? 'PASSED' : 'FAILED',
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
                           color: progressColor,
                           letterSpacing: 1.5,
@@ -267,9 +261,8 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                     ),
                   ),
 
-                  const SizedBox(height: 40),
+                  SizedBox(height: 40.h),
 
-                  // Stats cards
                   if (_showContent) ...[
                     FadeInLeft(
                       delay: const Duration(milliseconds: 400),
@@ -280,7 +273,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                         color: _passLight,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     FadeInRight(
                       delay: const Duration(milliseconds: 500),
                       child: _buildStatCard(
@@ -294,22 +287,21 @@ class _AudioResultScreenState extends State<AudioResultScreen>
 
                   const Spacer(),
 
-                  // Feedback message
                   if (_showContent)
                     FadeInUp(
                       delay: const Duration(milliseconds: 600),
                       child: Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16.w),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Text(
                           _isPassed
                               ? 'You unlocked the next lesson!'
                               : 'Need $requiredScore+ correct answers to pass',
                           style: GoogleFonts.poppins(
-                            fontSize: 16,
+                            fontSize: 16.sp,
                             color: Colors.white,
                             fontWeight: FontWeight.w500,
                           ),
@@ -318,25 +310,24 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                       ),
                     ),
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: 24.h),
 
-                  // Countdown
                   if (_showContent)
                     FadeIn(
                       delay: const Duration(milliseconds: 700),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.timer_outlined,
                             color: Colors.white,
-                            size: 18,
+                            size: 18.sp,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8.w),
                           Text(
                             'Redirecting in $_countdown seconds',
                             style: GoogleFonts.poppins(
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               color: Colors.white,
                             ),
                           ),
@@ -359,44 +350,44 @@ class _AudioResultScreenState extends State<AudioResultScreen>
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: Colors.white.withOpacity(0.2)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 10.r,
+            offset: Offset(0, 4.h),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               color: color.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color),
+            child: Icon(icon, color: color, size: 24.sp),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
                 style: GoogleFonts.poppins(
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: Colors.white.withOpacity(0.8),
                 ),
               ),
               Text(
                 value,
                 style: GoogleFonts.poppins(
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -409,13 +400,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
   }
 
   int _getRequiredScore() {
-    if (widget.lessonId == 1) return 0; // Lesson 1 has no questions
-    if (widget.lessonId <= 10) return 6; // Group 1: Lessons 2-10, 10 questions
-    if (widget.lessonId <= 20) return 8; // Group 2: Lessons 11-20, 12 questions
-    if (widget.lessonId <= 30) return 9; // Group 3: Lessons 21-30, 14 questions
-    if (widget.lessonId <= 40) {
-      return 11; // Group 4: Lessons 31-40, 16 questions
-    }
-    return 14; // Group 5: Lessons 41-50, 20 questions
+    return QuestionManager.getPassThreshold(widget.lessonId);
   }
 }

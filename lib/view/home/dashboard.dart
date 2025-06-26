@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:langtest_pro/controller/listening/listening_controller.dart';
-import 'package:langtest_pro/controller/reading/reading_controller.dart';
+import 'package:langtest_pro/controller/listening_controller.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
 import 'package:langtest_pro/controller/speaking_progress_provider.dart';
-import 'package:langtest_pro/controller/writing/writing_controller.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import '../../core/widgets/progress_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -34,7 +35,7 @@ class DashboardScreen extends StatelessWidget {
                 title: Text(
                   "Dashboard",
                   style: GoogleFonts.poppins(
-                    fontSize: 22,
+                    fontSize: 22.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -44,19 +45,19 @@ class DashboardScreen extends StatelessWidget {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(16.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Skill Progress",
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       Obx(
                         () => _buildSkillProgress(
                           listeningProgress: listeningProgress,
@@ -95,11 +96,15 @@ class DashboardScreen extends StatelessWidget {
         Expanded(
           child: ProgressCard(
             title: "Listening",
-            completed: listeningProgress.completedLessons,
+            completed:
+                (listeningProgress.lessonProgressPercentage /
+                        100 *
+                        ListeningProgressController.totalLessons)
+                    .round(),
             total: ListeningProgressController.totalLessons,
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         Expanded(
           child: ProgressCard(
             title: "Reading",
@@ -107,19 +112,25 @@ class DashboardScreen extends StatelessWidget {
             total: totalReadingLessons,
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         Expanded(
           child: ProgressCard(
             title: "Writing",
-            completed: writingProgress.completedLessons,
+            completed:
+                (writingProgress.progress *
+                        WritingProgressController.totalLessons)
+                    .round(),
             total: WritingProgressController.totalLessons,
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: 8.w),
         Expanded(
           child: ProgressCard(
             title: "Speaking",
-            completed: speakingProgress.completedLessons,
+            completed:
+                (speakingProgress.progress *
+                        SpeakingProgressController.totalLessons)
+                    .round(),
             total: SpeakingProgressController.totalLessons,
           ),
         ),

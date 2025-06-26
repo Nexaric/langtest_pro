@@ -1,4 +1,4 @@
-// lib/exams/ielts/exams/listening_audio.dart
+// lib/exams/ielts/listening/audio_lessons/questions/question_manager.dart
 
 import 'package:flutter/material.dart';
 
@@ -91,6 +91,13 @@ class QuestionManager {
     if (lessonId <= 30) return 3;
     if (lessonId <= 40) return 4;
     return 5;
+  }
+
+  /// Gets the pass threshold for a lesson
+  static int getPassThreshold(int lessonId) {
+    if (lessonId == 1) return 0; // Lesson 1 has no questions
+    final group = _getGroupForLesson(lessonId);
+    return _groupConfig[group]!['passThreshold']!;
   }
 
   /// Gets a random set of questions for the specified lesson based on group rules
@@ -259,12 +266,12 @@ class QuestionManager {
           throw Exception("Question ${i + 1} has empty question text");
         }
 
-        final options = question['options'];
+        final options = question['options'] as List<dynamic>?;
         if (options == null || options.length < 2) {
           throw Exception("Question ${i + 1} has insufficient options");
         }
 
-        final correctAnswer = question['correctAnswer'];
+        final correctAnswer = question['correctAnswer'] as String?;
         if (correctAnswer == null || !options.contains(correctAnswer)) {
           throw Exception("Question ${i + 1} has invalid correct answer");
         }
@@ -297,7 +304,7 @@ class QuestionManager {
     if (questionIndex < 0 || questionIndex >= currentQuestions.length) {
       throw Exception("Invalid question index: $questionIndex");
     }
-    return currentQuestions[questionIndex]['correctAnswer'];
+    return currentQuestions[questionIndex]['correctAnswer'] as String;
   }
 
   /// Calculates the score based on user answers

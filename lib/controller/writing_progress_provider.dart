@@ -1,23 +1,28 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:langtest_pro/repo/writing/writing_auth_facade.dart';
-import 'package:langtest_pro/repo/writing/writing_impl.dart';
 
 class WritingProgressController extends GetxController {
+  // Total number of lessons (40 Writing Task 2 + 14 Formal Letters)
   static const int totalLessons = 54;
   static const int totalWritingLessons = 40;
   static const int totalLetterLessons = 14;
 
+  // Track completed Writing Task 2 lessons
   final _completedLessons = 0.obs;
   final _completedLessonIds = <int>{}.obs;
+
+  // Track completed Formal Letter lessons
   final _completedLetterLessons = 0.obs;
   final _completedLetterIds = <int>{}.obs;
 
+  // SharedPreferences for persistence
   SharedPreferences? _prefs;
-  final IWritingFacade _facade = WritingImpl();
-  final String? _userId = Supabase.instance.client.auth.currentUser?.id;
 
+  WritingProgressController() {
+    _loadProgress();
+  }
+
+  // Getters
   int get completedLessons => _completedLessons.value;
   Set<int> get completedLessonIds => _completedLessonIds.toSet();
   int get completedLetterLessons => _completedLetterLessons.value;
@@ -25,14 +30,10 @@ class WritingProgressController extends GetxController {
 
   double get progress =>
       (_completedLessons.value + _completedLetterLessons.value) / totalLessons;
+
   int get completionPercentage => (progress * 100).round();
 
-  @override
-  void onInit() {
-    super.onInit();
-    if (_userId != null) _loadProgress();
-  }
-
+  // Load progress from SharedPreferences
   Future<void> _loadProgress() async {
     try {
       _prefs = await SharedPreferences.getInstance();
@@ -41,27 +42,19 @@ class WritingProgressController extends GetxController {
           _prefs?.getInt('completedLetterLessons') ?? 0;
 
       final lessonIds = _prefs?.getStringList('completedLessonIds') ?? [];
-      _completedLessonIds.value = lessonIds.map(int.parse).toSet();
+      _completedLessonIds.addAll(lessonIds.map(int.parse));
 
       final letterIds = _prefs?.getStringList('completedLetterIds') ?? [];
-      _completedLetterIds.value = letterIds.map(int.parse).toSet();
+      _completedLetterIds.addAll(letterIds.map(int.parse));
 
-      if (_userId != null)
-        await _facade.loadProgress(uid: _userId!, controller: this);
       update();
     } catch (e) {
       print('Error loading progress: $e');
     }
   }
 
-  // Add public loadProgress method
-  Future<void> loadProgress() async {
-    await _loadProgress();
-  }
-
+  // Save progress to SharedPreferences
   Future<void> _saveProgress() async {
-    if (_userId == null) return;
-
     try {
       await _prefs?.setInt('completedLessons', _completedLessons.value);
       await _prefs?.setInt(
@@ -76,15 +69,13 @@ class WritingProgressController extends GetxController {
         'completedLetterIds',
         _completedLetterIds.map((id) => id.toString()).toList(),
       );
-
-      await _facade.syncProgress(uid: _userId!, controller: this);
     } catch (e) {
       print('Error saving progress: $e');
     }
   }
 
+  // Complete a Writing Task 2 lesson
   void completeLesson(int lessonNumber) {
-    if (_userId == null) return;
     if (lessonNumber < 1 || lessonNumber > totalWritingLessons) {
       print('Invalid lesson number: $lessonNumber');
       return;
@@ -96,8 +87,8 @@ class WritingProgressController extends GetxController {
     }
   }
 
+  // Complete a Formal Letter lesson
   void completeLetterLesson(int letterId) {
-    if (_userId == null) return;
     if (letterId < 1 || letterId > totalLetterLessons) {
       print('Invalid letter ID: $letterId');
       return;
@@ -109,17 +100,18 @@ class WritingProgressController extends GetxController {
     }
   }
 
+  // Check if a Writing Task 2 lesson is completed
   bool isLessonCompleted(int lessonNumber) {
     return _completedLessonIds.contains(lessonNumber);
   }
 
+  // Check if a Formal Letter lesson is completed
   bool isLetterLessonCompleted(int letterId) {
     return _completedLetterIds.contains(letterId);
   }
 
+  // Reset all progress
   Future<void> resetProgress() async {
-    if (_userId == null) return;
-
     _completedLessons.value = 0;
     _completedLessonIds.clear();
     _completedLetterLessons.value = 0;

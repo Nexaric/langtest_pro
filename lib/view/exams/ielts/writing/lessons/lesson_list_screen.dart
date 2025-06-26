@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/controller/writing/writing_controller.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';

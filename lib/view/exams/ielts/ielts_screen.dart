@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/controller/listening/listening_controller.dart';
-import 'package:langtest_pro/controller/reading/reading_controller.dart';
+import 'package:langtest_pro/controller/listening_controller.dart';
+import 'package:langtest_pro/controller/reading_progress_provider.dart';
 import 'package:langtest_pro/controller/speaking_progress_provider.dart';
-import 'package:langtest_pro/controller/writing/writing_controller.dart';
+import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:langtest_pro/core/loading/under_maintenance.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,7 @@ class IeltsScreen extends StatelessWidget {
         title: Text(
           "IELTS Preparation",
           style: GoogleFonts.poppins(
-            fontSize: 24,
+            fontSize: 24.sp,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -38,7 +39,6 @@ class IeltsScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Gradient Background
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -48,21 +48,16 @@ class IeltsScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // Content Scroll View
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
               child: Column(
                 children: [
-                  // Skill Progress Overview
                   FadeInDown(
                     delay: const Duration(milliseconds: 300),
                     child: _buildProgressOverview(context),
                   ),
-                  const SizedBox(height: 30),
-
-                  // IELTS Modules Grid
+                  SizedBox(height: 30.h),
                   ZoomIn(
                     duration: const Duration(milliseconds: 600),
                     child: _buildModulesGrid(context, size),
@@ -77,16 +72,16 @@ class IeltsScreen extends StatelessWidget {
   }
 
   Widget _buildProgressOverview(BuildContext context) {
-    final listeningController = Get.put(ListeningProgressController());
-    final readingController = Get.put(ReadingProgressController());
-    final writingController = Get.put(WritingProgressController());
-    final speakingController = Get.put(SpeakingProgressController());
+    final listeningController = Get.find<ListeningProgressController>();
+    final readingController = Get.find<ReadingProgressController>();
+    final writingController = Get.find<WritingProgressController>();
+    final speakingController = Get.find<SpeakingProgressController>();
 
     return Obx(() {
       return GlassmorphicContainer(
         width: double.infinity,
-        height: 200,
-        borderRadius: 20,
+        height: 200.h,
+        borderRadius: 20.r,
         blur: 20,
         alignment: Alignment.center,
         linearGradient: LinearGradient(
@@ -105,24 +100,24 @@ class IeltsScreen extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
               Text(
                 "📊 Skill Progress",
                 style: GoogleFonts.poppins(
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildProgressCircle(
                     "Listening",
-                    listeningController.progress,
+                    listeningController.lessonProgressPercentage / 100,
                   ),
                   _buildProgressCircle("Reading", readingController.progress),
                   _buildProgressCircle("Writing", writingController.progress),
@@ -140,26 +135,26 @@ class IeltsScreen extends StatelessWidget {
     return Column(
       children: [
         CircularPercentIndicator(
-          radius: 35,
-          lineWidth: 6,
-          percent: progress,
+          radius: 35.r,
+          lineWidth: 6.w,
+          percent: progress.clamp(0.0, 1.0),
           animation: true,
           circularStrokeCap: CircularStrokeCap.round,
           center: Text(
             "${(progress * 100).toInt()}%",
             style: GoogleFonts.poppins(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: 12.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
           progressColor: Colors.white,
           backgroundColor: Colors.white24,
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: 4.h),
         Text(
           skill,
-          style: GoogleFonts.poppins(color: Colors.white, fontSize: 13),
+          style: GoogleFonts.poppins(color: Colors.white, fontSize: 13.sp),
         ),
       ],
     );
@@ -170,8 +165,8 @@ class IeltsScreen extends StatelessWidget {
 
     return GlassmorphicContainer(
       width: double.infinity,
-      height: isTablet ? 550 : 450,
-      borderRadius: 20,
+      height: isTablet ? 550.h : 450.h,
+      borderRadius: 20.r,
       blur: 20,
       alignment: Alignment.center,
       linearGradient: LinearGradient(
@@ -187,24 +182,23 @@ class IeltsScreen extends StatelessWidget {
         colors: [Colors.white.withOpacity(0.3), Colors.white.withOpacity(0.1)],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.w),
         child: Column(
           children: [
             Text(
               "📚 IELTS Modules",
               style: GoogleFonts.poppins(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
-
-            const SizedBox(height: 30),
+            SizedBox(height: 30.h),
             Expanded(
               child: GridView.count(
                 crossAxisCount: isTablet ? 3 : 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
+                mainAxisSpacing: 16.h,
+                crossAxisSpacing: 16.w,
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 children: [
@@ -261,30 +255,33 @@ class IeltsScreen extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.92),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(color: Colors.black12, blurRadius: 6, spreadRadius: 2),
           ],
         ),
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(14.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.school_rounded, color: color, size: 40),
-            const SizedBox(height: 10),
+            Icon(Icons.school_rounded, color: color, size: 40.sp),
+            SizedBox(height: 10.h),
             Text(
               title,
               style: GoogleFonts.poppins(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 6.h),
             Text(
               subtitle,
-              style: GoogleFonts.poppins(fontSize: 13, color: Colors.black54),
+              style: GoogleFonts.poppins(
+                fontSize: 13.sp,
+                color: Colors.black54,
+              ),
               textAlign: TextAlign.center,
             ),
           ],

@@ -1,12 +1,7 @@
-import 'package:langtest_pro/controller/listening/listening_controller.dart';
+// lib/repo/listening/listening_auth_facade.dart
 
-abstract class IListeningFacade {
-  Future<void> syncProgress({
-    required String uid,
-    required ListeningProgressController controller,
-  });
-  Future<void> loadProgress({
-    required String uid,
-    required ListeningProgressController controller,
-  });
+abstract class ListeningAuthFacade {
+  Future<void> updateProgress(String userId, List<String> progress);
+  Future<List<String>> fetchProgress(String userId);
+  Future<void> resetProgress(String userId);
 }

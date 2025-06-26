@@ -1,8 +1,11 @@
+// lib/view/exams/ielts/listening/practice_test_screen.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/listening/listening_controller.dart';
+import 'package:langtest_pro/controller/listening_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
 import 'practice_test_questions_screen.dart';
 
@@ -59,137 +62,161 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const IeltsListeningScreen()),
-        );
-        return false;
-      },
-      child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [_gradientStart, _gradientEnd],
-            ),
-          ),
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                title: Text(
-                  "IELTS Practice Tests",
-                  style: GoogleFonts.poppins(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: _textLight,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                centerTitle: true,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const IeltsListeningScreen(),
-                      ),
-                    );
-                  },
-                ),
-                pinned: true,
-                floating: false,
-                snap: false,
-                expandedHeight: 0,
-                toolbarHeight: kToolbarHeight,
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return WillPopScope(
+          onWillPop: () async {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const IeltsListeningScreen(),
               ),
-              const SliverPadding(padding: EdgeInsets.only(top: 10)),
-              GetBuilder<ListeningProgressController>(
-                builder: (progressController) {
-                  if (progressController.isLoading) {
-                    return const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-
-                  if (progressController.hasError) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              progressController.errorMessage ??
-                                  'Error loading progress',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: _textLight,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await progressController.restoreFromCloud();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: _accentColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              child: Text(
-                                'Retry',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: _textLight,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+            );
+            return false;
+          },
+          child: Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [_gradientStart, _gradientEnd],
+                ),
+              ),
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    title: Text(
+                      "IELTS Practice Tests",
+                      style: GoogleFonts.poppins(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w600,
+                        color: _textLight,
+                        letterSpacing: 0.5,
                       ),
-                    );
-                  }
-
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final test = _practiceTests[index];
-                        final isLocked = _isTestLocked(
-                          index,
-                          progressController,
-                        );
-                        final isCompleted = progressController
-                            .isPracticeTestComplete(test['part']);
-
-                        return FadeInUp(
-                          delay: Duration(milliseconds: 100 * index),
-                          child: _buildTestCard(
-                            context,
-                            test: test,
-                            isLocked: isLocked,
-                            isCompleted: isCompleted,
-                            progressController: progressController,
+                    ),
+                    centerTitle: true,
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
+                    leading: IconButton(
+                      icon: Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 24.sp,
+                      ),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const IeltsListeningScreen(),
                           ),
                         );
-                      }, childCount: _practiceTests.length),
+                      },
                     ),
-                  );
-                },
+                    pinned: true,
+                    floating: false,
+                    snap: false,
+                    expandedHeight: 0,
+                    toolbarHeight: kToolbarHeight,
+                  ),
+                  SliverPadding(padding: EdgeInsets.only(top: 10.h)),
+                  GetBuilder<ListeningProgressController>(
+                    builder: (progressController) {
+                      if (progressController.isLoading) {
+                        return SliverFillRemaining(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: _gradientStart,
+                            ),
+                          ),
+                        );
+                      }
+
+                      if (progressController.hasError) {
+                        return SliverFillRemaining(
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  progressController.errorMessage ??
+                                      'Error loading progress',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16.sp,
+                                    color: _textLight,
+                                  ),
+                                ),
+                                SizedBox(height: 16.h),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    await progressController.restoreFromCloud();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _accentColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 10.h,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Retry',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14.sp,
+                                      color: _textLight,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      return SliverPadding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final test = _practiceTests[index];
+                            final isLocked = _isTestLocked(
+                              index,
+                              progressController,
+                            );
+                            final isCompleted = progressController
+                                .isPracticeTestComplete(test['part']);
+
+                            return FadeInUp(
+                              delay: Duration(milliseconds: 100 * index),
+                              child: _buildTestCard(
+                                context,
+                                test: test,
+                                isLocked: isLocked,
+                                isCompleted: isCompleted,
+                                progressController: progressController,
+                              ),
+                            );
+                          }, childCount: _practiceTests.length),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -212,12 +239,12 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
   }) {
     return Material(
       elevation: 4,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(20.r),
       color: Colors.transparent,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
+        margin: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           gradient:
               isLocked
                   ? LinearGradient(
@@ -236,13 +263,13 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              blurRadius: 10.r,
+              offset: Offset(0, 4.h),
             ),
           ],
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           onTap:
               isLocked
                   ? null
@@ -257,7 +284,7 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
                     );
                   },
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -268,7 +295,7 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
                       child: Text(
                         test['title'],
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
                           color: _textLight,
                         ),
@@ -277,29 +304,29 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
                       ),
                     ),
                     if (isCompleted)
-                      const Icon(
+                      Icon(
                         Icons.check_circle,
                         color: Colors.white,
-                        size: 20,
+                        size: 20.sp,
                       ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 Text(
                   test['description'],
                   style: GoogleFonts.poppins(
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     color: _textLight.withOpacity(0.7),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12.h),
                 Center(
                   child:
                       isLocked
                           ? Container(
-                            padding: const EdgeInsets.all(10),
+                            padding: EdgeInsets.all(10.w),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: _textLight.withOpacity(0.1),
@@ -307,26 +334,26 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
                             child: Icon(
                               Icons.lock_outline,
                               color: _textLight.withOpacity(0.7),
-                              size: 24,
+                              size: 24.sp,
                             ),
                           )
                           : Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 10,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 10.h,
                             ),
                             decoration: BoxDecoration(
                               color: _textLight.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(20.r),
                               border: Border.all(
                                 color: _textLight.withOpacity(0.3),
-                                width: 1,
+                                width: 1.w,
                               ),
                             ),
                             child: Text(
                               isCompleted ? "Review" : "Start Test",
                               style: GoogleFonts.poppins(
-                                fontSize: 14,
+                                fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
                                 color: _textLight,
                                 letterSpacing: 0.5,
