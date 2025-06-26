@@ -16,9 +16,9 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize profile data after first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (profileController.userData.value == null) {
+     
         profileController.getProfile();
-      }
+      
     });
 
     return Scaffold(
