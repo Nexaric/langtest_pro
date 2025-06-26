@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:dartz/dartz.dart';
 import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/repo/profile/profile_impl.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
