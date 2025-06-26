@@ -85,9 +85,9 @@ class SubscriptionScreen extends StatelessWidget {
                             ? 'Subscription'
                             : 'Profile';
                   },
-                  children: const [
-                    HomeContent(),
-                    SubscriptionContent(),
+                  children: [
+                    const HomeContent(),
+                    const SubscriptionContent(),
                     ProfileScreen(),
                   ],
                 ),

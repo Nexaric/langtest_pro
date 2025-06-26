@@ -40,5 +40,6 @@ class Utils {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+  
 
 }

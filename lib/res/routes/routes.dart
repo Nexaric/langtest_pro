@@ -49,10 +49,12 @@ class AppRoutes {
       name: RoutesName.subscriptionStatusScreen,
       page: () => const SubscriptionStatusScreen(),
     ),
-    GetPage(name: RoutesName.profileScreen, page: () => const ProfileScreen()),
+    GetPage(name: RoutesName.profileScreen, page: () =>  ProfileScreen()),
     GetPage(
       name: RoutesName.editProfileScreen,
-      page: () => const EditProfileScreen(),
+      page: () =>  EditProfileScreen(
+        usrModel: Get.arguments,
+      ),
     ),
     GetPage(
       name: RoutesName.myCoursesScreen,

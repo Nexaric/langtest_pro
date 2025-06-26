@@ -16,7 +16,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
      HomeScreen(),
     // const AiChatScreen(),
     // const CourseScreen(),
-    const ProfileScreen(),
+     ProfileScreen(),
   ];
 
   @override

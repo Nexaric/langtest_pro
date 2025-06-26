@@ -485,7 +485,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
               Obx(() {
                 final progressController =
                     Get.find<ListeningProgressController>();
-                if (progressController.isLoading.value) {
+                if (progressController.isLoading) {
                   return SliverFillRemaining(
                     child: Center(
                       child: CircularProgressIndicator(strokeWidth: 4.w),
@@ -493,14 +493,14 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                   );
                 }
 
-                if (progressController.hasError.value) {
+                if (progressController.hasError) {
                   return SliverFillRemaining(
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            progressController.errorMessage.value ??
+                            progressController.errorMessage ??
                                 'Error loading progress',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(

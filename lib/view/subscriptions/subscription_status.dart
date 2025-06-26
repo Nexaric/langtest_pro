@@ -79,9 +79,9 @@ class _SubscriptionStatusScreenState extends State<SubscriptionStatusScreen> {
                             ? 'Subscription Status'
                             : 'Profile';
                   },
-                  children: const [
-                    HomeContent(),
-                    SubscriptionStatusContent(),
+                  children: [
+                    const HomeContent(),
+                    const SubscriptionStatusContent(),
                     ProfileScreen(),
                   ],
                 ),
