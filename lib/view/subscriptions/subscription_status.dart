@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:intl/intl.dart';
-import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/profile/profile_screen.dart';
 
@@ -182,39 +181,7 @@ class SubscriptionStatusContent extends StatelessWidget {
         'description': 'Billed yearly (Save 40%)',
         'isRecommended': true,
       },
-      {
-        'title': 'Lifetime',
-        'price': '₹1999',
-        'period': '',
-        'duration': const Duration(days: 365 * 100),
-        'description': 'One-time payment',
-        'isRecommended': false,
-      },
     ];
-
-    void extendSubscription(
-      Duration duration,
-      String newPlan,
-      String newPrice,
-    ) {
-      DateTime newExpiryDate;
-      bool newIsLifetime;
-
-      if (duration.inDays > 365 * 50) {
-        newExpiryDate = DateTime.now().add(const Duration(days: 365 * 100));
-        newIsLifetime = true;
-      } else {
-        final extendFrom =
-            expiryDate.isAfter(DateTime.now()) ? expiryDate : DateTime.now();
-        newExpiryDate = extendFrom.add(duration);
-        newIsLifetime = false;
-      }
-
-      Get.toNamed(
-        RoutesName.paymentScreen,
-        arguments: {'price': newPrice, 'plan': newPlan, 'duration': duration},
-      );
-    }
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(20.w),
@@ -304,9 +271,7 @@ class SubscriptionStatusContent extends StatelessWidget {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            isLifetime
-                                ? 'Lifetime'
-                                : DateFormat('MMM d, y').format(expiryDate),
+                            DateFormat('MMM d, y').format(expiryDate),
                             style: GoogleFonts.montserrat(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -321,143 +286,10 @@ class SubscriptionStatusContent extends StatelessWidget {
               ],
             ),
           ),
-          if (!isLifetime) ...[
-            SizedBox(height: 32.h),
-            Text(
-              'Extend Your Plan',
-              style: GoogleFonts.montserrat(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              'Choose a plan to add to your current subscription',
-              style: GoogleFonts.montserrat(
-                fontSize: 14.sp,
-                color: Colors.white.withOpacity(0.7),
-              ),
-            ),
-            SizedBox(height: 20.h),
-            ...plans.map((plan) => _buildPlanCard(plan, extendSubscription)),
-            SizedBox(height: 24.h),
-            Text(
-              'Your subscription will automatically renew unless canceled at least 24 hours before the end of the current period.',
-              style: GoogleFonts.montserrat(
-                fontSize: 12.sp,
-                color: Colors.white.withOpacity(0.5),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
         ],
       ),
     );
   }
 
-  Widget _buildPlanCard(
-    Map<String, dynamic> plan,
-    Function(Duration, String, String) extendSubscription,
-  ) {
-    final bool isLifetimePlan = plan['duration'].inDays > 365 * 50;
-
-    return GestureDetector(
-      onTap:
-          () => extendSubscription(
-            plan['duration'],
-            plan['title'],
-            plan['price'],
-          ),
-      child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color:
-                plan['isRecommended']
-                    ? Colors.white
-                    : Colors.white.withOpacity(0.2),
-            width: plan['isRecommended'] ? 1.5.w : 1.w,
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    plan['title'],
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    plan['description'],
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13.sp,
-                      color: Colors.white.withOpacity(0.7),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                if (plan['isRecommended'])
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(6.r),
-                    ),
-                    child: Text(
-                      'SAVE ${plan['title'] == 'Yearly' ? '40%' : ''}',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                if (plan['isRecommended']) SizedBox(height: 6.h),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      plan['price'],
-                      style: GoogleFonts.montserrat(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    if (!isLifetimePlan)
-                      Text(
-                        plan['period'],
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14.sp,
-                          color: Colors.white.withOpacity(0.7),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  
 }

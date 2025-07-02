@@ -20,6 +20,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
 
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
   DateTime? _selectedDate;
   String? _selectedGender;
 
@@ -55,40 +56,56 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   }
 
   void _saveUserInfo() async {
-    if (_firstNameController.text.isNotEmpty &&
-        _lastNameController.text.isNotEmpty &&
-        _selectedDate != null &&
-        _selectedGender != null) {
-      debugPrint(_selectedGender);
+  String phone = _phoneNumberController.text.trim();
 
-      final userData = UserData(
-        uid:widget.userCred.id,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        dob: _selectedDate.toString(),
-        gender: _selectedGender.toString(),
-        email: widget.userCred.email ?? '',
-        role: 'Student',
-        isCompleted: true,
-      );
+  // Phone number validation: 10 digits and only numbers
+  bool isValidPhone = RegExp(r'^[0-9]{10}$').hasMatch(phone);
 
-      authController.addUserDataController(
-        userCred: widget.userCred,
-        userModel: userData,
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Please fill all fields", style: GoogleFonts.poppins()),
-          backgroundColor: const Color(0xFF6C4DF6),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      );
+  if (_firstNameController.text.isNotEmpty &&
+      _lastNameController.text.isNotEmpty &&
+      phone.isNotEmpty &&
+      isValidPhone &&
+      _selectedDate != null &&
+      _selectedGender != null) {
+    
+    debugPrint(_selectedGender);
+
+    final userData = UserData(
+      phone: phone,
+      uid: widget.userCred.id,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      dob: _selectedDate.toString(),
+      gender: _selectedGender.toString(),
+      email: widget.userCred.email ?? '',
+      role: 'Student',
+      isCompleted: true,
+    );
+
+    authController.addUserDataController(
+      userCred: widget.userCred,
+      userModel: userData,
+    );
+  } else {
+    String errorMsg = "Please fill all fields";
+
+    if (!isValidPhone) {
+      errorMsg = "Phone number must be 10 digits and contain only numbers";
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMsg, style: GoogleFonts.poppins()),
+        backgroundColor: const Color(0xFF6C4DF6),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +212,11 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                                     label: "Last Name",
                                     hint: "Enter your last name",
                                     controller: _lastNameController,
+                                  ),
+                                  const SizedBox(height: 20), _buildGlassTextField(
+                                    label: "Phone Number",
+                                    hint: "Enter your phone number",
+                                    controller: _phoneNumberController,
                                   ),
                                   const SizedBox(height: 20),
 

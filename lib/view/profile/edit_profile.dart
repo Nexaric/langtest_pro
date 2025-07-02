@@ -20,6 +20,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _firstnameController;
   late TextEditingController _lastnameController;
   late TextEditingController _emailController;
+  late TextEditingController _phoneController;
   String? _selectedGender;
   String? _dob;
 
@@ -29,6 +30,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _firstnameController = TextEditingController(
       text: widget.usrModel.firstName,
     );
+    _phoneController = TextEditingController(text: widget.usrModel.phone);
     _lastnameController = TextEditingController(text: widget.usrModel.lastName);
     _emailController = TextEditingController(text: widget.usrModel.email);
     _selectedGender = widget.usrModel.gender;
@@ -118,6 +120,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             _lastnameController,
                           ),
                         ),
+                        FadeInLeft(
+                          duration: const Duration(milliseconds: 600),
+                          child: _buildTextField(
+                            "Phone Number",
+                            Icons.person_outline,
+                            _phoneController,
+                          ),
+                        ),
                         SizedBox(height: 16.h),
                         FadeInRight(
                           duration: const Duration(milliseconds: 600),
@@ -172,58 +182,98 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           child: SizedBox(
                             width: double.infinity,
                             child: Obx(
-                              ()=>profileController.isLoading.value? Center(child: CircularProgressIndicator(color: Colors.deepPurple,),): ElevatedButton(
-                                onPressed: () {
-                                  if (_firstnameController.text.isEmpty ||
-                                      _lastnameController.text.isEmpty ||
-                                      _selectedGender == null ||
-                                      _dob == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Please fill all fields',
-                                          style: GoogleFonts.poppins(),
+                              () =>
+                                  profileController.isLoading.value
+                                      ? Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.deepPurple,
                                         ),
-                                        backgroundColor: Colors.red,
+                                      )
+                                      : ElevatedButton(
+                                        onPressed: () {
+                                          final phone =
+                                              _phoneController.text.trim();
+                                          final isValidPhone = RegExp(
+                                            r'^[0-9]{10}$',
+                                          ).hasMatch(phone);
+
+                                          if (_firstnameController
+                                                  .text
+                                                  .isEmpty ||
+                                              _lastnameController
+                                                  .text
+                                                  .isEmpty ||
+                                              _selectedGender == null ||
+                                              _dob == null ||
+                                              phone.isEmpty ||
+                                              !isValidPhone) {
+                                            String errorMsg =
+                                                'Please fill all fields';
+                                            if (!isValidPhone) {
+                                              errorMsg =
+                                                  'Phone number must be 10 digits and numeric only';
+                                            }
+
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  errorMsg,
+                                                  style: GoogleFonts.poppins(),
+                                                ),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          final usrDataModel = UserData(
+                                            phone: phone,
+                                            uid: widget.usrModel.uid,
+                                            firstName:
+                                                _firstnameController.text,
+                                            lastName: _lastnameController.text,
+                                            dob: _dob!,
+                                            gender: _selectedGender!,
+                                            email: _emailController.text,
+                                            role: widget.usrModel.role,
+                                            isCompleted:
+                                                widget.usrModel.isCompleted,
+                                            // Add phone if your UserData has it:
+                                            // phone: phone,
+                                          );
+
+                                          profileController.updateProfile(
+                                            userDataModel: usrDataModel,
+                                          );
+                                        },
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 16.h,
+                                            horizontal: 40.w,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                          ),
+                                          elevation: 5,
+                                          shadowColor: Colors.black.withOpacity(
+                                            0.2,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          "Save Changes",
+                                          style: GoogleFonts.poppins(
+                                            color: const Color(0xFF6A5AE0),
+                                            fontSize: 16.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ),
-                                    );
-                                    return;
-                                  }
-                                  final usrDataModel = UserData(
-                                    uid: widget.usrModel.uid,
-                                    firstName: _firstnameController.text,
-                                    lastName: _lastnameController.text,
-                                    dob: _dob!,
-                                    gender: _selectedGender!,
-                                    email: _emailController.text,
-                                    role: widget.usrModel.role,
-                                    isCompleted: widget.usrModel.isCompleted,
-                                  );
-                                  profileController.updateProfile(
-                                    userDataModel: usrDataModel,
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 16.h,
-                                    horizontal: 40.w,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                  elevation: 5,
-                                  shadowColor: Colors.black.withOpacity(0.2),
-                                ),
-                                child: Text(
-                                  "Save Changes",
-                                  style: GoogleFonts.poppins(
-                                    color: const Color(0xFF6A5AE0),
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
                             ),
                           ),
                         ),

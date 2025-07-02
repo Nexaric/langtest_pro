@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/model/userData_model.dart';
@@ -22,10 +21,29 @@ class AuthController extends GetxController {
           Utils.snakBar("Error", f.toString());
           loading.value = false;
         },
-        (s) {
+        (s) async {
           loading.value = false;
           Utils.saveString('userId', s.id);
-          Get.offNamed(RoutesName.userDetailsScreen, arguments: s);
+          final status = await auth.checkUserDataAdded(userCred: s);
+          if (!status) {
+            Get.offNamed(RoutesName.userDetailsScreen, arguments: s);
+            await auth.addUserData(
+              userCred: s,
+              userModel: UserData(
+                phone: '',
+                uid: s.id,
+                firstName: '',
+                lastName: '',
+                dob: '',
+                gender: '',
+                email: s.email ?? '',
+                role: '',
+                isCompleted: false,
+              ),
+            );
+          }else{
+            Get.offNamed(RoutesName.homeScreen);
+          }
         },
       );
     });
@@ -63,9 +81,7 @@ class AuthController extends GetxController {
         Get.offNamed(RoutesName.homeScreen);
       } else {
         loading.value = false;
-        Get.offNamed(RoutesName.userDetailsScreen,
-        arguments: userStatus
-        );
+        Get.offNamed(RoutesName.userDetailsScreen, arguments: userStatus);
       }
     } else {
       loading.value = false;

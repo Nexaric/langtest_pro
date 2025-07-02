@@ -3,7 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
+import 'package:langtest_pro/controller/payments/payment_controller.dart';
+import 'package:langtest_pro/model/payments_model.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
+import 'package:langtest_pro/utils/utils.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/profile/profile_screen.dart';
 import 'package:langtest_pro/view/subscriptions/onetime_offer.dart';
@@ -157,6 +160,7 @@ class SubscriptionContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final payController = Get.put(PaymentController());
     final selectedPlanIndex = ValueNotifier<int>(0); // Default to Monthly plan
 
     return SingleChildScrollView(
@@ -216,53 +220,93 @@ class SubscriptionContent extends StatelessWidget {
                     isSelected: value == 1,
                     onTap: () => selectedPlanIndex.value = 1,
                   ),
-                  SizedBox(height: 20.h),
-                  Text(
-                    'Cancel anytime in the App store',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.white.withOpacity(0.6),
-                      fontSize: 14.sp,
-                    ),
-                  ),
+
                   SizedBox(height: 20.h),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: SizedBox(
                       width: double.infinity,
                       height: 55.h,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          final planDetails =
-                              value == 0
-                                  ? {
-                                    'price': '₹99',
-                                    'plan': 'Monthly',
-                                    'duration': const Duration(days: 30),
-                                  }
-                                  : {
-                                    'price': '₹599',
-                                    'plan': 'Yearly',
-                                    'duration': const Duration(days: 365),
-                                  };
-                          Get.toNamed(
-                            RoutesName.paymentScreen,
-                            arguments: planDetails,
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6B48EE),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                        ),
-                        child: Text(
-                          'Continue with ${_getPlanPriceText(value)}',
-                          style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      child: Obx(
+                        () =>
+                            payController.isLoading.value
+                                ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.blueAccent,
+                                  ),
+                                )
+                                : ElevatedButton(
+                                  onPressed: () async {
+                                    final phone = await Utils.getString(
+                                      'phone',
+                                    );
+                                    final email = await Utils.getString(
+                                      'email',
+                                    );
+                                    final amount =
+                                        _getPlanPriceText(
+                                          selectedPlanIndex.value,
+                                        ) *
+                                        100;
+
+                                    final String period =
+                                        selectedPlanIndex.value == 0
+                                            ? 'monthly'
+                                            : 'yearly';
+
+                                    final model = PaymentModel(
+                                      key:
+                                          'rzp_test_7iG4y8agXMTCV0', // replace with your key
+                                      amount: amount, // ₹1.00
+                                      name: 'LangTest Pro',
+                                      description: 'IELTS Practice Cource',
+                                      retry: {'enabled': true, 'max_count': 1},
+                                      sendSmsHash: true,
+                                      prefill: {
+                                        'contact': phone ?? '',
+                                        'email': email ?? "",
+                                      },
+                                      paymentModelExternal: {
+                                        'wallets': ['paytm'],
+                                      },
+                                    );
+                                    payController.makePayment(
+                                      model: model,
+                                      period: period,
+                                    );
+
+                                    //   final planDetails =
+                                    //       value == 0
+                                    //           ? {
+                                    //             'price': '₹99',
+                                    //             'plan': 'Monthly',
+                                    //             'duration': const Duration(days: 30),
+                                    //           }
+                                    //           : {
+                                    //             'price': '₹599',
+                                    //             'plan': 'Yearly',
+                                    //             'duration': const Duration(days: 365),
+                                    //           };
+                                    //   Get.toNamed(
+                                    //     RoutesName.paymentScreen,
+                                    //     arguments: planDetails,
+                                    //   );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF6B48EE),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Continue with ${_getPlanPriceText(value)}',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
                       ),
                     ),
                   ),
@@ -275,14 +319,14 @@ class SubscriptionContent extends StatelessWidget {
     );
   }
 
-  String _getPlanPriceText(int index) {
+  int _getPlanPriceText(int index) {
     switch (index) {
       case 0:
-        return '₹99/month';
+        return 99;
       case 1:
-        return '₹599/year';
+        return 599;
       default:
-        return '';
+        return 99;
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/repo/profile/i_profilefacade.dart';
 import 'package:langtest_pro/utils/app_exceptions.dart';
@@ -24,7 +26,11 @@ class ProfileImpl implements IProfilefacade {
       final data = response;
 
       return right(UserData.fromJson(data));
-    } catch (e) {
+    }on SocketException {
+      return left(AppExceptions("No internet connection"));
+    } 
+    
+    catch (e) {
       return left(AppExceptions(e.toString()));
     }
   }

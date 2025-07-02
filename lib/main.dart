@@ -169,7 +169,7 @@ class MyApp extends StatelessWidget {
             Get.lazyPut<SpeakingProgressController>(
               () => SpeakingProgressController(),
             );
-            Get.lazyPut<NotificationController>(() => NotificationController());
+            // Get.lazyPut<NotificationController>(() => NotificationController());
           }),
         );
       },
