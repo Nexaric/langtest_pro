@@ -7,6 +7,6 @@ abstract class IReportProblemFacade {
   Future<Either<AppExceptions, Unit>> reportProblem({
     required String title,
     required String description,
-    required File image,
+     File? image,
   });
 }
