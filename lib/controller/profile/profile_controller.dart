@@ -4,9 +4,12 @@ import 'package:langtest_pro/model/userData_model.dart';
 import 'package:langtest_pro/repo/profile/profile_impl.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/utils/utils.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
   final ProfileImpl _profileImpl = ProfileImpl();
+
+  final supabase = Supabase.instance.client;
 
   var userData = Rxn<UserData>();
   var isLoading = false.obs;
@@ -45,5 +48,15 @@ class ProfileController extends GetxController {
         },
       );
     });
+  }
+
+  Future<void> signOut() async {
+    isLoading.value = true;
+    try {
+      await supabase.auth.signOut();
+      Get.offNamed(RoutesName.loginScreen);
+    } catch (e) {
+      Utils.snakBar("Error", e.toString());
+    }
   }
 }

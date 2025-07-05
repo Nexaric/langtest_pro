@@ -40,7 +40,7 @@ class AuthImpl implements IAuthfacade {
   Future<Either<AppExceptions, Unit>> addUserData({
     required User userCred,
     required UserData userModel,
-  }) async {
+  }) async { 
     // final db = FirebaseFirestore.instance;
 
     final userData = UserData(
