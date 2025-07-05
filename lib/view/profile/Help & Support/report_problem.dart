@@ -5,8 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:langtest_pro/controller/report_problem/report_problem_controller.dart';
 
-
-
 class ReportProblemScreen extends StatelessWidget {
   const ReportProblemScreen({super.key});
 
@@ -199,28 +197,37 @@ class ReportProblemScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 30.h),
                 Center(
-                  child: ElevatedButton(
-                    onPressed: controller.submitReport,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 12.h,
-                        horizontal: 40.w,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      elevation: 8,
-                      shadowColor: Colors.black.withOpacity(0.1),
-                    ),
-                    child: Text(
-                      "Submit Report",
-                      style: GoogleFonts.poppins(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
+                  child: Obx(
+                    () =>
+                        controller.isLoading.value
+                            ? Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.red,
+                              ),
+                            )
+                            : ElevatedButton(
+                              onPressed: controller.submitReport,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 12.h,
+                                  horizontal: 40.w,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                elevation: 8,
+                                shadowColor: Colors.black.withOpacity(0.1),
+                              ),
+                              child: Text(
+                                "Submit Report",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                   ),
                 ),
                 SizedBox(height: 20.h),

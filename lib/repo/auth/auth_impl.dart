@@ -74,7 +74,7 @@ class AuthImpl implements IAuthfacade {
     return user;
   }
 
-  @override
+@override
   Future<bool> checkUserDataAdded({required User userCred}) async {
     print("Reached data checking, ${userCred.id}");
 
