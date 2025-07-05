@@ -24,3 +24,4 @@ class RequestTimeOut extends AppExceptions {
 class ServerException extends AppExceptions {
   ServerException([String? message]) : super(message, "Server Error");
 }
+

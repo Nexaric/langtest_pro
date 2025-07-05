@@ -9,10 +9,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
+import 'package:langtest_pro/controller/listening_controller.dart';
 import 'package:langtest_pro/core/loading/internet_signel_low.dart';
 import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'practice_test_result.dart';
 import 'practice_test_timer.dart';
@@ -169,10 +169,10 @@ class _PracticeTestQuestionsScreenState
 
   Future<String> _getAudioPathForPart(String part) async {
     final audioPaths = {
-      'Part 1': 'practice_test/part1.mp3',
-      'Part 2': 'practice_test/part2.mp3',
-      'Part 3': 'practice_test/part3.mp3',
-      'Part 4': 'practice_test/part4.mp3',
+      'Part 1': await fetchAudioFromSupabase('practice_test/part1.mp3'),
+      'Part 2': await fetchAudioFromSupabase('practice_test/part2.mp3'),
+      'Part 3': await fetchAudioFromSupabase('practice_test/part3.mp3'),
+      'Part 4': await fetchAudioFromSupabase('practice_test/part4.mp3'),
     };
     if (!audioPaths.containsKey(part)) {
       throw Exception('Invalid part: $part');
@@ -180,25 +180,28 @@ class _PracticeTestQuestionsScreenState
     return await fetchAudioFromSupabase(audioPaths[part]!);
   }
 
-  Future<String> fetchAudioFromSupabase(String supabasePath) async {
-    try {
-      debugPrint('Fetching audio from Supabase: $supabasePath');
-      final bytes = await Supabase.instance.client.storage
-          .from('audio')
-          .download(supabasePath);
+ Future<String> fetchAudioFromSupabase(String supabasePath) async {
+  try {
+    // Download file bytes from Supabase
+    final bytes = await Supabase.instance.client.storage
+        .from('audio') // your bucket name
+        .download(supabasePath); // e.g., 'folder/filename.mp3'
 
-      final dir = await getTemporaryDirectory();
-      final fileName = supabasePath.split('/').last;
-      final file = File('${dir.path}/$fileName');
-      await file.writeAsBytes(bytes);
+    // Prepare to store the file locally
+    final dir = await getTemporaryDirectory();
+    final fileName = supabasePath.split('/').last;
+    final file = File('${dir.path}/$fileName');
 
-      debugPrint("Audio path: ${file.path}");
-      return file.path;
-    } catch (e) {
-      debugPrint('Error fetching audio: $e');
-      rethrow;
-    }
+    // Write bytes to the file
+    await file.writeAsBytes(bytes);
+
+    debugPrint("Audio path: ${file.path}");
+    return file.path;
+  } catch (e) {
+    debugPrint('Error fetching audio: $e');
+    rethrow;
   }
+}
 
   List<Map<String, dynamic>> _getRandomQuestionsForPart(String part) {
     final allQuestions = {

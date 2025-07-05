@@ -16,9 +16,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Initialize profile data after first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
-     
-        profileController.getProfile();
-      
+      profileController.getProfile();
     });
 
     return Scaffold(
@@ -123,45 +121,20 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       SlideInLeft(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: _buildQuickAction(
-                                icon: Icons.edit,
-                                label: "Edit",
-                                color: Colors.white,
-                                iconColor: const Color(0xFF3E1E68),
-                                onTap: () => Get.toNamed(
-                                  RoutesName.editProfileScreen,
-                                  arguments: userData,
-                                ),
+                        child: Center(
+                          child: SizedBox(
+                            width: 150.w,
+                            child: _buildQuickAction(
+                              icon: Icons.edit,
+                              label: "Edit Profile",
+                              color: Colors.white,
+                              iconColor: const Color(0xFF3E1E68),
+                              onTap: () => Get.toNamed(
+                                RoutesName.editProfileScreen,
+                                arguments: userData,
                               ),
                             ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: _buildQuickAction(
-                                icon: Icons.settings,
-                                label: "Settings",
-                                color: Colors.white,
-                                iconColor: const Color(0xFF3E1E68),
-                                onTap: () => Get.toNamed(
-                                  RoutesName.notificationSettingsScreen,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: _buildQuickAction(
-                                icon: Icons.book,
-                                label: "Courses",
-                                color: Colors.white,
-                                iconColor: const Color(0xFF3E1E68),
-                                onTap: () => Get.toNamed(
-                                  RoutesName.myCoursesScreen,
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                       SizedBox(height: 30.h),
@@ -209,12 +182,40 @@ class ProfileScreen extends StatelessWidget {
                           width: double.infinity,
                           child: OutlinedButton(
                             onPressed: () {
-                              // Handle logout
-                              Get.snackbar(
-                                'Logout',
-                                'Logged out successfully!',
-                                backgroundColor: const Color(0xFF3E1E68),
-                                colorText: Colors.white,
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Confirm Logout'),
+                                    content: Text(
+                                      'Are you sure you want to log out?',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('Cancel', style: TextStyle(
+                                          color: Colors.black
+                                        ),),
+                                        onPressed: () {
+                                          Navigator.of(
+                                            context,
+                                          ).pop(); // close dialog
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('Logout', style: TextStyle(
+                                          color: Colors.red,
+                                        ),),
+                                        onPressed: () {
+                                          Navigator.of(
+                                            context,
+                                          ).pop(); // close dialog
+                                          profileController
+                                              .signOut(); // call sign out
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
                             style: OutlinedButton.styleFrom(
@@ -257,7 +258,7 @@ class ProfileScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h),
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(12.r),

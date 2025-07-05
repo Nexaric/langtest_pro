@@ -2,61 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
-class ReportProblemController extends GetxController {
-  var description = ''.obs;
-  var image = Rx<File?>(null);
-  var selectedIssue = 'App Crash'.obs;
+import 'package:langtest_pro/controller/report_problem/report_problem_controller.dart';
 
-  final List<String> issues = [
-    "App Crash",
-    "Login Issues",
-    "Payment Problems",
-    "Course Access Issues",
-    "Audio/Video Errors",
-    "Other",
-  ];
 
-  final picker = ImagePicker();
-
-  Future<void> pickImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      image.value = File(pickedFile.path);
-    }
-  }
-
-  void submitReport() {
-    if (description.value.trim().isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please describe the issue.',
-        backgroundColor: Colors.redAccent,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        borderRadius: 12.r,
-        margin: EdgeInsets.all(16.w),
-      );
-      return;
-    }
-
-    Get.snackbar(
-      'Success',
-      'Report submitted successfully!',
-      backgroundColor: const Color(0xFF6A5AE0),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      borderRadius: 12.r,
-      margin: EdgeInsets.all(16.w),
-    );
-
-    description.value = '';
-    image.value = null;
-    selectedIssue.value = 'App Crash';
-  }
-}
 
 class ReportProblemScreen extends StatelessWidget {
   const ReportProblemScreen({super.key});
