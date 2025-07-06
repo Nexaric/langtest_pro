@@ -100,27 +100,27 @@ class TermsPoliciesScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20.h),
-              ElevatedButton(
-                onPressed: () => Get.back(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.greenAccent,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 12.h,
-                    horizontal: 40.w,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-                child: Text(
-                  "Accept & Continue",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
+              // ElevatedButton(
+              //   onPressed: () => Get.back(),
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.greenAccent,
+              //     padding: EdgeInsets.symmetric(
+              //       vertical: 12.h,
+              //       horizontal: 40.w,
+              //     ),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(12.r),
+              //     ),
+              //   ),
+              //   child: Text(
+              //     "Accept & Continue",
+              //     style: GoogleFonts.poppins(
+              //       fontSize: 16.sp,
+              //       fontWeight: FontWeight.w600,
+              //       color: Colors.black,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

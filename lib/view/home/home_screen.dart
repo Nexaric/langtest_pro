@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:langtest_pro/controller/push_notification/notification_controller.dart';
 import 'package:langtest_pro/core/loading/404.dart';
 import 'package:langtest_pro/res/colors/app_colors.dart';
 import 'package:langtest_pro/utils/utils.dart';
@@ -29,7 +30,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  // final NotificationController pushController = Get.put(NotificationController());
+  final NotificationController pushController = Get.put(NotificationController());
   final PageController pageController = PageController(initialPage: 0);
   final NotchBottomBarController notchController = NotchBottomBarController(index: 0);
   final ValueNotifier<String> appBarTitle = ValueNotifier<String>('Home');
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void _initializeUser() async {
     final userId = await Utils.getString('userId');
     if (userId != null) {
-      // pushController.requestPermissionForFcm(userId: userId);
+      pushController.requestPermissionForFcm(userId: userId);
     }
   }
 

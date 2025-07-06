@@ -48,8 +48,11 @@ void main() async {
 }
 
 Future<void> initialise() async {
+
+  final notificationController = Get.put(NotificationController());
   // Initialize Hive
   try {
+   
     await Hive.initFlutter();
     await Hive.openBox('listening_progress');
     await Hive.openBox('reading_progress');

@@ -1,6 +1,3 @@
-// lib/repo/push_notification/push_impl.dart
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -24,28 +21,8 @@ class PushImpl implements IPushFacade {
   Future<void> requestPermissionForFcm({required String userId}) async {
     try {
       await _messaging.requestPermission();
-      final token = await _messaging.getToken();
-      debugPrint('FCM token: $token');
-
-      if (token != null && userId != 'unknown') {
-        await FirebaseFirestore.instance.collection('users').doc(userId).set({
-          'fcmToken': token,
-          'updatedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
-      }
-
-      _messaging.onTokenRefresh.listen((newToken) async {
-        if (userId != 'unknown') {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(userId)
-              .update({
-                'fcmToken': newToken,
-                'updatedAt': FieldValue.serverTimestamp(),
-              });
-          debugPrint('FCM token refreshed: $newToken');
-        }
-      });
+      // final token = await _messaging.getToken();
+      await FirebaseMessaging.instance.subscribeToTopic("PushNotification");
     } catch (e) {
       debugPrint('Error requesting FCM permission: $e');
     }
