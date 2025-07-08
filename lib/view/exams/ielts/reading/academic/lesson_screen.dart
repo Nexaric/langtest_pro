@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/controller/reading_progress_provider.dart';
-import 'package:langtest_pro/view/exams/ielts/reading/academic/lessons/academic_result.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'lessons/academic_lesson_1.dart' as lesson1;
 import 'lessons/academic_lesson_2.dart' as lesson2;

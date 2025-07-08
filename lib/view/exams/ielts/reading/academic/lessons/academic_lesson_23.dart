@@ -1,224 +1,381 @@
 class AcademicLesson23Data {
   static final Map<String, dynamic> data = {
     'lessonId': 23,
-    'title': 'Lesson 23: The Role of Artificial Photosynthesis',
+    'title': 'Lesson 23: Urban Planning and Green Cities',
     'passage': '''
-Artificial photosynthesis, mimicking plants’ ability to convert sunlight, water, and carbon dioxide into energy, offers a sustainable solution to energy and environmental challenges. Unlike solar panels, which generate electricity, this technology produces fuels like hydrogen or ethanol, storing energy for transport and industry. Since its development in the 2010s, efficiency has risen to 15%, rivaling natural photosynthesis. Catalysts, like cobalt-based materials, split water into hydrogen and oxygen, while engineered bacteria convert CO2 into fuels. The process captures 10% of industrial emissions, reducing greenhouse gases. Pilot projects, like Japan’s 2023 initiative, produce 1,000 liters of fuel daily. Artificial photosynthesis could replace 20% of fossil fuels by 2050, cutting emissions by 5 gigatons annually. It supports circular economies, using waste CO2 from factories. In agriculture, it creates carbon-neutral fertilizers, boosting yields by 12%. Developing nations, with abundant sunlight, could benefit, with Africa’s solar potential 50% higher than Europe’s. However, challenges include high costs—systems cost 500 per square meter—and scalability, with only 0.1% of global energy from this tech. Catalyst durability, degrading after 1,000 hours, limits commercial use. Research, funded by 2 billion globally, focuses on nanomaterials to improve efficiency. Public skepticism, with 30% doubting scalability, slows investment. Environmental risks, like catalyst leakage, threaten ecosystems, though biodegradable alternatives are emerging. Policy support, like EU’s Green Deal, offers subsidies, but inconsistent regulations hinder progress. Collaboration, such as US-China research hubs, accelerates innovation. Applications extend to space exploration, powering Mars missions with CO2-rich atmospheres. Artificial photosynthesis aligns with net-zero goals, promising clean energy, reduced emissions, and economic benefits, but requires investment, technological breakthroughs, and global cooperation to overcome barriers and achieve widespread adoption.
+Urban planning represents the systematic design and organization of urban spaces to create functional, sustainable, and livable communities that serve the diverse needs of their inhabitants while minimizing environmental impact and promoting social equity. As more than half of the world's population now lives in cities, with this proportion expected to reach 68% by 2050, the importance of thoughtful urban planning has never been more critical for addressing challenges ranging from climate change to housing affordability to social inclusion.
+
+The concept of green cities has emerged as a central framework for modern urban planning, emphasizing the integration of natural systems into urban environments to create more sustainable, resilient, and healthy communities. Green cities prioritize environmental sustainability through strategies like renewable energy adoption, waste reduction, green building practices, and the preservation and expansion of urban green spaces that provide ecosystem services while improving quality of life for residents.
+
+Historical urban planning evolved from basic concerns about sanitation and public health in the 19th century to comprehensive approaches that consider environmental, social, and economic sustainability. Early planners like Baron Haussmann in Paris and Daniel Burnham in Chicago created grand boulevards and public spaces that remain iconic today. The Garden City movement, pioneered by Ebenezer Howard, sought to combine the benefits of urban and rural living through planned communities surrounded by green belts.
+
+Modern urban planning employs sophisticated tools and methodologies to analyze complex urban systems. Geographic Information Systems (GIS) enable planners to visualize and analyze spatial relationships, population density, transportation networks, and environmental factors. Computer modeling helps predict the impacts of proposed developments on traffic flow, air quality, and infrastructure capacity. Public participation processes ensure that community voices are heard in planning decisions that affect their daily lives.
+
+Green infrastructure represents a fundamental shift from traditional gray infrastructure approaches. Instead of relying solely on concrete and steel, green infrastructure incorporates natural systems to provide urban services. Green roofs and walls reduce stormwater runoff while providing insulation and habitat. Urban forests and street trees improve air quality, reduce urban heat island effects, and provide psychological benefits. Constructed wetlands and bioswales manage stormwater naturally while creating attractive landscape features.
+
+Transportation planning forms a crucial component of green city design. Sustainable transportation systems prioritize walking, cycling, and public transit over private automobile use. Complete streets design ensures that roadways safely accommodate all users, including pedestrians, cyclists, and public transportation. Transit-oriented development concentrates housing and commercial development around public transportation nodes, reducing the need for car trips while creating vibrant, walkable neighborhoods.
+
+Energy systems in green cities emphasize renewable sources and efficiency. Solar panels on rooftops and in solar gardens provide clean electricity, while building design maximizes natural lighting and passive heating and cooling. District energy systems can efficiently provide heating and cooling to multiple buildings from centralized plants that may use renewable energy sources or waste heat from other processes. Smart grid technologies enable better management of energy supply and demand.
+
+Water management in green cities addresses both supply and quality concerns. Rainwater harvesting systems collect precipitation for irrigation and non-potable uses. Permeable pavements allow rainwater to infiltrate naturally rather than creating surface runoff. Greywater recycling systems treat and reuse water from sinks and showers for irrigation. Green infrastructure approaches to stormwater management reduce flooding while improving water quality through natural filtration processes.
+
+Waste management strategies in green cities emphasize the circular economy principles of reduce, reuse, and recycle. Zero waste initiatives aim to divert all waste from landfills through comprehensive recycling, composting, and waste reduction programs. Food waste composting programs create valuable soil amendments while reducing methane emissions from landfills. Industrial ecology approaches create symbiotic relationships between businesses where the waste from one becomes input for another.
+
+Social equity considerations ensure that green city benefits are accessible to all residents regardless of income or neighborhood. Environmental justice principles address the disproportionate burden of pollution and lack of green space in low-income communities. Affordable housing requirements in green developments prevent displacement of existing residents. Community gardens and urban agriculture programs provide fresh food access while building social connections and environmental stewardship.
+
+Climate adaptation strategies help cities prepare for the impacts of climate change. Flood management systems protect against increasing storm intensity and rising sea levels. Urban heat island reduction through green infrastructure and building design helps cities cope with rising temperatures. Resilient infrastructure design ensures that critical systems can continue functioning during extreme weather events.
+
+Economic benefits of green city planning include job creation in emerging green industries, reduced infrastructure costs through natural systems, and increased property values in well-designed sustainable neighborhoods. Green buildings reduce operating costs through energy and water efficiency. Urban agriculture can provide economic opportunities while improving food security. Eco-tourism may generate revenue while showcasing sustainable practices.
+
+Technology integration enhances green city functionality through smart city systems that monitor and optimize urban services. Sensors can track air and water quality, energy consumption, and traffic patterns to enable data-driven decision making. Smart lighting systems adjust brightness based on usage patterns and natural light levels. Mobile applications can help residents access public transportation, find green spaces, or participate in sustainability programs.
+
+Challenges in implementing green city concepts include financing sustainable infrastructure, overcoming regulatory barriers, and building political support for long-term planning. Retrofitting existing cities presents particular challenges compared to building new green communities from scratch. Balancing development pressures with environmental protection requires careful planning and strong regulatory frameworks.
+
+International examples of successful green cities provide models for implementation. Copenhagen's extensive bicycle infrastructure and carbon neutrality goals demonstrate comprehensive sustainable transportation. Singapore's vertical gardens and water management systems show how dense cities can integrate nature. Curitiba, Brazil's bus rapid transit system and extensive green spaces illustrate cost-effective approaches to sustainable urban development.
+
+The future of urban planning and green cities will likely incorporate emerging technologies like autonomous vehicles, artificial intelligence for city management, and new materials for sustainable construction. Climate change will continue driving innovation in resilient infrastructure design. Growing urbanization will require new approaches to creating livable, sustainable communities that can accommodate billions of additional urban residents while reducing environmental impact and improving quality of life for all.
 ''',
     'questions': [
       {
-        "question": "What does artificial photosynthesis produce?",
-        "options": ["Fuels", "Electricity", "Oxygen"],
-        "correctAnswer": "Fuels",
+        "question":
+            "What proportion of the world’s population is expected to live in cities by 2050?",
+        "options": ["50%", "60%", "68%", "75%"],
+        "correctAnswer": "68%",
       },
       {
-        "question": "What is the efficiency of artificial photosynthesis?",
-        "options": ["10%", "15%", "20%"],
-        "correctAnswer": "15%",
-      },
-      {
-        "question": "What splits water in the process?",
-        "options": ["Catalysts", "Bacteria", "Panels"],
-        "correctAnswer": "Catalysts",
-      },
-      {
-        "question": "What converts CO2 into fuels?",
-        "options": ["Bacteria", "Catalysts", "Sunlight"],
-        "correctAnswer": "Bacteria",
-      },
-      {
-        "question": "What percentage of emissions does it capture?",
-        "options": ["5%", "10%", "15%"],
-        "correctAnswer": "10%",
-      },
-      {
-        "question": "How much fuel does Japan’s project produce daily?",
-        "options": ["500 liters", "1,000 liters", "1,500 liters"],
-        "correctAnswer": "1,000 liters",
-      },
-      {
-        "question": "What could replace 20% of fossil fuels?",
+        "question": "What does the concept of green cities prioritize?",
         "options": [
-          "Artificial photosynthesis",
-          "Solar panels",
-          "Wind turbines",
+          "Economic growth",
+          "Environmental sustainability",
+          "Urban sprawl",
+          "Car dependency",
         ],
-        "correctAnswer": "Artificial photosynthesis",
+        "correctAnswer": "Environmental sustainability",
       },
       {
-        "question": "How much emissions could it cut by 2050?",
-        "options": ["3 gigatons", "5 gigatons", "7 gigatons"],
-        "correctAnswer": "5 gigatons",
-      },
-      {
-        "question": "What boosts agricultural yields by 12%?",
-        "options": ["Fertilizers", "Fuels", "Catalysts"],
-        "correctAnswer": "Fertilizers",
-      },
-      {
-        "question": "What has 50% higher solar potential?",
-        "options": ["Africa", "Asia", "Europe"],
-        "correctAnswer": "Africa",
-      },
-      {
-        "question": "What costs 500 per square meter?",
-        "options": ["Systems", "Catalysts", "Bacteria"],
-        "correctAnswer": "Systems",
-      },
-      {
-        "question": "TRUE, FALSE, or NOT GIVEN: It powers all industries.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "TRUE, FALSE, or NOT GIVEN: Catalysts last indefinitely.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph mentions Japan’s project?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 3",
-      },
-      {
-        "question": "Which paragraph discusses challenges?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 4",
-      },
-      {
-        "question": "What is NOT a challenge?",
-        "options": ["High costs", "Scalability", "Fertilizers"],
-        "correctAnswer": "Fertilizers",
-      },
-      {
-        "question": "What percentage doubt scalability?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
-      },
-      {
-        "question": "What supports net-zero goals?",
+        "question": "Who pioneered the Garden City movement?",
         "options": [
-          "Artificial photosynthesis",
-          "Fossil fuels",
+          "Baron Haussmann",
+          "Daniel Burnham",
+          "Ebenezer Howard",
+          "Le Corbusier",
+        ],
+        "correctAnswer": "Ebenezer Howard",
+      },
+      {
+        "question": "What tool helps planners visualize spatial relationships?",
+        "options": ["GIS", "CAD", "VR", "Excel"],
+        "correctAnswer": "GIS",
+      },
+      {
+        "question": "What reduces stormwater runoff in green infrastructure?",
+        "options": [
+          "Concrete pipes",
+          "Green roofs",
+          "Asphalt roads",
+          "Steel barriers",
+        ],
+        "correctAnswer": "Green roofs",
+      },
+      {
+        "question": "What prioritizes walking and cycling in green cities?",
+        "options": [
+          "Highways",
+          "Sustainable transportation",
+          "Parking lots",
+          "Airports",
+        ],
+        "correctAnswer": "Sustainable transportation",
+      },
+      {
+        "question": "What provides clean electricity in green cities?",
+        "options": [
+          "Coal plants",
+          "Solar panels",
+          "Oil refineries",
+          "Nuclear reactors",
+        ],
+        "correctAnswer": "Solar panels",
+      },
+      {
+        "question": "What collects precipitation for irrigation?",
+        "options": [
+          "Rainwater harvesting",
+          "Greywater recycling",
+          "Permeable pavements",
+          "Bioswales",
+        ],
+        "correctAnswer": "Rainwater harvesting",
+      },
+      {
+        "question": "What aims to divert all waste from landfills?",
+        "options": [
+          "Zero waste initiatives",
+          "Incineration",
+          "Landfill expansion",
+          "Dumping",
+        ],
+        "correctAnswer": "Zero waste initiatives",
+      },
+      {
+        "question":
+            "What addresses pollution burdens in low-income communities?",
+        "options": [
+          "Urban sprawl",
+          "Environmental justice",
+          "Gentrification",
+          "Highways",
+        ],
+        "correctAnswer": "Environmental justice",
+      },
+      {
+        "question": "What protects cities from increasing storm intensity?",
+        "options": [
+          "Flood management systems",
+          "Skyscrapers",
+          "Car parks",
+          "Billboards",
+        ],
+        "correctAnswer": "Flood management systems",
+      },
+      {
+        "question": "What creates jobs in green industries?",
+        "options": [
+          "Green city planning",
+          "Fossil fuel extraction",
+          "Deforestation",
+          "Overbuilding",
+        ],
+        "correctAnswer": "Green city planning",
+      },
+      {
+        "question": "What monitors urban services in smart cities?",
+        "options": ["Sensors", "Billboards", "Radios", "Newspapers"],
+        "correctAnswer": "Sensors",
+      },
+      {
+        "question": "What city is known for its bicycle infrastructure?",
+        "options": ["Singapore", "Copenhagen", "Curitiba", "Paris"],
+        "correctAnswer": "Copenhagen",
+      },
+      {
+        "question":
+            "What challenge involves financing sustainable infrastructure?",
+        "options": [
+          "Green city implementation",
+          "Urban sprawl",
+          "Car expansion",
           "Deforestation",
         ],
-        "correctAnswer": "Artificial photosynthesis",
+        "correctAnswer": "Green city implementation",
       },
       {
-        "question": "What funds research globally?",
-        "options": ["2 billion", "4 billion", "6 billion"],
-        "correctAnswer": "2 billion",
-      },
-      {
-        "question": "What powers Mars missions?",
+        "question": "What design ensures roadways accommodate all users?",
         "options": [
-          "Artificial photosynthesis",
-          "Solar panels",
-          "Nuclear energy",
+          "Complete streets",
+          "Highways",
+          "Parking lots",
+          "One-way roads",
         ],
-        "correctAnswer": "Artificial photosynthesis",
+        "correctAnswer": "Complete streets",
+      },
+      {
+        "question": "What reduces methane emissions from landfills?",
+        "options": [
+          "Food waste composting",
+          "Plastic incineration",
+          "Landfill expansion",
+          "Chemical dumping",
+        ],
+        "correctAnswer": "Food waste composting",
+      },
+      {
+        "question": "What future technology may enhance city management?",
+        "options": [
+          "Artificial intelligence",
+          "Steam engines",
+          "Telegraphs",
+          "Typewriters",
+        ],
+        "correctAnswer": "Artificial intelligence",
+      },
+      {
+        "question": "What improves air quality in green cities?",
+        "options": ["Urban forests", "Skyscrapers", "Factories", "Highways"],
+        "correctAnswer": "Urban forests",
+      },
+      {
+        "question": "What prevents displacement in green developments?",
+        "options": [
+          "Affordable housing",
+          "Luxury condos",
+          "Commercial malls",
+          "Parking garages",
+        ],
+        "correctAnswer": "Affordable housing",
       },
       {
         "question":
-            "What percentage of the population are international migrants?",
-        "options": ["3.6%", "4.6%", "5.6%"],
-        "correctAnswer": "3.6%",
-      },
-      {
-        "question": "What is a key economic benefit of migration?",
-        "options": ["Remittances", "Unemployment", "Inflation"],
-        "correctAnswer": "Remittances",
-      },
-      {
-        "question": "TRUE, FALSE, or NOT GIVEN: All migrants integrate easily.",
+            "TRUE, FALSE, or NOT GIVEN: Green cities rely solely on gray infrastructure.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question": "Which paragraph discusses cultural diversity?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 2",
-      },
-      {
-        "question": "What supports 30% of migrant integration?",
-        "options": ["Language training", "Job quotas", "Travel bans"],
-        "correctAnswer": "Language training",
-      },
-      {
-        "question": "How much do remittances contribute annually?",
-        "options": ["600 billion", "700 billion", "800 billion"],
-        "correctAnswer": "700 billion",
-      },
-      {
-        "question": "What is NOT a migration challenge?",
-        "options": ["Xenophobia", "Brain drain", "Economic growth"],
-        "correctAnswer": "Economic growth",
-      },
-      {
-        "question": "What percentage of migrants face language barriers?",
-        "options": ["40%", "50%", "60%"],
-        "correctAnswer": "50%",
-      },
-      {
-        "question": "What technology aids migrant communication?",
-        "options": ["Translation apps", "Social media", "Blockchain"],
-        "correctAnswer": "Translation apps",
-      },
-      {
-        "question": "What percentage of nations have integration policies?",
-        "options": ["50%", "60%", "70%"],
-        "correctAnswer": "60%",
+        "question":
+            "TRUE, FALSE, or NOT GIVEN: Copenhagen aims for carbon neutrality.",
+        "options": ["TRUE", "FALSE", "NOT GIVEN"],
+        "correctAnswer": "TRUE",
       },
       {
         "question":
-            "TRUE, FALSE, or NOT GIVEN: Migration only occurs due to conflict.",
+            "TRUE, FALSE, or NOT GIVEN: Urban planning began in the 20th century.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question": "Which paragraph mentions remittances?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 3",
+        "question":
+            "TRUE, FALSE, or NOT GIVEN: Green cities eliminate all car use.",
+        "options": ["TRUE", "FALSE", "NOT GIVEN"],
+        "correctAnswer": "NOT GIVEN",
       },
       {
-        "question": "How many migrants are there globally?",
-        "options": ["181 million", "281 million", "381 million"],
-        "correctAnswer": "281 million",
+        "question": "Which paragraph mentions green infrastructure?",
+        "options": ["Paragraph 4", "Paragraph 5", "Paragraph 6"],
+        "correctAnswer": "Paragraph 5",
       },
       {
-        "question": "What reduces prejudice against migrants by 15%?",
-        "options": ["Education campaigns", "Policy reforms", "Job programs"],
-        "correctAnswer": "Education campaigns",
+        "question": "Which paragraph discusses economic benefits?",
+        "options": ["Paragraph 10", "Paragraph 11", "Paragraph 12"],
+        "correctAnswer": "Paragraph 12",
       },
       {
-        "question": "What is a major cause of migration?",
-        "options": ["Climate change", "Urbanization", "Deforestation"],
-        "correctAnswer": "Climate change",
+        "question": "Which paragraph mentions international examples?",
+        "options": ["Paragraph 13", "Paragraph 14", "Paragraph 15"],
+        "correctAnswer": "Paragraph 15",
       },
       {
-        "question": "What percentage of urban populations are migrants?",
-        "options": ["30%", "40%", "50%"],
-        "correctAnswer": "40%",
+        "question": "What is NOT a strategy of green cities?",
+        "options": [
+          "Renewable energy",
+          "Waste reduction",
+          "Urban sprawl",
+          "Green spaces",
+        ],
+        "correctAnswer": "Urban sprawl",
       },
       {
-        "question": "What supports 10 million migrants with jobs?",
-        "options": ["Online platforms", "Government aid", "NGOs"],
-        "correctAnswer": "Online platforms",
+        "question": "What is NOT a benefit of urban forests?",
+        "options": [
+          "Air quality improvement",
+          "Heat island reduction",
+          "Psychological benefits",
+          "Increased flooding",
+        ],
+        "correctAnswer": "Increased flooding",
       },
       {
-        "question": "What percentage of communities report cultural clashes?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
+        "question": "What is NOT a tool used in modern urban planning?",
+        "options": [
+          "GIS",
+          "Computer modeling",
+          "Public participation",
+          "Horse-drawn carriages",
+        ],
+        "correctAnswer": "Horse-drawn carriages",
       },
       {
-        "question": "What is NOT a migration benefit?",
-        "options": ["Innovation", "Diversity", "Isolation"],
-        "correctAnswer": "Isolation",
+        "question":
+            "What is NOT a feature of water management in green cities?",
+        "options": [
+          "Rainwater harvesting",
+          "Permeable pavements",
+          "Greywater recycling",
+          "Oil pipelines",
+        ],
+        "correctAnswer": "Oil pipelines",
       },
       {
-        "question": "How many people are supported by remittances?",
-        "options": ["600 million", "800 million", "1 billion"],
-        "correctAnswer": "800 million",
+        "question": "What is NOT a challenge in green city implementation?",
+        "options": [
+          "Financing",
+          "Regulatory barriers",
+          "Political support",
+          "Unlimited resources",
+        ],
+        "correctAnswer": "Unlimited resources",
+      },
+      {
+        "question": "What is NOT an example of a green city mentioned?",
+        "options": ["Copenhagen", "Singapore", "Curitiba", "Florida"],
+        "correctAnswer": "Florida",
+      },
+      {
+        "question":
+            "What historical planner created grand boulevards in Paris?",
+        "options": [
+          "Ebenezer Howard",
+          "Daniel Burnham",
+          "Baron Haussmann",
+          "Le Corbusier",
+        ],
+        "correctAnswer": "Baron Haussmann",
+      },
+      {
+        "question":
+            "What concentrates development around transportation nodes?",
+        "options": [
+          "Transit-oriented development",
+          "Urban sprawl",
+          "Highway expansion",
+          "Parking lots",
+        ],
+        "correctAnswer": "Transit-oriented development",
+      },
+      {
+        "question": "What provides heating and cooling to multiple buildings?",
+        "options": [
+          "District energy systems",
+          "Coal plants",
+          "Oil heaters",
+          "Individual furnaces",
+        ],
+        "correctAnswer": "District energy systems",
+      },
+      {
+        "question":
+            "What creates symbiotic business relationships in waste management?",
+        "options": [
+          "Industrial ecology",
+          "Landfill expansion",
+          "Incineration",
+          "Dumping",
+        ],
+        "correctAnswer": "Industrial ecology",
+      },
+      {
+        "question": "What reduces operating costs in green buildings?",
+        "options": [
+          "Energy efficiency",
+          "High maintenance",
+          "Fossil fuels",
+          "Large windows",
+        ],
+        "correctAnswer": "Energy efficiency",
+      },
+      {
+        "question": "What tracks air and water quality in smart cities?",
+        "options": ["Sensors", "Cameras", "Radios", "Newspapers"],
+        "correctAnswer": "Sensors",
+      },
+      {
+        "question": "What generates revenue through sustainable practices?",
+        "options": [
+          "Eco-tourism",
+          "Deforestation",
+          "Fossil fuel extraction",
+          "Urban sprawl",
+        ],
+        "correctAnswer": "Eco-tourism",
       },
     ],
     'questionsToAsk': 20,

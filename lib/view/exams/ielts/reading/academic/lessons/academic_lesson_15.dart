@@ -1,174 +1,307 @@
 class AcademicLesson15Data {
   static final Map<String, dynamic> data = {
     'lessonId': 15,
-    'title': 'Lesson 15: The Impact of Urbanization',
+    'title': 'Lesson 15: Ocean Currents and Weather Patterns',
     'passage': '''
-Urbanization, the shift from rural to urban living, has accelerated globally, with 56% of the world’s population now city-dwellers. Cities drive economic growth, concentrating resources, innovation, and infrastructure. Urban areas generate 80% of global GDP, fueled by industries, services, and technology hubs. However, rapid urbanization strains resources, causing housing shortages, with 1.6 billion people living in inadequate conditions. Traffic congestion and air pollution, from vehicle emissions, degrade quality of life—cities like Delhi face severe smog crises. Urban sprawl encroaches on ecosystems, reducing biodiversity by 30% in some regions. Social inequality widens, as slums expand alongside luxury developments. Solutions include smart cities, using IoT to optimize energy and transport, like Singapore’s traffic systems. Green spaces, such as urban parks, improve mental health and reduce heat islands. Affordable housing initiatives, like Brazil’s Minha Casa, address shortages. Public transport, including metro systems, cuts emissions, though funding remains a barrier. Urban planning emphasizes sustainability, with compact city models minimizing sprawl. Community engagement ensures inclusive development, empowering residents in decisions. However, corruption and poor governance hinder progress, especially in developing nations. Climate change exacerbates challenges, with rising sea levels threatening coastal cities like Miami. Resilient infrastructure, like flood barriers, is critical. Urbanization offers opportunities for cultural exchange, with diverse populations fostering creativity, but social tensions arise from integration issues. Balancing growth with sustainability requires innovation, equitable policies, and global cooperation to create livable, resilient urban futures.
+Ocean currents form the planet's largest circulation system, transporting vast quantities of heat, salt, nutrients, and marine life across thousands of miles. These massive water movements, driven by wind, temperature differences, salinity variations, and Earth's rotation, profoundly influence global weather patterns, regional climates, and marine ecosystems. Understanding ocean currents reveals the intricate connections between oceanic and atmospheric systems that regulate Earth's climate and sustain life across the planet.
+
+Surface currents, extending to depths of approximately 400 meters, are primarily driven by prevailing winds that transfer energy to ocean waters through friction. The trade winds near the equator create westward-flowing equatorial currents, while westerlies in temperate regions drive eastward currents. The Coriolis effect, resulting from Earth's rotation, deflects these currents, creating circular patterns called gyres in each major ocean basin. These gyres transport warm water toward the poles and cold water toward the equator, distributing thermal energy globally.
+
+The Gulf Stream exemplifies how ocean currents influence regional climate. This powerful warm current originates in the Gulf of Mexico, flows along the eastern United States coast, and continues across the North Atlantic toward Europe. The Gulf Stream transports approximately 30 million cubic meters of water per second, carrying tropical heat northward. This heat transport moderates temperatures in Western Europe, making cities like London significantly warmer than locations at similar latitudes in North America.
+
+Thermohaline circulation, also known as the global conveyor belt, drives deep ocean currents through density differences caused by temperature and salinity variations. Cold, salty water is denser than warm, fresh water, causing it to sink and flow along ocean floors. This deep water circulation connects all major oceans, creating a continuous circulation pattern that can take 1,000 years to complete a full cycle. The North Atlantic Deep Water formation, where cold surface water sinks near Greenland and Iceland, drives much of this global circulation.
+
+Upwelling and downwelling processes bring deep nutrients to surface waters and transport surface nutrients to deeper layers. Wind-driven upwelling along certain coastlines brings cold, nutrient-rich water to the surface, supporting highly productive marine ecosystems. The California Current system, Benguela Current off Southwest Africa, and Humboldt Current along South America's west coast are major upwelling regions that support important fisheries and diverse marine life.
+
+El Niño and La Niña phenomena demonstrate how ocean-atmosphere interactions can dramatically alter global weather patterns. During El Niño events, weakened trade winds allow warm water to spread eastward across the Pacific, disrupting normal atmospheric circulation patterns. This change brings increased rainfall to South America's west coast while causing droughts in Australia and Southeast Asia. La Niña events intensify normal patterns, strengthening trade winds and enhancing upwelling along the South American coast.
+
+Monsoon systems illustrate the complex relationship between ocean temperatures and seasonal weather patterns. The Asian monsoon, affecting billions of people, results from temperature differences between continental landmasses and adjacent oceans. During summer, warm land creates low pressure that draws moist air from the oceans, bringing essential rainfall to agricultural regions. Winter reverses this pattern, with cool land creating high pressure that pushes dry air toward the oceans.
+
+Ocean currents play crucial roles in marine ecosystem distribution and productivity. Warm currents support coral reef development by maintaining suitable temperatures for coral growth, while cold currents enhance nutrient availability for phytoplankton production. The Kuroshio Current supports diverse marine life along Japan's coast, while the Antarctic Circumpolar Current transports nutrients and marine organisms around Antarctica, supporting the Southern Ocean's rich ecosystem.
+
+Climate change is altering ocean current systems with potentially significant consequences for global weather patterns. Rising temperatures and melting ice sheets change ocean water density, affecting thermohaline circulation strength and patterns. The Atlantic Meridional Overturning Circulation, which includes the Gulf Stream system, shows signs of weakening, potentially affecting temperature regulation in the North Atlantic region. Changes in precipitation patterns and ice melt alter ocean salinity, further affecting circulation patterns.
+
+Hurricanes and tropical cyclones demonstrate the energy exchange between oceans and atmosphere. These powerful storms draw energy from warm ocean waters, requiring sea surface temperatures above 26.5°C (80°F) for formation and intensification. Ocean currents transport this thermal energy, creating regions where tropical cyclone development is more likely. The Loop Current in the Gulf of Mexico can provide additional energy for hurricane intensification, while cold currents tend to weaken tropical storms.
+
+Seasonal variations in ocean currents affect regional climate patterns and marine productivity. The Intertropical Convergence Zone (ITCZ), where trade winds converge near the equator, migrates seasonally, altering current patterns and precipitation distribution. These changes affect agricultural seasons, fishing patterns, and weather forecasting across tropical and subtropical regions.
+
+Ocean acidification, caused by increased atmospheric carbon dioxide absorption, affects marine ecosystems and potentially alters current patterns through changes in marine organism distribution and ocean chemistry. Coral reef degradation reduces coastal protection and alters local current patterns, while changes in phytoplankton populations affect ocean carbon cycling and atmospheric interactions.
+
+Tidal currents, driven by gravitational forces from the moon and sun, create regular patterns of water movement that influence coastal environments and marine ecosystems. These currents can be particularly strong in narrow passages and estuaries, affecting sediment transport, nutrient distribution, and marine organism behavior. Some regions harness tidal currents for renewable energy generation, demonstrating human adaptation to natural current patterns.
+
+Modern satellite technology and autonomous oceanographic instruments provide unprecedented insights into ocean current behavior and variability. Altimetry satellites measure sea surface height to track current patterns, while Argo floats collect temperature and salinity data throughout the water column. These observations improve weather forecasting, climate modeling, and understanding of ocean-atmosphere interactions.
+
+Ocean current research continues revealing new aspects of their role in Earth's climate system. Scientists are discovering how currents transport microplastics and other pollutants, affect deep-sea ecosystems, and respond to climate change. Understanding these processes is essential for predicting future climate scenarios and developing strategies for ocean conservation and sustainable resource management.
 ''',
     'questions': [
       {
-        "question": "What percentage of people are city-dwellers?",
-        "options": ["46%", "56%", "66%"],
-        "correctAnswer": "56%",
+        "question": "What primarily drives surface ocean currents?",
+        "options": [
+          "Tides",
+          "Prevailing winds",
+          "Earth's gravity",
+          "Solar radiation",
+        ],
+        "correctAnswer": "Prevailing winds",
       },
       {
-        "question": "What do cities generate?",
-        "options": ["80% of GDP", "50% of GDP", "30% of GDP"],
-        "correctAnswer": "80% of GDP",
+        "question": "What creates circular patterns called gyres?",
+        "options": [
+          "Coriolis effect",
+          "Tidal forces",
+          "Ocean depth",
+          "Marine life",
+        ],
+        "correctAnswer": "Coriolis effect",
       },
       {
-        "question": "What causes housing shortages?",
-        "options": ["Urbanization", "Rural growth", "Deforestation"],
-        "correctAnswer": "Urbanization",
+        "question": "Where does the Gulf Stream originate?",
+        "options": [
+          "Gulf of Mexico",
+          "North Atlantic",
+          "South Pacific",
+          "Indian Ocean",
+        ],
+        "correctAnswer": "Gulf of Mexico",
       },
       {
-        "question": "How many live in inadequate housing?",
-        "options": ["1.6 billion", "0.6 billion", "2.6 billion"],
-        "correctAnswer": "1.6 billion",
+        "question": "How much water does the Gulf Stream transport per second?",
+        "options": [
+          "10 million cubic meters",
+          "20 million cubic meters",
+          "30 million cubic meters",
+          "40 million cubic meters",
+        ],
+        "correctAnswer": "30 million cubic meters",
       },
       {
-        "question": "What degrades urban life?",
-        "options": ["Air pollution", "Green spaces", "Public transport"],
-        "correctAnswer": "Air pollution",
+        "question": "What drives thermohaline circulation?",
+        "options": [
+          "Wind patterns",
+          "Temperature and salinity",
+          "Tidal forces",
+          "Earth's rotation",
+        ],
+        "correctAnswer": "Temperature and salinity",
       },
       {
-        "question": "What reduces biodiversity?",
-        "options": ["Urban sprawl", "Smart cities", "Urban parks"],
-        "correctAnswer": "Urban sprawl",
+        "question": "How long does a full thermohaline circulation cycle take?",
+        "options": ["100 years", "500 years", "1,000 years", "2,000 years"],
+        "correctAnswer": "1,000 years",
       },
       {
-        "question": "What widens in cities?",
-        "options": ["Social inequality", "Rural areas", "Ecosystems"],
-        "correctAnswer": "Social inequality",
+        "question": "Where does North Atlantic Deep Water formation occur?",
+        "options": [
+          "Greenland and Iceland",
+          "Gulf of Mexico",
+          "South Africa",
+          "Japan",
+        ],
+        "correctAnswer": "Greenland and Iceland",
       },
       {
-        "question": "What optimizes urban energy?",
-        "options": ["Smart cities", "Slums", "Sprawl"],
-        "correctAnswer": "Smart cities",
-      },
-      {
-        "question": "What improves mental health?",
-        "options": ["Green spaces", "Traffic", "Pollution"],
-        "correctAnswer": "Green spaces",
-      },
-      {
-        "question": "What addresses housing shortages?",
-        "options": ["Affordable housing", "Urban sprawl", "Air pollution"],
-        "correctAnswer": "Affordable housing",
-      },
-      {
-        "question": "What cuts urban emissions?",
-        "options": ["Public transport", "Private cars", "Factories"],
-        "correctAnswer": "Public transport",
-      },
-      {
-        "question": "What hinders urban progress?",
-        "options": ["Corruption", "Green spaces", "Smart cities"],
-        "correctAnswer": "Corruption",
+        "question": "What process brings nutrient-rich water to the surface?",
+        "options": [
+          "Downwelling",
+          "Upwelling",
+          "Thermohaline circulation",
+          "Tidal currents",
+        ],
+        "correctAnswer": "Upwelling",
       },
       {
         "question":
-            "TRUE, FALSE, or NOT GIVEN: Urbanization only harms ecosystems.",
+            "Which current supports fisheries off South America's west coast?",
+        "options": [
+          "Gulf Stream",
+          "Kuroshio Current",
+          "Humboldt Current",
+          "Antarctic Circumpolar Current",
+        ],
+        "correctAnswer": "Humboldt Current",
+      },
+      {
+        "question": "What happens during El Niño events?",
+        "options": [
+          "Strengthened trade winds",
+          "Weakened trade winds",
+          "Cold water spread",
+          "No atmospheric change",
+        ],
+        "correctAnswer": "Weakened trade winds",
+      },
+      {
+        "question": "What does El Niño cause in Australia?",
+        "options": [
+          "Increased rainfall",
+          "Droughts",
+          "Cooler temperatures",
+          "Stronger winds",
+        ],
+        "correctAnswer": "Droughts",
+      },
+      {
+        "question": "What causes the Asian monsoon?",
+        "options": [
+          "Ocean currents",
+          "Temperature differences",
+          "Tidal forces",
+          "Earth's rotation",
+        ],
+        "correctAnswer": "Temperature differences",
+      },
+      {
+        "question": "Which current supports coral reef development?",
+        "options": [
+          "Cold currents",
+          "Warm currents",
+          "Tidal currents",
+          "Deep currents",
+        ],
+        "correctAnswer": "Warm currents",
+      },
+      {
+        "question": "What supports marine life along Japan's coast?",
+        "options": [
+          "Gulf Stream",
+          "Kuroshio Current",
+          "Benguela Current",
+          "Loop Current",
+        ],
+        "correctAnswer": "Kuroshio Current",
+      },
+      {
+        "question": "What affects thermohaline circulation strength?",
+        "options": [
+          "Rising temperatures",
+          "Wind speed",
+          "Tidal forces",
+          "Marine life",
+        ],
+        "correctAnswer": "Rising temperatures",
+      },
+      {
+        "question":
+            "What is the minimum sea surface temperature for hurricane formation?",
+        "options": ["20°C", "24°C", "26.5°C", "30°C"],
+        "correctAnswer": "26.5°C",
+      },
+      {
+        "question":
+            "Which current can intensify hurricanes in the Gulf of Mexico?",
+        "options": [
+          "Loop Current",
+          "Gulf Stream",
+          "Humboldt Current",
+          "Kuroshio Current",
+        ],
+        "correctAnswer": "Loop Current",
+      },
+      {
+        "question": "What migrates seasonally, altering current patterns?",
+        "options": [
+          "Gulf Stream",
+          "Intertropical Convergence Zone",
+          "Thermohaline circulation",
+          "Antarctic Circumpolar Current",
+        ],
+        "correctAnswer": "Intertropical Convergence Zone",
+      },
+      {
+        "question": "What causes ocean acidification?",
+        "options": [
+          "Carbon dioxide absorption",
+          "Plastic pollution",
+          "Oil spills",
+          "Overfishing",
+        ],
+        "correctAnswer": "Carbon dioxide absorption",
+      },
+      {
+        "question": "What drives tidal currents?",
+        "options": [
+          "Wind patterns",
+          "Gravitational forces",
+          "Temperature differences",
+          "Ocean depth",
+        ],
+        "correctAnswer": "Gravitational forces",
+      },
+      {
+        "question":
+            "What technology measures sea surface height to track currents?",
+        "options": [
+          "Argo floats",
+          "Altimetry satellites",
+          "Weather balloons",
+          "Drones",
+        ],
+        "correctAnswer": "Altimetry satellites",
+      },
+      {
+        "question": "What collects temperature and salinity data in the ocean?",
+        "options": [
+          "Altimetry satellites",
+          "Argo floats",
+          "Tidal gauges",
+          "Weather stations",
+        ],
+        "correctAnswer": "Argo floats",
+      },
+      {
+        "question":
+            "What do ocean currents transport besides heat and nutrients?",
+        "options": ["Microplastics", "Sand", "Rocks", "Coral"],
+        "correctAnswer": "Microplastics",
+      },
+      {
+        "question": "What is affected by changes in phytoplankton populations?",
+        "options": [
+          "Ocean carbon cycling",
+          "Tidal currents",
+          "Wind patterns",
+          "Earth's rotation",
+        ],
+        "correctAnswer": "Ocean carbon cycling",
+      },
+      {
+        "question": "What supports the Southern Ocean’s ecosystem?",
+        "options": [
+          "Gulf Stream",
+          "Kuroshio Current",
+          "Antarctic Circumpolar Current",
+          "Benguela Current",
+        ],
+        "correctAnswer": "Antarctic Circumpolar Current",
+      },
+      {
+        "question":
+            "TRUE, FALSE, or NOT GIVEN: Ocean currents have no impact on weather.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question": "TRUE, FALSE, or NOT GIVEN: Singapore uses IoT.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "TRUE",
-      },
-      {
-        "question": "Which paragraph mentions smart cities?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 3",
-      },
-      {
-        "question": "Which paragraph discusses climate change?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 4",
-      },
-      {
-        "question": "What is NOT an urbanization issue?",
-        "options": ["Pollution", "Congestion", "Rural growth"],
-        "correctAnswer": "Rural growth",
-      },
-      {
-        "question": "What fosters urban creativity?",
-        "options": ["Diverse populations", "Air pollution", "Sprawl"],
-        "correctAnswer": "Diverse populations",
-      },
-      {
-        "question": "What protects coastal cities?",
-        "options": ["Flood barriers", "Urban parks", "Slums"],
-        "correctAnswer": "Flood barriers",
-      },
-      {
-        "question": "What ensures inclusive development?",
-        "options": [
-          "Community engagement",
-          "Urban sprawl",
-          "private investments",
-        ],
-        "correctAnswer": "Community engagement",
-      },
-      {
-        "question": "What drives global tourism growth?",
-        "options": [
-          "Economic prosperity",
-          "Climate change",
-          "Political instability",
-        ],
-        "correctAnswer": "Economic prosperity",
-      },
-      {
-        "question": "What percentage of GDP comes from tourism?",
-        "options": ["8%", "10%", "12%"],
-        "correctAnswer": "10%",
-      },
-      {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: Tourism always benefits local communities.",
+        "question": "TRUE, FALSE, or NOT GIVEN: La Niña weakens trade winds.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question": "Which paragraph discusses environmental impacts?",
+        "question": "Which paragraph mentions the Gulf Stream?",
         "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
         "correctAnswer": "Paragraph 3",
       },
       {
-        "question": "What reduces tourism’s carbon footprint by 20%?",
-        "options": ["Sustainable travel", "Air travel", "Hotel expansion"],
-        "correctAnswer": "Sustainable travel",
+        "question": "Which paragraph discusses El Niño and La Niña?",
+        "options": ["Paragraph 5", "Paragraph 6", "Paragraph 7"],
+        "correctAnswer": "Paragraph 6",
       },
       {
-        "question": "How many jobs does tourism create globally?",
-        "options": ["200 million", "300 million", "400 million"],
-        "correctAnswer": "300 million",
-      },
-      {
-        "question": "What is NOT a tourism challenge?",
-        "options": ["Overtourism", "Pollution", "Job creation"],
-        "correctAnswer": "Job creation",
-      },
-      {
-        "question": "What percentage of tourists prefer eco-friendly options?",
-        "options": ["50%", "60%", "70%"],
-        "correctAnswer": "60%",
-      },
-      {
-        "question": "What technology promotes sustainable tourism?",
-        "options": ["Mobile apps", "AI analytics", "Virtual reality"],
-        "correctAnswer": "Mobile apps",
-      },
-      {
-        "question":
-            "What percentage of heritage sites are at risk from tourism?",
-        "options": ["15%", "25%", "35%"],
-        "correctAnswer": "25%",
+        "question": "What is NOT a driver of ocean currents?",
+        "options": ["Wind", "Temperature", "Salinity", "Cloud cover"],
+        "correctAnswer": "Cloud cover",
       },
     ],
-    'questionsToAsk': 15, // Lessons 11–20 ask 15 questions
-    'requiredCorrectAnswers': 7, // Lessons 11–20 need 7 correct
+    'questionsToAsk': 15,
+    'requiredCorrectAnswers': 7,
   };
 }

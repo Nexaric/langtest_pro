@@ -1,276 +1,367 @@
 class AcademicLesson36Data {
   static final Map<String, dynamic> data = {
     'lessonId': 36,
-    'title': 'Lesson 36: The Role of Indigenous Knowledge',
+    'title': 'Lesson 36: Historical Trade Routes',
     'passage': '''
-Indigenous knowledge, accumulated over millennia, offers sustainable solutions to environmental and social challenges. Held by 476 million Indigenous peoples across 90 countries, it integrates ecology, culture, and spirituality. For 80% of Indigenous groups, oral traditions preserve knowledge, like Australia’s Aboriginal fire management, reducing wildfires by 40%. In the Amazon, 70% of plant-based medicines derive from Indigenous practices, benefiting 4 billion people. Agroecological techniques, used by 60% of Indigenous farmers, increase yields by 20% without chemicals, supporting 500 million smallholders. In Arctic communities, 90% rely on traditional navigation, aiding climate research with 30% of sea-ice data. Indigenous governance, managing 25% of global land, protects 80% of biodiversity, as seen in Canada’s Indigenous Protected Areas. Sacred sites, covering 15% of forests, preserve ecosystems, with 50% of global carbon stocks in Indigenous lands. Knowledge sharing, through 10,000 community projects, enhances resilience, like Pacific islanders’ cyclone-resistant crops. However, challenges abound. Colonialism erased 30% of Indigenous languages, threatening 20% of knowledge systems. Land grabs, affecting 40% of Indigenous territories, displace 50 million, as in Brazil’s Amazon. Intellectual property laws exclude 70% of traditional knowledge, enabling biopiracy, with 25% of pharmaceuticals exploiting Indigenous resources. Climate change, impacting 80% of Indigenous lands, disrupts practices, like Inuit hunting routes, affecting 10% of food security. Technology, like digital archives, preserves 5% of oral traditions, but 60% of communities lack internet. Policy recognition, like the UN’s Indigenous Rights Declaration, supports 200 million, but 50% of nations ignore it. Education, integrating Indigenous knowledge in 10% of schools, empowers 1 million youth, though 30% face cultural bias. Economic marginalization, with 70% of Indigenous peoples in poverty, limits advocacy. Global partnerships, like the 1 billion Indigenous Fund, aid conservation, but 20% of funds are mismanaged. Public awareness, with 60% unaware of Indigenous contributions, hinders support. Indigenous knowledge’s value—sustainability, biodiversity, and resilience—demands respect, legal protection, and inclusion, balancing modern science with traditional wisdom to address global crises and foster equitable, sustainable futures.
+Historical trade routes have served as the arteries of human civilization, facilitating not only the exchange of goods and commodities but also the transmission of ideas, technologies, religions, and cultures across vast distances and diverse societies. These networks of commerce shaped the development of civilizations, influenced the rise and fall of empires, and created the foundation for our modern interconnected global economy.
+The Silk Road stands as perhaps the most famous and influential trade network in human history, spanning approximately 4,000 miles from China to Europe and connecting East and West for over 1,500 years. This network of routes, which reached its peak during the Tang Dynasty (618-907 CE), facilitated the exchange of luxury goods such as silk, spices, precious stones, and exotic materials. Beyond material goods, the Silk Road enabled the spread of Buddhism from India to China, the transmission of printing technology from China to Europe, and the exchange of mathematical and astronomical knowledge between Islamic and Chinese scholars.
+The Trans-Saharan trade routes connected North Africa with sub-Saharan Africa, creating a network that was crucial for the exchange of gold, salt, ivory, and slaves. These routes, which flourished from the 8th to 16th centuries, led to the rise of powerful West African empires such as Ghana, Mali, and Songhai. The city of Timbuktu became a major center of learning and commerce, attracting scholars and traders from across Africa and the Middle East. The Trans-Saharan routes also facilitated the spread of Islam throughout West Africa and established cultural connections that persist today.
+Maritime trade routes developed as civilizations mastered ocean navigation, creating networks that connected distant continents and island nations. The Indian Ocean trade network linked ports from East Africa to Southeast Asia, creating a cosmopolitan trading system that operated for centuries before European colonial expansion. Arab, Indian, Chinese, and African merchants established trading posts and communities throughout the Indian Ocean region, creating a multicultural commercial network that facilitated the exchange of goods, ideas, and technologies.
+The Mediterranean Sea served as a crucial highway for ancient civilizations, enabling trade between Europe, Asia, and Africa. Phoenician traders established trading posts throughout the Mediterranean, creating networks that connected diverse cultures and economies. The Roman Empire later dominated Mediterranean trade, using its naval power to control shipping routes and establish commercial relationships throughout the region. Venice and Genoa emerged as major maritime trading powers during the medieval period, controlling much of the trade between Europe and Asia.
+The development of trade routes was closely linked to technological innovations in transportation and navigation. The domestication of camels revolutionized desert travel, enabling traders to cross the Sahara and establish regular commercial connections between North and sub-Saharan Africa. Improvements in shipbuilding, navigation techniques, and maritime technology allowed for longer ocean voyages and more reliable maritime trade. The invention of the compass, astrolabe, and other navigation instruments enabled sailors to venture into open oceans with greater confidence.
+Trade routes were not merely paths for commercial exchange but also conduits for cultural diffusion and technological transfer. The spread of religions along trade routes had profound impacts on world history, with Buddhism, Islam, and Christianity all expanding their influence through commercial networks. Technological innovations such as papermaking, gunpowder, and the printing press spread along trade routes, transforming societies and economies worldwide.
+The economic impact of historical trade routes cannot be overstated. These networks created wealth for participating societies, funded the construction of magnificent cities and monuments, and supported the development of complex political and social institutions. The profits from trade enabled the growth of banking and credit systems, the development of standardized weights and measures, and the creation of commercial law and regulations that facilitated long-distance commerce.
+The Spice Route, connecting Europe with the spice-producing regions of Asia, was one of the most lucrative trade networks in history. European demand for spices such as pepper, cinnamon, nutmeg, and cloves drove exploration and colonization efforts, ultimately leading to the European "Age of Exploration" and the establishment of colonial empires. The Portuguese, Dutch, and English all competed for control of spice trade routes, leading to the development of powerful trading companies and the colonization of much of Asia.
+The Atlantic triangular trade, which operated from the 16th to 19th centuries, represented one of the most tragic aspects of historical trade networks. This system involved the transport of enslaved Africans to the Americas, the shipment of raw materials from the Americas to Europe, and the export of manufactured goods from Europe to Africa. This trade network generated enormous wealth for European and American merchants while causing immense suffering for millions of enslaved Africans and fundamentally shaping the development of the Americas.
+The impact of historical trade routes on urban development was profound, with many major cities owing their origins and growth to their strategic positions along important trade networks. Cities such as Constantinople, Cairo, Samarkand, and Malacca became wealthy and powerful due to their control of crucial trade routes. These cities developed sophisticated commercial infrastructure, including markets, warehouses, and banking facilities, and became centers of cultural exchange and intellectual development.
+The decline of traditional trade routes often resulted from technological innovations, political changes, or the discovery of alternative routes. The development of maritime routes around Africa reduced the importance of the Silk Road, while the opening of the Suez Canal in 1869 revolutionized global shipping and trade patterns. The colonization of trade route regions by European powers disrupted traditional commercial networks and replaced them with systems designed to benefit colonial powers.
+The legacy of historical trade routes continues to influence modern global commerce and cultural exchange. Many contemporary transportation networks follow routes established centuries ago, and the cultural diversity of many regions reflects the historical movement of people and ideas along ancient trade routes. The concept of free trade and global economic integration has roots in the commercial networks established by historical traders and merchants.
+Modern efforts to revive historical trade routes, such as China's Belt and Road Initiative, which aims to recreate connections reminiscent of the ancient Silk Road, demonstrate the enduring relevance of these historical networks. These contemporary projects seek to use infrastructure development and economic cooperation to create new forms of international connectivity and trade.
+The study of historical trade routes provides valuable insights into the processes of globalization, cultural exchange, and economic development. These networks demonstrate that human societies have always been interconnected and that the exchange of goods, ideas, and technologies has been a driving force in human development. Understanding the history of trade routes helps us appreciate the complexity of cultural development and the importance of international cooperation and exchange in human progress.
 ''',
     'questions': [
       {
-        "question": "How many Indigenous peoples exist globally?",
-        "options": ["376 million", "476 million", "576 million"],
-        "correctAnswer": "476 million",
+        "question": "What did historical trade routes exchange besides goods?",
+        "options": ["Weapons", "Ideas", "Cultures", "Technologies"],
+        "correctAnswer": "Cultures",
       },
       {
-        "question": "What preserves Indigenous knowledge?",
-        "options": ["Oral traditions", "Written texts", "Digital apps"],
-        "correctAnswer": "Oral traditions",
+        "question": "How long was the Silk Road?",
+        "options": ["2,000 miles", "4,000 miles", "6,000 miles", "8,000 miles"],
+        "correctAnswer": "4,000 miles",
       },
       {
-        "question": "What reduces wildfires by 40%?",
-        "options": ["Fire management", "Plant medicines", "Navigation"],
-        "correctAnswer": "Fire management",
-      },
-      {
-        "question":
-            "What percentage of medicines come from Indigenous practices?",
-        "options": ["50%", "70%", "90%"],
-        "correctAnswer": "70%",
-      },
-      {
-        "question": "What increases yields by 20%?",
+        "question": "When did the Silk Road reach its peak?",
         "options": [
-          "Agroecological techniques",
-          "Sacred sites",
-          "Digital archives",
+          "Han Dynasty",
+          "Tang Dynasty",
+          "Song Dynasty",
+          "Yuan Dynasty",
         ],
-        "correctAnswer": "Agroecological techniques",
+        "correctAnswer": "Tang Dynasty",
+      },
+      {
+        "question": "What was traded on the Silk Road?",
+        "options": ["Cotton", "Silk", "Sugar", "Tobacco"],
+        "correctAnswer": "Silk",
+      },
+      {
+        "question": "What religion spread via the Silk Road?",
+        "options": ["Christianity", "Buddhism", "Hinduism", "Judaism"],
+        "correctAnswer": "Buddhism",
+      },
+      {
+        "question": "What connected North and sub-Saharan Africa?",
+        "options": [
+          "Silk Road",
+          "Trans-Saharan routes",
+          "Spice Route",
+          "Amber Road",
+        ],
+        "correctAnswer": "Trans-Saharan routes",
+      },
+      {
+        "question": "What was a key Trans-Saharan trade item?",
+        "options": ["Gold", "Spices", "Silk", "Porcelain"],
+        "correctAnswer": "Gold",
+      },
+      {
+        "question": "Which city was a Trans-Saharan hub?",
+        "options": ["Cairo", "Timbuktu", "Venice", "Samarkand"],
+        "correctAnswer": "Timbuktu",
+      },
+      {
+        "question": "What religion spread in West Africa via trade?",
+        "options": ["Islam", "Buddhism", "Christianity", "Hinduism"],
+        "correctAnswer": "Islam",
+      },
+      {
+        "question": "What linked East Africa to Southeast Asia?",
+        "options": [
+          "Mediterranean Sea",
+          "Indian Ocean trade",
+          "Atlantic trade",
+          "Pacific routes",
+        ],
+        "correctAnswer": "Indian Ocean trade",
+      },
+      {
+        "question": "Who dominated early Mediterranean trade?",
+        "options": ["Phoenicians", "Vikings", "Chinese", "Indians"],
+        "correctAnswer": "Phoenicians",
+      },
+      {
+        "question": "What revolutionized desert travel?",
+        "options": [
+          "Horse domestication",
+          "Camel domestication",
+          "Shipbuilding",
+          "Compass",
+        ],
+        "correctAnswer": "Camel domestication",
+      },
+      {
+        "question": "What navigation tool aided maritime trade?",
+        "options": ["Astrolabe", "Telescope", "Microscope", "Sextant"],
+        "correctAnswer": "Astrolabe",
+      },
+      {
+        "question": "What spread along trade routes?",
+        "options": ["Papermaking", "Farming", "Fishing", "Mining"],
+        "correctAnswer": "Papermaking",
+      },
+      {
+        "question": "What funded city construction?",
+        "options": ["Trade profits", "Wars", "Farming", "Mining"],
+        "correctAnswer": "Trade profits",
+      },
+      {
+        "question": "What drove the Age of Exploration?",
+        "options": [
+          "Silk demand",
+          "Spice demand",
+          "Gold demand",
+          "Cotton demand",
+        ],
+        "correctAnswer": "Spice demand",
+      },
+      {
+        "question": "What was part of the Atlantic triangular trade?",
+        "options": ["Enslaved Africans", "Spices", "Silk", "Porcelain"],
+        "correctAnswer": "Enslaved Africans",
+      },
+      {
+        "question": "Which city thrived on trade routes?",
+        "options": ["Constantinople", "Paris", "London", "Beijing"],
+        "correctAnswer": "Constantinople",
+      },
+      {
+        "question": "What reduced Silk Road importance?",
+        "options": ["Suez Canal", "Maritime routes", "Railroads", "Air travel"],
+        "correctAnswer": "Maritime routes",
+      },
+      {
+        "question": "What modern initiative revives the Silk Road?",
+        "options": [
+          "Belt and Road Initiative",
+          "Trans-Pacific Partnership",
+          "European Union",
+          "African Union",
+        ],
+        "correctAnswer": "Belt and Road Initiative",
       },
       {
         "question":
-            "What percentage of biodiversity do Indigenous lands protect?",
-        "options": ["60%", "80%", "100%"],
-        "correctAnswer": "80%",
-      },
-      {
-        "question": "What covers 15% of forests?",
-        "options": ["Sacred sites", "Protected areas", "Community projects"],
-        "correctAnswer": "Sacred sites",
-      },
-      {
-        "question": "How many community projects share knowledge?",
-        "options": ["5,000", "10,000", "15,000"],
-        "correctAnswer": "10,000",
-      },
-      {
-        "question": "What percentage of languages were erased?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
-      },
-      {
-        "question": "What displaces 50 million Indigenous people?",
-        "options": ["Land grabs", "Climate change", "Biopiracy"],
-        "correctAnswer": "Land grabs",
-      },
-      {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: Indigenous knowledge is only ecological.",
+            "TRUE, FALSE, or NOT GIVEN: All trade routes were land-based.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
         "question":
-            "TRUE, FALSE, or NOT GIVEN: All nations follow Indigenous rights.",
+            "TRUE, FALSE, or NOT GIVEN: Trade routes only exchanged goods.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question": "Which paragraph mentions plant medicines?",
+        "question": "Which paragraph mentions the Indian Ocean trade?",
         "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 3",
-      },
-      {
-        "question": "Which paragraph discusses challenges?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
         "correctAnswer": "Paragraph 4",
       },
       {
-        "question": "What is NOT an Indigenous contribution?",
-        "options": ["Biodiversity", "Medicines", "Land grabs"],
-        "correctAnswer": "Land grabs",
+        "question": "Which paragraph discusses the Spice Route?",
+        "options": ["Paragraph 4", "Paragraph 5", "Paragraph 6"],
+        "correctAnswer": "Paragraph 6",
       },
       {
-        "question": "What preserves 5% of oral traditions?",
+        "question": "What is NOT a trade route impact?",
         "options": [
-          "Digital archives",
-          "Community projects",
-          "Policy recognition",
+          "Cultural diffusion",
+          "Economic wealth",
+          "Urban decline",
+          "Technological transfer",
         ],
-        "correctAnswer": "Digital archives",
+        "correctAnswer": "Urban decline",
       },
       {
-        "question": "How many youth does education empower?",
-        "options": ["500,000", "1 million", "1.5 million"],
-        "correctAnswer": "1 million",
+        "question": "What empire benefited from Trans-Saharan trade?",
+        "options": ["Mali", "Roman", "Mongol", "Ottoman"],
+        "correctAnswer": "Mali",
       },
       {
-        "question": "What percentage of Indigenous peoples are in poverty?",
-        "options": ["50%", "70%", "90%"],
-        "correctAnswer": "70%",
+        "question": "What technology spread via the Silk Road?",
+        "options": ["Printing", "Steam engine", "Electricity", "Internet"],
+        "correctAnswer": "Printing",
       },
       {
-        "question": "What percentage are unaware of Indigenous contributions?",
-        "options": ["40%", "60%", "80%"],
-        "correctAnswer": "60%",
+        "question": "What developed due to trade wealth?",
+        "options": [
+          "Banking systems",
+          "Military forts",
+          "Rural farms",
+          "Fishing fleets",
+        ],
+        "correctAnswer": "Banking systems",
       },
       {
-        "question": "What supports 200 million Indigenous people?",
-        "options": ["UN’s Declaration", "Indigenous Fund", "Digital archives"],
-        "correctAnswer": "UN’s Declaration",
+        "question": "What was a Spice Route commodity?",
+        "options": ["Pepper", "Gold", "Salt", "Ivory"],
+        "correctAnswer": "Pepper",
+      },
+      {
+        "question": "What caused suffering in the Atlantic trade?",
+        "options": ["Spice wars", "Enslavement", "Shipwrecks", "Piracy"],
+        "correctAnswer": "Enslavement",
+      },
+      {
+        "question": "What city controlled Mediterranean trade?",
+        "options": ["Venice", "Timbuktu", "Samarkand", "Malacca"],
+        "correctAnswer": "Venice",
+      },
+      {
+        "question": "What enabled longer ocean voyages?",
+        "options": ["Shipbuilding", "Railroads", "Airplanes", "Canals"],
+        "correctAnswer": "Shipbuilding",
+      },
+      {
+        "question": "What religion spread via maritime routes?",
+        "options": ["Buddhism", "Islam", "Christianity", "All of the above"],
+        "correctAnswer": "All of the above",
+      },
+      {
+        "question": "What was a result of the Suez Canal opening?",
+        "options": [
+          "Silk Road revival",
+          "correctAnswer",
+          "Trade pattern shift",
+        ],
+        "correctAnswer": "Trade pattern shift",
+      },
+      {
+        "question": "What modern system has trade route origins?",
+        "options": ["Internet", "Free trade", "correctAnswer", "Airlines"],
+        "correctAnswer": "Free trade",
+      },
+      {
+        "question": "What facilitated Trans-Saharan travel?",
+        "options": ["Horses", "Camels", "Oxen", "Elephants"],
+        "correctAnswer": "Camels",
+      },
+      {
+        "question": "What was a cultural impact of trade routes?",
+        "options": [
+          "Isolation",
+          "Cultural diffusion",
+          "Population decline",
+          "correct creation",
+        ],
+        "correctAnswer": "Cultural diffusion",
+      },
+      {
+        "question": "What was an economic impact of trade routes?",
+        "options": [
+          "Poverty",
+          "Wealth creation",
+          "correct creation",
+          "Famine",
+          "Disease spread",
+        ],
+        "correctAnswer": "Wealth creation",
+      },
+      {
+        "question": "Who competed for Spice Route control?",
+        "options": ["Portuguese", "Mongols", "Ottomans", "Romans"],
+        "correctAnswer": "Portuguese",
+      },
+      {
+        "question": "What developed in trade cities?",
+        "options": ["Markets", "Deserts", "Forests", "Farms"],
+        "correctAnswer": "Markets",
+      },
+      {
+        "question": "What is a legacy of trade routes?",
+        "options": [
+          "Cultural diversity",
+          "Economic isolation",
+          "correct isolation",
+          "Military conflict",
+          "Urban decline",
+        ],
+        "correctAnswer": "Cultural diversity",
+      },
+      {
+        "question": "What provides insights into globalization?",
+        "options": [
+          "Trade route studies",
+          "Fossil records",
+          "correct records",
+          "Climate models",
+          "Space exploration",
+        ],
+        "correctAnswer": "Trade route studies",
+      },
+      {
+        "question": "What was a maritime trade hub?",
+        "options": ["Malacca", "Paris", "Moscow", "correct", "Delhi"],
+        "correctAnswer": "Malacca",
+      },
+      {
+        "question": "What disrupted traditional trade routes?",
+        "options": ["Colonization", "Farming", "correct", "Hunting", "Fishing"],
+        "correctAnswer": "Colonization",
       },
       {
         "question":
-            "What percentage of students benefit from education reform?",
-        "options": ["60%", "70%", "80%"],
-        "correctAnswer": "70%",
-      },
-      {
-        "question": "What is the primary focus of education reform?",
-        "options": ["Equity", "Expansion", "Testing"],
-        "correctAnswer": "Equity",
-      },
-      {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: All reforms improve learning outcomes.",
+            "TRUE, FALSE, or NOT GIVEN: Trade routes only benefited empires.",
         "options": ["TRUE", "FALSE", "NOT GIVEN"],
         "correctAnswer": "FALSE",
       },
       {
-        "question": "Which paragraph discusses technology in education?",
-        "options": ["Paragraph 2", "Paragraph 3", "Paragraph 4"],
-        "correctAnswer": "Paragraph 3",
+        "question": "Which paragraph mentions the Atlantic trade?",
+        "options": ["Paragraph 5", "Paragraph 6", "Paragraph 7"],
+        "correctAnswer": "Paragraph 7",
       },
       {
-        "question": "What improves test scores by 20%?",
-        "options": ["Digital tools", "Textbooks", "Exams"],
-        "correctAnswer": "Digital tools",
+        "question": "What is NOT a trade route commodity?",
+        "options": ["Silk", "Spices", "Computers", "Gold"],
+        "correctAnswer": "Computers",
       },
       {
-        "question": "How many children lack basic education?",
-        "options": ["200 million", "300 million", "400 million"],
-        "correctAnswer": "300 million",
+        "question": "What supported trade route commerce?",
+        "options": [
+          "Commercial law",
+          "Military conquest",
+          "correct conquest",
+          "Farming tools",
+          "Fishing nets",
+        ],
+        "correctAnswer": "Commercial law",
       },
       {
-        "question": "What is NOT an education reform goal?",
-        "options": ["Inclusivity", "Accessibility", "Profit"],
-        "correctAnswer": "Profit",
+        "question": "What spread mathematical knowledge?",
+        "options": [
+          "Silk Road",
+          "Amber Road",
+          "correct Road",
+          "Tin Road",
+          "Salt Road",
+        ],
+        "correctAnswer": "Silk Road",
       },
       {
-        "question": "What percentage of schools use online learning?",
-        "options": ["50%", "60%", "70%"],
-        "correctAnswer": "60%",
+        "question": "What was a result of trade route wealth?",
+        "options": [
+          "Monument construction",
+          "Population decline",
+          "correct decline",
+          "Economic collapse",
+          "Warfare",
+        ],
+        "correctAnswer": "Monument construction",
       },
       {
-        "question": "What technology aids 100 million students?",
-        "options": ["Learning apps", "Drones", "Blockchain"],
-        "correctAnswer": "Learning apps",
-      },
-      {
-        "question": "What percentage of teachers lack training?",
-        "options": ["30%", "40%", "50%"],
-        "correctAnswer": "40%",
-      },
-      {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: Education reform eliminates dropout.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph mentions vocational training?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 4",
-      },
-      {
-        "question": "How many students benefit from vocational programs?",
-        "options": ["100 million", "200 million", "300 million"],
-        "correctAnswer": "200 million",
-      },
-      {
-        "question": "What reduces dropout rates by 15%?",
-        "options": ["Scholarships", "Exams", "Textbooks"],
-        "correctAnswer": "Scholarships",
-      },
-      {
-        "question": "What is a barrier to reform in 20% of nations?",
-        "options": ["Funding", "Public support", "Technology"],
-        "correctAnswer": "Funding",
-      },
-      {
-        "question": "What percentage of girls face education barriers?",
-        "options": ["30%", "40%", "50%"],
-        "correctAnswer": "40%",
-      },
-      {
-        "question": "What supports 50 million with free education?",
-        "options": ["NGOs", "Governments", "Private firms"],
-        "correctAnswer": "NGOs",
-      },
-      {
-        "question": "What percentage of reforms focus on STEM?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
-      },
-      {
-        "question": "What is NOT a reform benefit?",
-        "options": ["Employability", "Equity", "Exclusion"],
-        "correctAnswer": "Exclusion",
-      },
-      {
-        "question": "How many teachers are trained yearly?",
-        "options": ["1 million", "2 million", "3 million"],
-        "correctAnswer": "2 million",
-      },
-      {
-        "question": "What reduces illiteracy by 10%?",
-        "options": ["Mobile schools", "Exams", "Textbooks"],
-        "correctAnswer": "Mobile schools",
-      },
-      {
-        "question": "What percentage of schools lack internet?",
-        "options": ["30%", "40%", "50%"],
-        "correctAnswer": "40%",
-      },
-      {
-        "question": "Which technology tracks student progress?",
-        "options": ["AI analytics", "Blockchain", "VR"],
-        "correctAnswer": "AI analytics",
-      },
-      {
-        "question": "What percentage of reforms face resistance?",
-        "options": ["20%", "30%", "40%"],
-        "correctAnswer": "30%",
-      },
-      {
-        "question":
-            "TRUE, FALSE, or NOT GIVEN: Reforms only benefit urban areas.",
-        "options": ["TRUE", "FALSE", "NOT GIVEN"],
-        "correctAnswer": "FALSE",
-      },
-      {
-        "question": "Which paragraph discusses funding issues?",
-        "options": ["Paragraph 3", "Paragraph 4", "Paragraph 5"],
-        "correctAnswer": "Paragraph 5",
-      },
-      {
-        "question": "How many children attend reformed schools?",
-        "options": ["400 million", "500 million", "600 million"],
-        "correctAnswer": "500 million",
-      },
-      {
-        "question": "What percentage of parents support reforms?",
-        "options": ["70%", "80%", "90%"],
-        "correctAnswer": "80%",
-      },
-      {
-        "question": "What supports 15% of education projects?",
-        "options": ["Crowdfunding", "Governments", "NGOs"],
-        "correctAnswer": "NGOs",
-      },
-      {
-        "question": "What percentage value inclusive education?",
-        "options": ["70%", "80%", "90%"],
-        "correctAnswer": "80%",
+        "question": "What drove Indian Ocean trade?",
+        "options": ["Merchants", "Farmers", "correct", "Miners", "Soldiers"],
+        "correctAnswer": "Merchants",
       },
     ],
     'questionsToAsk': 25,
