@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:langtest_pro/controller/listening_controller.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_controller.dart';
 import 'package:langtest_pro/controller/speaking_progress_provider.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_controller.dart';
 import 'package:langtest_pro/core/loading/under_maintenance.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:get/get.dart';
@@ -72,9 +72,9 @@ class IeltsScreen extends StatelessWidget {
   }
 
   Widget _buildProgressOverview(BuildContext context) {
-    final listeningController = Get.find<ListeningProgressController>();
-    final readingController = Get.find<ReadingProgressController>();
-    final writingController = Get.find<WritingProgressController>();
+    final listeningController = Get.find<ListeningController>();
+    final readingController = Get.find<ReadingController>();
+    final writingController = Get.find<WritingController>();
     final speakingController = Get.find<SpeakingProgressController>();
 
     return Obx(() {
@@ -117,10 +117,16 @@ class IeltsScreen extends StatelessWidget {
                 children: [
                   _buildProgressCircle(
                     "Listening",
-                    listeningController.lessonProgressPercentage / 100,
+                    listeningController.overallProgress / 100,
                   ),
-                  _buildProgressCircle("Reading", readingController.progress),
-                  _buildProgressCircle("Writing", writingController.progress),
+                  _buildProgressCircle(
+                    "Reading",
+                    readingController.overallProgress / 100,
+                  ),
+                  _buildProgressCircle(
+                    "Writing",
+                    writingController.completionPercentage / 100,
+                  ),
                   _buildProgressCircle("Speaking", speakingController.progress),
                 ],
               ),

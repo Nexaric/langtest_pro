@@ -37,11 +37,6 @@ class ReadingController extends GetxController {
   // Stream subscription for auth state changes
   StreamSubscription<bool>? _authSubscription;
 
-  // Total lessons (assumed values; replace with actual data source if available)
-  static int get totalAcademicLessons => 50;
-  static int get totalGeneralLessons => 50;
-  static int get totalLessons => totalAcademicLessons + totalGeneralLessons;
-
   // Getters
   bool get isLoading => _isLoading.value;
   bool get hasError => _hasError.value;
@@ -170,6 +165,7 @@ class ReadingController extends GetxController {
         },
       );
 
+      // Update current lessons
       final highestAcademic = await _readingAuthFacade
           .getHighestCompletedAcademicLesson(userId: userId);
       highestAcademic.fold(

@@ -1,5 +1,3 @@
-// lib/view/exams/ielts/listening/audio_lessons/audio_screen.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,7 +47,7 @@ class _AudioScreenState extends State<AudioScreen> {
   bool _isTransitioning = false;
   List<Map<String, dynamic>> _currentQuestions = [];
   List<String?> _userAnswers = [];
-  final ListeningProgressController _progressController = Get.find();
+  final ListeningController _progressController = Get.find();
 
   final Color _gradientStart = const Color(0xFF3E1E68);
   final Color _gradientEnd = const Color.fromARGB(255, 84, 65, 228);
@@ -63,7 +61,7 @@ class _AudioScreenState extends State<AudioScreen> {
         final lessonId = widget.lesson["lessonId"] as int;
         _progressController.updateLessonProgress(
           lessonId.toString(),
-          'audio_started',
+          'audio_opened',
         );
       }
     });
@@ -71,7 +69,7 @@ class _AudioScreenState extends State<AudioScreen> {
 
   void _loadQuestions() {
     if (widget.lesson["isIntroduction"] == true) {
-      return; // Skip questions for lesson 1
+      return;
     }
     final lessonId = widget.lesson["lessonId"] as int;
     setState(() {
@@ -81,41 +79,35 @@ class _AudioScreenState extends State<AudioScreen> {
   }
 
   Future<void> _loadAudio() async {
-    await fetchAudioFromSupabase(
-      'lesson${widget.lesson["lessonId"]}.mp3',
-    );
+    await fetchAudioFromSupabase('lesson${widget.lesson["lessonId"]}.mp3');
     _initAudio();
     _loadQuestions();
   }
 
+  Future<void> fetchAudioFromSupabase(String firebasePath) async {
+    try {
+      debugPrint('Fetching audio from Supabase: $firebasePath');
+      final response = await Supabase.instance.client.storage
+          .from('audio')
+          .download(firebasePath);
 
+      final bytes = response;
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${firebasePath.split('/').last}');
+      await file.writeAsBytes(bytes);
 
-Future<void> fetchAudioFromSupabase(String firebasePath) async {
-  try {
-    debugPrint('Fetching audio from Supabase: $firebasePath');
-    final response = await Supabase.instance.client.storage
-        .from('audio')
-        .download(firebasePath);
-
-    // Save the response (bytes) to a temp file
-    final bytes = response;
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/${firebasePath.split('/').last}');
-    await file.writeAsBytes(bytes);
-
-    setState(() {
-      audioPath = file.path; // Use this path in your audio player
-      _isAudioLoading = false;
-    });
-  } catch (e) {
-    print('Error fetching audio: $e');
-    setState(() {
-      _isAudioLoading = false;
-    });
-    rethrow;
+      setState(() {
+        audioPath = file.path;
+        _isAudioLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching audio: $e');
+      setState(() {
+        _isAudioLoading = false;
+      });
+      rethrow;
+    }
   }
-}
-
 
   Future<void> _initAudio() async {
     try {
@@ -187,7 +179,6 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
           if (mounted) {
             final lessonId = widget.lesson["lessonId"] as int;
             if (widget.lesson["isIntroduction"] == true) {
-              // Mark lesson 1 as completed
               _progressController.updateLessonProgress(
                 lessonId.toString(),
                 'lesson_completed',
@@ -201,7 +192,6 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
                 (Route<dynamic> route) => route.isFirst,
               );
             } else {
-              // Show questions for lessons 2-50
               setState(() {
                 showQuestions = true;
                 _isPlaying = false;
@@ -220,6 +210,13 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
     _audioPlayer.onPlayerStateChanged.listen((state) {
       if (mounted) {
         setState(() => _isPlaying = state == PlayerState.playing);
+        if (state == PlayerState.playing && _isInitialized) {
+          final lessonId = widget.lesson["lessonId"] as int;
+          _progressController.updateLessonProgress(
+            lessonId.toString(),
+            'audio_started',
+          );
+        }
       }
     });
   }

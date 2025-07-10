@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/lesson_list_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_list_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/feedback.dart';
@@ -161,7 +161,7 @@ class IeltsWritingScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final progressController = Get.find<WritingProgressController>();
+    final progressController = Get.find<WritingController>();
     return Obx(() {
       // Note: Original code uses 50.0 instead of totalLessons (54). Kept as-is for consistency.
       final progress = progressController.completedLessons / 50.0;

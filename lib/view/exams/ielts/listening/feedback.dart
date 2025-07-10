@@ -10,301 +10,295 @@ class FeedbackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressController = Get.find<ListeningProgressController>();
-    final lessonProgress = progressController.completedLessons;
-    final testProgress =
-        (progressController.testProgressPercentage / 25)
-            .floor(); // 4 tests, each 25%
-    final totalProgress =
-        (lessonProgress / 50) * 0.6 +
-        (testProgress / 4) * 0.4; // Weighted: 60% lessons, 40% tests
-    const totalLessons = ListeningProgressController.totalLessons; // 50 lessons
-    const totalTests = 4; // 4 practice tests
+    final progressController = Get.find<ListeningController>();
+    const int totalLessons = 50; // Total audio lessons
+    const int totalTests = 4; // Total practice tests
 
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 1.0],
+    return Obx(() {
+      final lessonProgress = progressController.completedAudioLessons;
+      final testProgress = progressController.completedPracticeTests;
+      final totalProgress =
+          (lessonProgress / totalLessons) * 0.6 +
+          (testProgress / totalTests) * 0.4;
+
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.0, 1.0],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // App Bar Section
-                  Row(
-                    children: [
-                      ElasticInLeft(
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 20,
-                            color: Colors.white,
-                          ),
-                          onPressed:
-                              () => Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const IeltsListeningScreen(),
-                                ),
-                              ),
-                        ),
-                      ),
-                      Expanded(
-                        child: BounceInDown(
-                          child: Text(
-                            "Listening Progress",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        ElasticInLeft(
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              size: 20,
                               color: Colors.white,
                             ),
+                            onPressed:
+                                () => Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) =>
+                                            const IeltsListeningScreen(),
+                                  ),
+                                ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 40), // Balance for back button
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Header
-                  FadeInDown(
-                    from: 30,
-                    duration: const Duration(milliseconds: 800),
-                    child: Text(
-                      "Your Listening Path",
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Overall Progress Card
-                  ElasticIn(
-                    duration: const Duration(milliseconds: 1000),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          SlideInLeft(
+                        Expanded(
+                          child: BounceInDown(
                             child: Text(
-                              "Overall Progress",
+                              "Listening Progress",
+                              textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
-                                fontSize: 20,
+                                fontSize: 22,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              SizedBox(
-                                width: 150,
-                                height: 150,
-                                child: CircularProgressIndicator(
-                                  value: totalProgress.clamp(0.0, 1.0),
-                                  strokeWidth: 12,
-                                  backgroundColor: Colors.white.withOpacity(
-                                    0.2,
-                                  ),
-                                  color: Colors.amberAccent,
-                                ),
-                              ),
-                              BounceIn(
-                                duration: const Duration(milliseconds: 1500),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      "${(totalProgress * 100).toStringAsFixed(0)}%",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Text(
-                                      "${lessonProgress + testProgress} / ${totalLessons + totalTests}",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16,
-                                        color: Colors.white.withOpacity(0.8),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Progress Breakdown
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 100),
-                    duration: const Duration(milliseconds: 800),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _buildProgressCard(
-                            context,
-                            "Lessons",
-                            "$lessonProgress / $totalLessons",
-                            Colors.blueAccent,
-                          ),
                         ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: _buildProgressCard(
-                            context,
-                            "Tests",
-                            "$testProgress / $totalTests",
-                            Colors.greenAccent,
-                          ),
-                        ),
+                        const SizedBox(width: 40),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Feedback Section
-                  FlipInX(
-                    delay: const Duration(milliseconds: 200),
-                    duration: const Duration(milliseconds: 800),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                    const SizedBox(height: 20),
+                    FadeInDown(
+                      from: 30,
+                      duration: const Duration(milliseconds: 800),
+                      child: Text(
+                        "Your Listening Path",
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 15,
-                            spreadRadius: 1,
-                          ),
-                        ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              ElasticIn(
-                                child: Icon(
-                                  Icons.feedback_rounded,
-                                  color: Colors.orange.shade200,
-                                  size: 28,
+                    ),
+                    const SizedBox(height: 30),
+                    ElasticIn(
+                      duration: const Duration(milliseconds: 1000),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 20,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            SlideInLeft(
+                              child: Text(
+                                "Overall Progress",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              SlideInRight(
-                                child: Text(
-                                  "Your Feedback",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
+                            ),
+                            const SizedBox(height: 20),
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 150,
+                                  height: 150,
+                                  child: CircularProgressIndicator(
+                                    value: totalProgress.clamp(0.0, 1.0),
+                                    strokeWidth: 12,
+                                    backgroundColor: Colors.white.withOpacity(
+                                      0.2,
+                                    ),
+                                    color: Colors.amberAccent,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-                          FadeIn(
-                            delay: const Duration(milliseconds: 300),
-                            child: Text(
-                              _getFeedbackMessage(lessonProgress, testProgress),
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: Colors.white.withOpacity(0.9),
-                                height: 1.6,
-                              ),
+                                BounceIn(
+                                  duration: const Duration(milliseconds: 1500),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        "${(totalProgress * 100).toStringAsFixed(0)}%",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${lessonProgress + testProgress} / ${totalLessons + totalTests}",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 16,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-
-                  // Motivational Quote
-                  FadeInUp(
-                    delay: const Duration(milliseconds: 400),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          ],
                         ),
                       ),
-                      child: Column(
+                    ),
+                    const SizedBox(height: 30),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 800),
+                      child: Row(
                         children: [
-                          JelloIn(
-                            child: const Icon(
-                              Icons.auto_awesome_rounded,
-                              color: Colors.amber,
-                              size: 36,
+                          Expanded(
+                            child: _buildProgressCard(
+                              context,
+                              "Lessons",
+                              "$lessonProgress / $totalLessons",
+                              Colors.blueAccent,
                             ),
                           ),
-                          const SizedBox(height: 15),
-                          Text(
-                            "Tune your ears, conquer the test!",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                              fontStyle: FontStyle.italic,
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: _buildProgressCard(
+                              context,
+                              "Tests",
+                              "$testProgress / $totalTests",
+                              Colors.greenAccent,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 30),
+                    FlipInX(
+                      delay: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 800),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 15,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                ElasticIn(
+                                  child: Icon(
+                                    Icons.feedback_rounded,
+                                    color: Colors.orange.shade200,
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                SlideInRight(
+                                  child: Text(
+                                    "Your Feedback",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 15),
+                            FadeIn(
+                              delay: const Duration(milliseconds: 300),
+                              child: Text(
+                                _getFeedbackMessage(
+                                  lessonProgress,
+                                  testProgress,
+                                ),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  color: Colors.white.withOpacity(0.9),
+                                  height: 1.6,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 400),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            JelloIn(
+                              child: const Icon(
+                                Icons.auto_awesome_rounded,
+                                color: Colors.amber,
+                                size: 36,
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            Text(
+                              "Tune your ears, conquer the test!",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildProgressCard(

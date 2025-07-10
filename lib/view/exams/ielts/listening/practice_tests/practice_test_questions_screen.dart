@@ -1,5 +1,3 @@
-// lib/exams/ielts/listening/practice_test_questions_screen.dart
-
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
@@ -11,7 +9,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
 import 'package:langtest_pro/controller/listening_controller.dart';
 import 'package:langtest_pro/core/loading/internet_signel_low.dart';
-import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'practice_test_result.dart';
@@ -33,7 +30,6 @@ class PracticeTestQuestionsScreen extends StatefulWidget {
 
 class _PracticeTestQuestionsScreenState
     extends State<PracticeTestQuestionsScreen> {
-  // Audio player state
   late final AudioPlayer _audioPlayer;
   bool _isPlaying = false;
   Duration _duration = Duration.zero;
@@ -42,8 +38,6 @@ class _PracticeTestQuestionsScreenState
   bool _isReloading = false;
   String? _audioPath;
   bool _isAudioLoading = true;
-
-  // Test state
   bool _isLoading = true;
   bool _isInitialized = false;
   String? _errorMessage;
@@ -53,14 +47,11 @@ class _PracticeTestQuestionsScreenState
   bool _showQuestions = false;
   int _score = 0;
 
-  // Timer
   late PracticeTestTimer _testTimer;
 
-  // Color scheme from audio_screen.dart
   final Color _gradientStart = const Color(0xFF3E1E68);
   final Color _gradientEnd = const Color.fromARGB(255, 84, 65, 228);
 
-  // Test configuration
   static const _partDurations = {
     'Part 1': Duration(minutes: 5),
     'Part 2': Duration(minutes: 10),
@@ -91,10 +82,31 @@ class _PracticeTestQuestionsScreenState
     },
   };
 
+  int _getLessonIdFromPart(String part) {
+    switch (part) {
+      case 'Part 1':
+        return 1;
+      case 'Part 2':
+        return 2;
+      case 'Part 3':
+        return 3;
+      case 'Part 4':
+        return 4;
+      default:
+        throw Exception('Invalid part: $part');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    Get.put(ListeningProgressController());
+    if (!Get.isRegistered<ListeningController>()) {
+      Get.put(ListeningController());
+    }
+    final progressController = Get.find<ListeningController>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      progressController.refreshProgress();
+    });
     _audioPlayer = AudioPlayer();
     _testTimer = PracticeTestTimer(
       initialDuration:
@@ -103,12 +115,10 @@ class _PracticeTestQuestionsScreenState
       onTick: (remaining) => setState(() {}),
     );
     _initializeTest();
-    // Trigger audio_started progress (50%)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_isInitialized) {
-        Get.find<ListeningProgressController>().updatePracticeTestProgress(
-          widget.part,
-          'audio_started',
+        progressController.markPracticeTestAsStarted(
+          _getLessonIdFromPart(widget.part),
         );
       }
     });
@@ -144,12 +154,10 @@ class _PracticeTestQuestionsScreenState
   }
 
   void _handleTimeExpired() {
-    final unlockedNextPart = _isNextPartUnlocked(widget.part, _score);
-    if (unlockedNextPart) {
-      Get.find<ListeningProgressController>().updatePracticeTestProgress(
-        widget.part,
-        'test_completed',
-      );
+    final lessonId = _getLessonIdFromPart(widget.part);
+    final progressController = Get.find<ListeningController>();
+    if (_score >= (_partRequirements[widget.part]!['requiredCorrect'] ?? 0)) {
+      progressController.markPracticeTestAsCompleted(lessonId);
     }
 
     Navigator.pushReplacement(
@@ -159,9 +167,11 @@ class _PracticeTestQuestionsScreenState
             (context) => PracticeTestResultScreen(
               score: _score,
               totalQuestions: _currentQuestions.length,
-              unlockedNextPart: unlockedNextPart,
+              unlockedNextPart:
+                  _score >=
+                  (_partRequirements[widget.part]!['requiredCorrect'] ?? 0),
               timeExpired: true,
-              part: widget.part, // Pass part to PracticeTestResultScreen
+              part: widget.part,
             ),
       ),
     );
@@ -169,10 +179,10 @@ class _PracticeTestQuestionsScreenState
 
   Future<String> _getAudioPathForPart(String part) async {
     final audioPaths = {
-      'Part 1': await fetchAudioFromSupabase('practice_test/part1.mp3'),
-      'Part 2': await fetchAudioFromSupabase('practice_test/part2.mp3'),
-      'Part 3': await fetchAudioFromSupabase('practice_test/part3.mp3'),
-      'Part 4': await fetchAudioFromSupabase('practice_test/part4.mp3'),
+      'Part 1': 'practice_test/part1.mp3',
+      'Part 2': 'practice_test/part2.mp3',
+      'Part 3': 'practice_test/part3.mp3',
+      'Part 4': 'practice_test/part4.mp3',
     };
     if (!audioPaths.containsKey(part)) {
       throw Exception('Invalid part: $part');
@@ -180,28 +190,22 @@ class _PracticeTestQuestionsScreenState
     return await fetchAudioFromSupabase(audioPaths[part]!);
   }
 
- Future<String> fetchAudioFromSupabase(String supabasePath) async {
-  try {
-    // Download file bytes from Supabase
-    final bytes = await Supabase.instance.client.storage
-        .from('audio') // your bucket name
-        .download(supabasePath); // e.g., 'folder/filename.mp3'
-
-    // Prepare to store the file locally
-    final dir = await getTemporaryDirectory();
-    final fileName = supabasePath.split('/').last;
-    final file = File('${dir.path}/$fileName');
-
-    // Write bytes to the file
-    await file.writeAsBytes(bytes);
-
-    debugPrint("Audio path: ${file.path}");
-    return file.path;
-  } catch (e) {
-    debugPrint('Error fetching audio: $e');
-    rethrow;
+  Future<String> fetchAudioFromSupabase(String supabasePath) async {
+    try {
+      final bytes = await Supabase.instance.client.storage
+          .from('audio')
+          .download(supabasePath);
+      final dir = await getTemporaryDirectory();
+      final fileName = supabasePath.split('/').last;
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(bytes);
+      debugPrint("Audio path: ${file.path}");
+      return file.path;
+    } catch (e) {
+      debugPrint('Error fetching audio: $e');
+      rethrow;
+    }
   }
-}
 
   List<Map<String, dynamic>> _getRandomQuestionsForPart(String part) {
     final allQuestions = {
@@ -275,9 +279,9 @@ class _PracticeTestQuestionsScreenState
             _isPlaying = false;
             if (!_testTimer.isRunning) {
               _testTimer.start();
-              // Trigger question_opened progress (75%)
-              Get.find<ListeningProgressController>()
-                  .updatePracticeTestProgress(widget.part, 'question_opened');
+              Get.find<ListeningController>().markPracticeTestAsOpened(
+                _getLessonIdFromPart(widget.part),
+              );
             }
           });
         }
@@ -408,8 +412,11 @@ class _PracticeTestQuestionsScreenState
     });
   }
 
-  void _nextQuestion() {
+  void _nextQuestion() async {
     if (_testTimer.remainingTime.inSeconds <= 0) return;
+
+    final lessonId = _getLessonIdFromPart(widget.part);
+    final progressController = Get.find<ListeningController>();
 
     if (_currentQuestionIndex < _currentQuestions.length - 1) {
       setState(() {
@@ -417,12 +424,10 @@ class _PracticeTestQuestionsScreenState
         _selectedAnswer = null;
       });
     } else {
-      final unlockedNextPart = _isNextPartUnlocked(widget.part, _score);
-      if (unlockedNextPart) {
-        Get.find<ListeningProgressController>().updatePracticeTestProgress(
-          widget.part,
-          'test_completed',
-        );
+      final isCompleted =
+          _score >= (_partRequirements[widget.part]!['requiredCorrect'] ?? 0);
+      if (isCompleted) {
+        await progressController.markPracticeTestAsCompleted(lessonId);
       }
 
       Navigator.pushReplacement(
@@ -432,19 +437,13 @@ class _PracticeTestQuestionsScreenState
               (context) => PracticeTestResultScreen(
                 score: _score,
                 totalQuestions: _currentQuestions.length,
-                unlockedNextPart: unlockedNextPart,
+                unlockedNextPart: isCompleted,
                 timeExpired: false,
                 part: widget.part,
               ),
         ),
       );
     }
-  }
-
-  bool _isNextPartUnlocked(String part, int score) {
-    final requirements = _partRequirements[part];
-    if (requirements == null) return false;
-    return score >= (requirements['requiredCorrect'] ?? 0);
   }
 
   String _getPartDescription(String part) {
@@ -512,7 +511,7 @@ class _PracticeTestQuestionsScreenState
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Center(
               child: Obx(() {
-                final controller = Get.find<ListeningProgressController>();
+                final controller = Get.find<ListeningController>();
                 return TimerDisplay(
                   duration: _testTimer.remainingTime,
                   isWarning: _testTimer.remainingTime.inMinutes < 1,
@@ -1090,16 +1089,12 @@ class _PracticeTestQuestionsScreenState
                 SizedBox(height: 20.h),
                 ElevatedButton(
                   onPressed: () {
-                    final unlockedNextPart = _isNextPartUnlocked(
-                      widget.part,
-                      _score,
-                    );
-                    if (unlockedNextPart) {
-                      Get.find<ListeningProgressController>()
-                          .updatePracticeTestProgress(
-                            widget.part,
-                            'test_completed',
-                          );
+                    final lessonId = _getLessonIdFromPart(widget.part);
+                    final progressController = Get.find<ListeningController>();
+                    if (_score >=
+                        (_partRequirements[widget.part]!['requiredCorrect'] ??
+                            0)) {
+                      progressController.markPracticeTestAsCompleted(lessonId);
                     }
                     Navigator.pushReplacement(
                       context,
@@ -1108,7 +1103,11 @@ class _PracticeTestQuestionsScreenState
                             (context) => PracticeTestResultScreen(
                               score: _score,
                               totalQuestions: _currentQuestions.length,
-                              unlockedNextPart: unlockedNextPart,
+                              unlockedNextPart:
+                                  _score >=
+                                  (_partRequirements[widget
+                                          .part]!['requiredCorrect'] ??
+                                      0),
                               timeExpired: true,
                               part: widget.part,
                             ),

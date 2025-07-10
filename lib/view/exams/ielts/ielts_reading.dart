@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/general/general_lessons.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/feedback.dart';
@@ -162,7 +162,7 @@ class IeltsReadingScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final progressController = Get.find<ReadingProgressController>();
+    final progressController = Get.find<ReadingController>();
     const totalLessons = 54; // 40 Academic + 14 General
 
     return Obx(() {

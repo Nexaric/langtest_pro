@@ -1,14 +1,14 @@
-import 'dart:math';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart'; // Added import
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_controller.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_data.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/writing_result.dart';
-import 'letter_data.dart';
 
 class LetterScreen extends StatefulWidget {
   final Map<String, dynamic> lessonData;
@@ -21,41 +21,25 @@ class LetterScreen extends StatefulWidget {
 
 class _LetterScreenState extends State<LetterScreen>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  // Controllers
   final TextEditingController _letterController = TextEditingController();
-  final WritingProgressController _progressController =
-      Get.find<WritingProgressController>();
-
-  // Animation Controllers
-  late final AnimationController _saveAnimationController;
-  late final Animation<double> _saveScaleAnimation;
-
-  // State variables
+  final WritingController _progressController = Get.find<WritingController>();
+  late AnimationController _saveAnimationController;
+  late Animation<double> _saveScaleAnimation;
   int _wordCount = 0;
   bool _showSample = false;
   bool _showTips = false;
   bool _isSubmitting = false;
   bool _isLoading = true;
   bool _showSaveIndicator = false;
-
-  // Storage
   late String _storagePath;
   late File _letterFile;
-
-  // Task content
   late Map<String, dynamic> _task;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
-    // Initialize task data
-    _task = letterLessons.firstWhere(
-      (lesson) => lesson['id'] == widget.lessonData['id'],
-    );
-
-    // Initialize animation controllers
+    _task = widget.lessonData;
     _saveAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -64,15 +48,11 @@ class _LetterScreenState extends State<LetterScreen>
       parent: _saveAnimationController,
       curve: Curves.elasticOut,
     );
-
-    // Initialize storage and load data
     _initStorage().then((_) {
       _loadSavedResponse().then((_) {
         setState(() => _isLoading = false);
       });
     });
-
-    // Setup text controller
     _setupController();
   }
 
@@ -80,7 +60,7 @@ class _LetterScreenState extends State<LetterScreen>
     try {
       final directory = await getApplicationDocumentsDirectory();
       _storagePath = directory.path;
-      _letterFile = File('$_storagePath/${_task['id']}.json');
+      _letterFile = File('$_storagePath/letter_${_task['intId']}.json');
     } catch (e) {
       debugPrint('Error initializing storage: $e');
     }
@@ -106,9 +86,7 @@ class _LetterScreenState extends State<LetterScreen>
   }
 
   void _setupController() {
-    _letterController.addListener(() {
-      _updateWordCount();
-    });
+    _letterController.addListener(_updateWordCount);
   }
 
   bool _isValidInput(String input) {
@@ -119,48 +97,29 @@ class _LetterScreenState extends State<LetterScreen>
     try {
       final response = _letterController.text;
       if (!_isValidInput(response)) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                'Only letters, numbers, spaces, punctuation, and newlines are allowed.',
-              ),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
-        }
+        _showSnackBar(
+          'Only letters, numbers, spaces, punctuation, and newlines are allowed.',
+        );
         return;
       }
-
       final data = {
         'response': response,
         'lastSaved': DateTime.now().toIso8601String(),
         'wordCount': _wordCount,
       };
       await _letterFile.writeAsString(jsonEncode(data));
-
-      // Show save indicator animation
-      setState(() => _showSaveIndicator = true);
+      setState(() {
+        _showSaveIndicator = true;
+      });
       _saveAnimationController.reset();
       _saveAnimationController.forward();
       await Future.delayed(const Duration(seconds: 1));
-      setState(() => _showSaveIndicator = false);
+      setState(() {
+        _showSaveIndicator = false;
+      });
     } catch (e) {
       debugPrint('Error saving response: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving response: $e'),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-      }
+      _showSnackBar('Error saving response: $e');
     }
   }
 
@@ -189,23 +148,12 @@ class _LetterScreenState extends State<LetterScreen>
 
   Future<void> _submitResponse() async {
     setState(() => _isSubmitting = true);
-
     try {
       await _saveResponse();
-
       final score = _calculateScore(_letterController.text);
-      if (_task['type'] == 'Formal') {
-        _progressController.completeLetterLesson(widget.lessonData['id']);
-      } else {
-        _progressController.completeLesson(
-          _parseLessonId(widget.lessonData['id']),
-        );
-      }
-
+      await _progressController.completeLetterLesson(_task['intId']);
       await Future.delayed(const Duration(milliseconds: 500));
-
       if (!mounted) return;
-
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
@@ -214,9 +162,9 @@ class _LetterScreenState extends State<LetterScreen>
               (_, __, ___) => WritingResultScreen(
                 score: score,
                 feedback: _generateFeedback(score),
-                taskType: widget.lessonData['title'],
+                taskType: _task['title'],
                 wordCount: _wordCount,
-                lessonData: widget.lessonData,
+                lessonData: _task,
               ),
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(
@@ -238,16 +186,7 @@ class _LetterScreenState extends State<LetterScreen>
         ),
       );
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to submit response: $e'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
+      _showSnackBar('Failed to submit response: $e');
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
@@ -257,40 +196,32 @@ class _LetterScreenState extends State<LetterScreen>
 
   double _calculateScore(String text) {
     final wordCount = _countWords(text);
-    final sentenceCount = text.split('.').length - 1;
+    final sentenceCount =
+        text.split('.').where((s) => s.trim().isNotEmpty).length;
     final targetWords = _task['type'] == 'Formal' ? 100 : 80;
     final wordScore = (wordCount / targetWords).clamp(0.0, 1.0) * 3;
     final sentenceScore = (sentenceCount / 4).clamp(0.0, 1.0) * 2;
-    return 4.0 + wordScore + sentenceScore + (Random().nextDouble() * 1.5);
+    return (4.0 + wordScore + sentenceScore).clamp(0.0, 9.0);
   }
 
   String _generateFeedback(double score) {
     if (_task['type'] == 'Formal') {
       if (score >= 8.0) {
-        return "Excellent formal letter! Your tone is professional, and the content is clear and well-structured.";
+        return 'Excellent formal letter! Your tone is professional, and the content is clear and well-structured.';
       } else if (score >= 6.0) {
-        return "Good effort. Ensure a formal tone and include specific details for clarity.";
+        return 'Good effort. Ensure a formal tone and include specific details for clarity.';
       } else {
-        return "Needs improvement. Focus on formal language and detailed explanations.";
+        return 'Needs improvement. Focus on formal language and detailed explanations.';
       }
     } else {
       if (score >= 8.0) {
-        return "Excellent informal letter! Your tone is warm, engaging, and includes relevant details.";
+        return 'Excellent informal letter! Your tone is warm, engaging, and includes relevant details.';
       } else if (score >= 6.0) {
-        return "Good effort. Add a more personal touch or include more specific details.";
+        return 'Good effort. Add a more personal touch or include more specific details.';
       } else {
-        return "Needs improvement. Use a friendlier tone and provide clear details.";
+        return 'Needs improvement. Use a friendlier tone and provide clear details.';
       }
     }
-  }
-
-  int _parseLessonId(dynamic id) {
-    if (id is int) return id;
-    if (id is String) {
-      final match = RegExp(r'\d+').firstMatch(id);
-      return match != null ? int.parse(match.group(0)!) : 8;
-    }
-    return 8;
   }
 
   Future<void> _deleteResponse() async {
@@ -299,7 +230,6 @@ class _LetterScreenState extends State<LetterScreen>
         _letterController.clear();
         _wordCount = 0;
       });
-
       await _letterFile.writeAsString(
         jsonEncode({
           'response': '',
@@ -307,26 +237,21 @@ class _LetterScreenState extends State<LetterScreen>
           'wordCount': 0,
         }),
       );
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Response deleted'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
+      _showSnackBar('Response deleted');
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to delete response: $e'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      _showSnackBar('Failed to delete response: $e');
     }
+  }
+
+  void _showSnackBar(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: GoogleFonts.poppins(fontSize: 12)),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
   }
 
   Widget _buildTaskView() {
@@ -336,10 +261,10 @@ class _LetterScreenState extends State<LetterScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircularProgressIndicator(),
-            SizedBox(height: 20),
+            SizedBox(height: 16),
             Text(
               'Loading your saved work...',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              style: TextStyle(color: Colors.grey, fontSize: 14),
             ),
           ],
         ),
@@ -347,328 +272,290 @@ class _LetterScreenState extends State<LetterScreen>
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
           Text(
             _task['title'],
             style: GoogleFonts.poppins(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
               color: Colors.blue[800],
             ),
           ),
+          const SizedBox(height: 12),
+          _buildQuestionCard(),
           const SizedBox(height: 16),
-
-          // Question Card
-          Card(
-            elevation: 0,
-            margin: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: Colors.grey[200]!, width: 1),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
-              onTap: () {
-                HapticFeedback.lightImpact();
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Task',
-                          style: GoogleFonts.poppins(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue[700],
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      _task['question'],
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        height: 1.5,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Writing Area
-          Text(
-            'YOUR RESPONSE',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[700],
-              letterSpacing: 0.5,
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-              border: Border.all(color: Colors.grey[200]!),
-            ),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _letterController,
-                  maxLines: 12,
-                  minLines: 6,
-                  style: GoogleFonts.poppins(height: 1.5),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'[A-Za-z0-9 ,.\n\r!?]*'),
-                    ),
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      if (!_isValidInput(newValue.text)) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                'Only letters, numbers, spaces, punctuation, and newlines are allowed.',
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          );
-                        }
-                        return oldValue;
-                      }
-                      return newValue;
-                    }),
-                  ],
-                  decoration: InputDecoration(
-                    hintText: 'Start typing your letter here...',
-                    hintStyle: GoogleFonts.poppins(color: Colors.grey[400]),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.all(20),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50],
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(16),
-                      bottomRight: Radius.circular(16),
-                    ),
-                    border: Border(top: BorderSide(color: Colors.grey[200]!)),
-                  ),
-                  child: Row(
-                    children: [
-                      Tooltip(
-                        message:
-                            'Word count: $_wordCount\nCharacters: ${_letterController.text.length}\nLast saved: ${_getLastModifiedTime()}',
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color:
-                                _wordCount >=
-                                        (_task['type'] == 'Formal' ? 100 : 80)
-                                    ? Colors.green[50]
-                                    : Colors.orange[50],
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color:
-                                  _wordCount >=
-                                          (_task['type'] == 'Formal' ? 100 : 80)
-                                      ? Colors.green[100]!
-                                      : Colors.orange[100]!,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.text_fields,
-                                size: 14,
-                                color:
-                                    _wordCount >=
-                                            (_task['type'] == 'Formal'
-                                                ? 100
-                                                : 80)
-                                        ? Colors.green[700]
-                                        : Colors.orange[700],
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                '$_wordCount',
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      _wordCount >=
-                                              (_task['type'] == 'Formal'
-                                                  ? 100
-                                                  : 80)
-                                          ? Colors.green[700]
-                                          : Colors.orange[700],
-                                ),
-                              ),
-                              Text(
-                                '/${_task['type'] == 'Formal' ? '100' : '80'}',
-                                style: GoogleFonts.poppins(
-                                  color:
-                                      _wordCount >=
-                                              (_task['type'] == 'Formal'
-                                                  ? 100
-                                                  : 80)
-                                          ? Colors.green[700]
-                                          : Colors.orange[700],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      if (_showSaveIndicator)
-                        ScaleTransition(
-                          scale: _saveScaleAnimation,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.check_circle,
-                                size: 16,
-                                color: Colors.green[500],
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                'Saved',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.green[500],
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Action Buttons
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _buildActionButton(
-                icon: Icons.lightbulb_outline,
-                label: _showTips ? 'Hide Tips' : 'Show Tips',
-                color: Colors.orange,
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  setState(() {
-                    _showTips = !_showTips;
-                  });
-                },
-              ),
-              _buildActionButton(
-                icon: Icons.visibility_outlined,
-                label: _showSample ? 'Hide Sample' : 'Show Sample Answer',
-                color: Colors.purple,
-                onPressed: () {
-                  HapticFeedback.lightImpact();
-                  setState(() {
-                    _showSample = !_showSample;
-                  });
-                },
-              ),
-              ElevatedButton(
-                onPressed: _isSubmitting ? null : _submitResponse,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[700],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                  shadowColor: Colors.transparent,
-                ),
-                child:
-                    _isSubmitting
-                        ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                        : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.send, size: 18),
-                            const SizedBox(width: 6),
-                            Text('Submit', style: GoogleFonts.poppins()),
-                          ],
-                        ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Tips Section
-          if (_showTips)
-            _buildExpandableSection(
-              icon: Icons.lightbulb_outline,
-              iconColor: Colors.orange[700]!,
-              title: 'Expert Writing Tips',
-              content: _task['tips'],
-            ),
-
-          // Sample Answer Section
-          if (_showSample)
-            _buildExpandableSection(
-              icon: Icons.auto_awesome,
-              iconColor: Colors.purple[700]!,
-              title: 'Sample Answer',
-              content: _task['sampleAnswer'],
-            ),
-
+          _buildWritingArea(),
+          const SizedBox(height: 16),
+          _buildActionButtons(),
+          const SizedBox(height: 16),
+          if (_showTips) _buildTipsSection(),
+          if (_showSample) _buildSampleSection(),
           const SizedBox(height: 60),
         ],
       ),
+    );
+  }
+
+  Widget _buildQuestionCard() {
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.grey[200]!, width: 1),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () => HapticFeedback.lightImpact(),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Iconsax.task, size: 20, color: Colors.blue[600]),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Task',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue[600],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _task['question'],
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  height: 1.5,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWritingArea() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'YOUR RESPONSE',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+            fontSize: 12,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: Column(
+            children: [
+              TextField(
+                controller: _letterController,
+                maxLines: 10,
+                minLines: 6,
+                style: GoogleFonts.poppins(fontSize: 14, height: 1.5),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'[A-Za-z0-9 ,.\n\r!?]*'),
+                  ),
+                  TextInputFormatter.withFunction((oldValue, newValue) {
+                    if (!_isValidInput(newValue.text)) {
+                      _showSnackBar(
+                        'Only letters, numbers, spaces, punctuation, and newlines are allowed.',
+                      );
+                      return oldValue;
+                    }
+                    return newValue;
+                  }),
+                ],
+                decoration: InputDecoration(
+                  hintText: 'Start typing your letter here...',
+                  hintStyle: GoogleFonts.poppins(
+                    color: Colors.grey[400],
+                    fontSize: 14,
+                  ),
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.all(16),
+                ),
+              ),
+              _buildWordCountContainer(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWordCountContainer() {
+    final targetWords = _task['type'] == 'Formal' ? 100 : 80;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+      ),
+      child: Row(
+        children: [
+          Tooltip(
+            message:
+                'Word count: $_wordCount\nCharacters: ${_letterController.text.length}\nLast saved: ${_getLastModifiedTime()}',
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color:
+                    _wordCount >= targetWords
+                        ? Colors.green[50]
+                        : Colors.orange[50],
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color:
+                      _wordCount >= targetWords
+                          ? Colors.green[100]!
+                          : Colors.orange[100]!,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.text_fields,
+                    size: 14,
+                    color:
+                        _wordCount >= targetWords
+                            ? Colors.green[700]
+                            : Colors.orange[700],
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '$_wordCount',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      color:
+                          _wordCount >= targetWords
+                              ? Colors.green[700]
+                              : Colors.orange[700],
+                      fontSize: 12,
+                    ),
+                  ),
+                  Text(
+                    '/$targetWords',
+                    style: GoogleFonts.poppins(
+                      color:
+                          _wordCount >= targetWords
+                              ? Colors.green[700]
+                              : Colors.orange[700],
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const Spacer(),
+          if (_showSaveIndicator)
+            ScaleTransition(
+              scale: _saveScaleAnimation,
+              child: Row(
+                children: [
+                  Icon(Icons.check_circle, size: 14, color: Colors.green[500]),
+                  const SizedBox(width: 6),
+                  Text(
+                    'Saved',
+                    style: GoogleFonts.poppins(
+                      color: Colors.green[500],
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        _buildActionButton(
+          icon: Icons.lightbulb,
+          label: _showTips ? 'Hide Tips' : 'Show Tips',
+          color: Colors.orange,
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            setState(() => _showTips = !_showTips);
+          },
+        ),
+        _buildActionButton(
+          icon: Icons.visibility_outlined,
+          label: _showSample ? 'Hide Sample' : 'Show Sample Answer',
+          color: Colors.purple,
+          onPressed: () {
+            HapticFeedback.lightImpact();
+            setState(() => _showSample = !_showSample);
+          },
+        ),
+        ElevatedButton(
+          onPressed: _isSubmitting ? null : _submitResponse,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue[600],
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+          child:
+              _isSubmitting
+                  ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                  : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.send, size: 16),
+                      const SizedBox(width: 6),
+                      Text('Submit', style: GoogleFonts.poppins(fontSize: 14)),
+                    ],
+                  ),
+        ),
+      ],
     );
   }
 
@@ -681,19 +568,37 @@ class _LetterScreenState extends State<LetterScreen>
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        side: BorderSide(color: color.withOpacity(0.3)),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        side: BorderSide(color: color.withOpacity(0.2)),
         backgroundColor: color.withOpacity(0.05),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: color),
+          Icon(icon, size: 16, color: color),
           const SizedBox(width: 6),
-          Text(label, style: GoogleFonts.poppins(color: color)),
+          Text(label, style: GoogleFonts.poppins(color: color, fontSize: 12)),
         ],
       ),
+    );
+  }
+
+  Widget _buildTipsSection() {
+    return _buildExpandableSection(
+      icon: Icons.lightbulb,
+      iconColor: Colors.orange[600]!,
+      title: 'Expert Writing Tips',
+      content: _task['tips'],
+    );
+  }
+
+  Widget _buildSampleSection() {
+    return _buildExpandableSection(
+      icon: Icons.auto_awesome,
+      iconColor: Colors.purple[600]!,
+      title: 'Sample Answer',
+      content: _task['sampleAnswer'],
     );
   }
 
@@ -706,9 +611,8 @@ class _LetterScreenState extends State<LetterScreen>
       final today = DateTime(now.year, now.month, now.day);
       if (modified.isAfter(today)) {
         return 'Today at ${modified.hour}:${modified.minute.toString().padLeft(2, '0')}';
-      } else {
-        return '${modified.day}/${modified.month}/${modified.year}';
       }
+      return '${modified.day}/${modified.month}/${modified.year}';
     } catch (e) {
       return 'Unknown';
     }
@@ -721,15 +625,15 @@ class _LetterScreenState extends State<LetterScreen>
     required String content,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
         ],
         border: Border.all(color: Colors.grey[200]!),
@@ -738,37 +642,38 @@ class _LetterScreenState extends State<LetterScreen>
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           initiallyExpanded: true,
-          tilePadding: const EdgeInsets.symmetric(horizontal: 20),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 12),
           childrenPadding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 20,
+            left: 12,
+            right: 12,
+            bottom: 12,
           ),
           leading: Container(
-            padding: const EdgeInsets.all(6),
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: iconColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(4),
             ),
-            child: Icon(icon, color: iconColor, size: 20),
+            child: Icon(icon, color: iconColor, size: 16),
           ),
           title: Text(
             title,
             style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
               color: Colors.grey[800],
+              fontSize: 14,
             ),
           ),
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 content,
-                style: GoogleFonts.poppins(fontSize: 15, height: 1.6),
+                style: GoogleFonts.poppins(fontSize: 12, height: 1.5),
               ),
             ),
           ],
@@ -783,15 +688,15 @@ class _LetterScreenState extends State<LetterScreen>
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: Text(
-          'IELTS Writing: ${_task['type']} Letter ${widget.lessonData['intId'] - (_task['type'] == 'Formal' ? 0 : 7)}',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+          'IELTS Writing: ${_task['type']} Letter ${_task['intId'] - (_task['type'] == 'Formal' ? 0 : 7)}',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_outline, color: Colors.red[600]),
+            icon: Icon(Icons.delete_outlined, color: Colors.red[600], size: 22),
             tooltip: 'Delete letter',
             onPressed: _deleteResponse,
           ),

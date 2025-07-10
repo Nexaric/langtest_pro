@@ -3,9 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
-
-import 'general_screen.dart';
+import 'package:langtest_pro/controller/reading_controller.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/general/general_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 
 class GeneralLessonsScreen extends StatefulWidget {
@@ -71,8 +70,8 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ReadingProgressController>()) {
-      Get.put(ReadingProgressController());
+    if (!Get.isRegistered<ReadingController>()) {
+      Get.put(ReadingController());
     }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
@@ -84,6 +83,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
+    _loadProgress();
   }
 
   @override
@@ -95,6 +95,11 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
       ),
     );
     super.dispose();
+  }
+
+  Future<void> _loadProgress() async {
+    final controller = Get.find<ReadingController>();
+    await controller.refreshProgress();
   }
 
   @override
@@ -146,14 +151,12 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                 pinned: true,
                 floating: false,
                 snap: false,
-                expandedHeight: 0,
                 toolbarHeight: kToolbarHeight,
               ),
               const SliverPadding(padding: EdgeInsets.only(top: 10)),
               SliverToBoxAdapter(
                 child: Obx(() {
-                  final progressController =
-                      Get.find<ReadingProgressController>();
+                  final progressController = Get.find<ReadingController>();
                   if (progressController.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -164,8 +167,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            progressController.errorMessage ??
-                                'Error loading progress',
+                            progressController.errorMessage,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.poppins(
                               fontSize: 16,
@@ -175,7 +177,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () async {
-                              await progressController.restoreFromCloud();
+                              await _loadProgress();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: _accentColor,
@@ -258,14 +260,32 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                                 final lessonIndex = startIndex + index;
                                 final lesson = lessons[lessonIndex];
 
-                                return FadeInUp(
-                                  delay: Duration(milliseconds: 100 * index),
-                                  child: _buildLessonCard(
-                                    context,
-                                    lesson: lesson,
-                                    lessonIndex: lessonIndex,
-                                    progressController: progressController,
-                                  ),
+                                return FutureBuilder<bool>(
+                                  future: progressController
+                                      .isGeneralLessonAccessible(
+                                        lesson['lessonId'],
+                                      ),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                    final isAccessible = snapshot.data ?? false;
+                                    return FadeInUp(
+                                      delay: Duration(
+                                        milliseconds: 100 * index,
+                                      ),
+                                      child: _buildLessonCard(
+                                        context,
+                                        lesson: lesson,
+                                        lessonIndex: lessonIndex,
+                                        progressController: progressController,
+                                        isAccessible: isAccessible,
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             ),
@@ -288,17 +308,11 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
     BuildContext context, {
     required Map<String, dynamic> lesson,
     required int lessonIndex,
-    required ReadingProgressController progressController,
+    required ReadingController progressController,
+    required bool isAccessible,
   }) {
     final lessonNumber = lessonIndex + 1;
-    final isLocked =
-        !progressController.isGeneralLessonAccessible(lessonNumber);
-    final progress =
-        lessonNumber <= progressController.completedGeneralLessons
-            ? 1.0
-            : (lessonNumber == progressController.completedGeneralLessons + 1
-                ? progressController.currentLessonProgress
-                : 0.0);
+    final progress = progressController.getGeneralLessonProgress(lessonNumber);
     final lessonId = lesson['lessonId'] as int?;
 
     return Material(
@@ -309,7 +323,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient:
-              isLocked
+              !isAccessible
                   ? LinearGradient(
                     colors: [_lockedColor.withOpacity(0.7), _lockedColor],
                     begin: Alignment.topLeft,
@@ -317,7 +331,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                   )
                   : LinearGradient(
                     colors:
-                        progress == 1.0
+                        progress == 100
                             ? [_accentColor.withOpacity(0.8), _accentColor]
                             : [_unlockedStart, _unlockedEnd],
                     begin: Alignment.topLeft,
@@ -334,9 +348,12 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap:
-              isLocked || lessonId == null
+              !isAccessible || lessonId == null
                   ? null
-                  : () {
+                  : () async {
+                    await progressController.markGeneralLessonAsOpened(
+                      lessonId,
+                    );
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -344,14 +361,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                             (context) => GeneralScreen(
                               lessonId: lessonId,
                               onComplete: () async {
-                                await progressController.completeGeneralLesson(
-                                  lessonId: lessonId,
-                                  score:
-                                      progressController
-                                          .generalLessonScores[lessonId] ??
-                                      '0/0',
-                                );
-                                setState(() {}); // Refresh lock status
+                                await progressController.refreshProgress();
                               },
                             ),
                       ),
@@ -393,7 +403,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                 Column(
                   children: [
                     LinearProgressIndicator(
-                      value: progress,
+                      value: progress / 100,
                       backgroundColor: _textLight.withOpacity(0.2),
                       valueColor: AlwaysStoppedAnimation<Color>(
                         _textLight.withOpacity(0.8),
@@ -403,11 +413,11 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      isLocked
+                      !isAccessible
                           ? "Complete previous lesson"
-                          : progress == 1.0
+                          : progress == 100
                           ? "Completed ✓"
-                          : "${(progress * 100).toStringAsFixed(0)}% complete",
+                          : "$progress% complete",
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: _textLight.withOpacity(0.9),
@@ -417,7 +427,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                 ),
                 Center(
                   child:
-                      isLocked
+                      !isAccessible
                           ? Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
@@ -444,7 +454,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                               ),
                             ),
                             child: Text(
-                              progress == 1.0 ? "Review" : "Start Now",
+                              progress == 100 ? "Review" : "Start Now",
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,

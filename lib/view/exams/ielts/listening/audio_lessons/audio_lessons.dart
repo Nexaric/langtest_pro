@@ -63,7 +63,6 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   ];
 
   final List<Map<String, dynamic>> audioLessons = [
-    // Section 0: Introduction (Lesson 1)
     {
       "title": "Lesson 1: Introduction to IELTS Listening",
       "progress": 0.0,
@@ -71,7 +70,6 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
       "lessonId": 1,
       "isIntroduction": true,
     },
-    // Section 1: Everyday Conversations (Lessons 2-10)
     {
       "title": "Lesson 2: Booking a Hotel Room",
       "progress": 0.0,
@@ -420,9 +418,14 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ListeningProgressController>()) {
-      Get.put(ListeningProgressController());
+    if (!Get.isRegistered<ListeningController>()) {
+      Get.put(ListeningController());
     }
+    // Refresh progress on screen load
+    final progressController = Get.find<ListeningController>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      progressController.refreshProgress();
+    });
   }
 
   @override
@@ -483,8 +486,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
               ),
               SliverPadding(padding: EdgeInsets.only(top: 10.h)),
               Obx(() {
-                final progressController =
-                    Get.find<ListeningProgressController>();
+                final progressController = Get.find<ListeningController>();
                 if (progressController.isLoading) {
                   return SliverFillRemaining(
                     child: Center(
@@ -511,7 +513,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                           SizedBox(height: 16.h),
                           ElevatedButton(
                             onPressed: () async {
-                              await progressController.restoreFromCloud();
+                              await progressController.refreshProgress();
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: _accentColor,
@@ -591,14 +593,38 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                               final lessonIndex = startIndex + index;
                               final lesson = audioLessons[lessonIndex];
 
-                              return FadeInUp(
-                                delay: Duration(milliseconds: 100 * index),
-                                child: _buildLessonCard(
-                                  context,
-                                  lesson: lesson,
-                                  lessonIndex: lessonIndex,
-                                  progressController: progressController,
-                                ),
+                              return FutureBuilder<bool>(
+                                future: progressController
+                                    .isAudioLessonAccessible(
+                                      lesson["lessonId"] as int,
+                                    ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.w,
+                                      ),
+                                    );
+                                  }
+                                  final isLocked =
+                                      snapshot.data == false && lessonIndex > 0;
+
+                                  return Obx(
+                                    () => FadeInUp(
+                                      delay: Duration(
+                                        milliseconds: 100 * index,
+                                      ),
+                                      child: _buildLessonCard(
+                                        context,
+                                        lesson: lesson,
+                                        lessonIndex: lessonIndex,
+                                        progressController: progressController,
+                                        isLocked: isLocked,
+                                      ),
+                                    ),
+                                  );
+                                },
                               );
                             },
                           ),
@@ -620,18 +646,12 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
     BuildContext context, {
     required Map<String, dynamic> lesson,
     required int lessonIndex,
-    required ListeningProgressController progressController,
+    required ListeningController progressController,
+    required bool isLocked,
   }) {
     final lessonId =
         int.tryParse(lesson["lessonId"].toString())?.toString() ?? '0';
     final isIntroduction = lesson["isIntroduction"] as bool;
-    // Unlock lesson if previous lesson is completed
-    final isLocked =
-        lessonIndex > 0
-            ? progressController.getProgress((lessonIndex).toString()) == 0.0 &&
-                progressController.getProgress((lessonIndex - 1).toString()) <
-                    1.0
-            : false;
     final progress = progressController.getProgress(lessonId);
 
     return Material(
@@ -682,18 +702,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                                 "progress": progress,
                               },
                               onComplete: () {
-                                if (!isIntroduction) {
-                                  // Only for non-introduction lessons
-                                  if (progressController.getProgress(
-                                        lessonId,
-                                      ) ==
-                                      1.0) {
-                                    progressController.updateLessonProgress(
-                                      (lessonIndex + 1).toString(),
-                                      'audio_started',
-                                    );
-                                  }
-                                }
+                                // Progress updates are handled in AudioResultScreen
                               },
                             ),
                       ),

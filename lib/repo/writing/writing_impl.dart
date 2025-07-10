@@ -1,23 +1,18 @@
 import 'package:dartz/dartz.dart';
-import 'package:langtest_pro/repo/listening/listening_auth_facade.dart';
+import 'package:langtest_pro/repo/writing/writing_auth_facade.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:async';
 
-/// Concrete implementation of ListeningAuthFacade using Supabase
-/// This handles all the actual data operations for listening progress
-class ListeningImpl implements ListeningAuthFacade {
+class WritingImpl implements WritingAuthFacade {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  // Table names
-  static const String _listeningAudioLessonsTable = 'listening_audio_lessons';
-  static const String _listeningPracticeTestsTable = 'listening_practice_tests';
+  static const String _writingLessonsTable = 'writing_lessons';
+  static const String _writingLettersTable = 'writing_letters';
 
-  // Stream controller for auth state changes
   final StreamController<bool> _authStateController =
       StreamController<bool>.broadcast();
 
-  ListeningImpl() {
-    // Listen to auth state changes
+  WritingImpl() {
     _supabase.auth.onAuthStateChange.listen((data) {
       _authStateController.add(data.session != null);
     });
@@ -37,14 +32,14 @@ class ListeningImpl implements ListeningAuthFacade {
   Stream<bool> get authStateChanges => _authStateController.stream;
 
   @override
-  Future<Either<String, int?>> getListeningAudioLessonProgress({
+  Future<Either<String, int?>> getWritingLessonProgress({
     required String userId,
     required int lessonId,
   }) async {
     try {
       final response =
           await _supabase
-              .from(_listeningAudioLessonsTable)
+              .from(_writingLessonsTable)
               .select('progress')
               .eq('user_id', userId)
               .eq('lesson_id', lessonId)
@@ -63,14 +58,14 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, int?>> getListeningPracticeTestProgress({
+  Future<Either<String, int?>> getWritingLetterProgress({
     required String userId,
     required int lessonId,
   }) async {
     try {
       final response =
           await _supabase
-              .from(_listeningPracticeTestsTable)
+              .from(_writingLettersTable)
               .select('progress')
               .eq('user_id', userId)
               .eq('lesson_id', lessonId)
@@ -89,18 +84,17 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, void>> upsertListeningAudioLessonProgress({
+  Future<Either<String, void>> upsertWritingLessonProgress({
     required String userId,
     required int lessonId,
     required int progress,
   }) async {
     try {
-      // Validate progress value
       if (![50, 75, 100].contains(progress)) {
         return const Left('Invalid progress value. Must be 50, 75, or 100.');
       }
 
-      await _supabase.from(_listeningAudioLessonsTable).upsert({
+      await _supabase.from(_writingLessonsTable).upsert({
         'user_id': userId,
         'lesson_id': lessonId,
         'progress': progress,
@@ -116,18 +110,17 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, void>> upsertListeningPracticeTestProgress({
+  Future<Either<String, void>> upsertWritingLetterProgress({
     required String userId,
     required int lessonId,
     required int progress,
   }) async {
     try {
-      // Validate progress value
       if (![50, 75, 100].contains(progress)) {
         return const Left('Invalid progress value. Must be 50, 75, or 100.');
       }
 
-      await _supabase.from(_listeningPracticeTestsTable).upsert({
+      await _supabase.from(_writingLettersTable).upsert({
         'user_id': userId,
         'lesson_id': lessonId,
         'progress': progress,
@@ -143,12 +136,12 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, Map<int, int>>> getAllListeningAudioLessonsProgress({
+  Future<Either<String, Map<int, int>>> getAllWritingLessonsProgress({
     required String userId,
   }) async {
     try {
       final response = await _supabase
-          .from(_listeningAudioLessonsTable)
+          .from(_writingLessonsTable)
           .select('lesson_id, progress')
           .eq('user_id', userId)
           .order('lesson_id', ascending: true);
@@ -167,12 +160,12 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, Map<int, int>>> getAllListeningPracticeTestsProgress({
+  Future<Either<String, Map<int, int>>> getAllWritingLettersProgress({
     required String userId,
   }) async {
     try {
       final response = await _supabase
-          .from(_listeningPracticeTestsTable)
+          .from(_writingLettersTable)
           .select('lesson_id, progress')
           .eq('user_id', userId)
           .order('lesson_id', ascending: true);
@@ -191,13 +184,13 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, void>> deleteListeningAudioLessonProgress({
+  Future<Either<String, void>> deleteWritingLessonProgress({
     required String userId,
     required int lessonId,
   }) async {
     try {
       await _supabase
-          .from(_listeningAudioLessonsTable)
+          .from(_writingLessonsTable)
           .delete()
           .eq('user_id', userId)
           .eq('lesson_id', lessonId);
@@ -211,13 +204,13 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, void>> deleteListeningPracticeTestProgress({
+  Future<Either<String, void>> deleteWritingLetterProgress({
     required String userId,
     required int lessonId,
   }) async {
     try {
       await _supabase
-          .from(_listeningPracticeTestsTable)
+          .from(_writingLettersTable)
           .delete()
           .eq('user_id', userId)
           .eq('lesson_id', lessonId);
@@ -231,7 +224,7 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, void>> batchUpdateListeningAudioLessonsProgress({
+  Future<Either<String, void>> batchUpdateWritingLessonsProgress({
     required String userId,
     required Map<int, int> progressMap,
   }) async {
@@ -239,7 +232,6 @@ class ListeningImpl implements ListeningAuthFacade {
       final List<Map<String, dynamic>> upsertData = [];
 
       for (final entry in progressMap.entries) {
-        // Validate progress value
         if (![50, 75, 100].contains(entry.value)) {
           return Left(
             'Invalid progress value for lesson ${entry.key}. Must be 50, 75, or 100.',
@@ -255,7 +247,7 @@ class ListeningImpl implements ListeningAuthFacade {
       }
 
       await _supabase
-          .from(_listeningAudioLessonsTable)
+          .from(_writingLessonsTable)
           .upsert(upsertData, onConflict: 'user_id,lesson_id');
 
       return const Right(null);
@@ -267,7 +259,7 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, void>> batchUpdateListeningPracticeTestsProgress({
+  Future<Either<String, void>> batchUpdateWritingLettersProgress({
     required String userId,
     required Map<int, int> progressMap,
   }) async {
@@ -275,10 +267,9 @@ class ListeningImpl implements ListeningAuthFacade {
       final List<Map<String, dynamic>> upsertData = [];
 
       for (final entry in progressMap.entries) {
-        // Validate progress value
         if (![50, 75, 100].contains(entry.value)) {
           return Left(
-            'Invalid progress value for test ${entry.key}. Must be 50, 75, or 100.',
+            'Invalid progress value for letter ${entry.key}. Must be 50, 75, or 100.',
           );
         }
 
@@ -291,7 +282,7 @@ class ListeningImpl implements ListeningAuthFacade {
       }
 
       await _supabase
-          .from(_listeningPracticeTestsTable)
+          .from(_writingLettersTable)
           .upsert(upsertData, onConflict: 'user_id,lesson_id');
 
       return const Right(null);
@@ -303,12 +294,12 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, int>> getHighestCompletedListeningAudioLesson({
+  Future<Either<String, int>> getHighestCompletedWritingLesson({
     required String userId,
   }) async {
     try {
       final response = await _supabase
-          .from(_listeningAudioLessonsTable)
+          .from(_writingLessonsTable)
           .select('lesson_id')
           .eq('user_id', userId)
           .eq('progress', 100)
@@ -328,12 +319,12 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, int>> getHighestCompletedListeningPracticeTest({
+  Future<Either<String, int>> getHighestCompletedWritingLetter({
     required String userId,
   }) async {
     try {
       final response = await _supabase
-          .from(_listeningPracticeTestsTable)
+          .from(_writingLettersTable)
           .select('lesson_id')
           .eq('user_id', userId)
           .eq('progress', 100)
@@ -353,18 +344,16 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, bool>> isListeningAudioLessonAccessible({
+  Future<Either<String, bool>> isWritingLessonAccessible({
     required String userId,
     required int lessonId,
   }) async {
     try {
-      // Lesson 1 is always accessible
       if (lessonId == 1) {
         return const Right(true);
       }
 
-      // Check if previous lesson is completed (100%)
-      final previousLessonResult = await getListeningAudioLessonProgress(
+      final previousLessonResult = await getWritingLessonProgress(
         userId: userId,
         lessonId: lessonId - 1,
       );
@@ -379,23 +368,21 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, bool>> isListeningPracticeTestAccessible({
+  Future<Either<String, bool>> isWritingLetterAccessible({
     required String userId,
     required int lessonId,
   }) async {
     try {
-      // Test 1 is always accessible
       if (lessonId == 1) {
         return const Right(true);
       }
 
-      // Check if previous test is completed (100%)
-      final previousTestResult = await getListeningPracticeTestProgress(
+      final previousLetterResult = await getWritingLetterProgress(
         userId: userId,
         lessonId: lessonId - 1,
       );
 
-      return previousTestResult.fold(
+      return previousLetterResult.fold(
         (error) => Left(error),
         (progress) => Right(progress == 100),
       );
@@ -405,88 +392,72 @@ class ListeningImpl implements ListeningAuthFacade {
   }
 
   @override
-  Future<Either<String, Map<String, dynamic>>> getListeningProgressStats({
+  Future<Either<String, Map<String, dynamic>>> getWritingProgressStats({
     required String userId,
+    required int totalLessons,
+    required int totalLetters,
   }) async {
     try {
-      // Get all progress data
-      final audioLessonsResult = await getAllListeningAudioLessonsProgress(
-        userId: userId,
-      );
-      final practiceTestsResult = await getAllListeningPracticeTestsProgress(
-        userId: userId,
-      );
+      final lessonsResult = await getAllWritingLessonsProgress(userId: userId);
+      final lettersResult = await getAllWritingLettersProgress(userId: userId);
 
-      return audioLessonsResult.fold(
+      return lessonsResult.fold(
         (error) => Left(error),
-        (audioLessonsProgress) => practiceTestsResult.fold(
-          (error) => Left(error),
-          (practiceTestsProgress) {
-            // Calculate statistics
-            const int totalAudioLessons = 50;
-            const int totalPracticeTests = 4;
-            const int totalLessons = totalAudioLessons + totalPracticeTests;
+        (lessonsProgress) => lettersResult.fold((error) => Left(error), (
+          lettersProgress,
+        ) {
+          final int completedLessons =
+              lessonsProgress.values
+                  .where((progress) => progress == 100)
+                  .length;
+          final int completedLetters =
+              lettersProgress.values
+                  .where((progress) => progress == 100)
+                  .length;
+          final int totalWritingTasks = totalLessons + totalLetters;
+          final int totalCompletedTasks = completedLessons + completedLetters;
 
-            final int completedAudioLessons =
-                audioLessonsProgress.values
-                    .where((progress) => progress == 100)
-                    .length;
-            final int completedPracticeTests =
-                practiceTestsProgress.values
-                    .where((progress) => progress == 100)
-                    .length;
-            final int totalCompletedLessons =
-                completedAudioLessons + completedPracticeTests;
+          final int inProgressLessons =
+              lessonsProgress.values
+                  .where((progress) => progress > 0 && progress < 100)
+                  .length;
+          final int inProgressLetters =
+              lettersProgress.values
+                  .where((progress) => progress > 0 && progress < 100)
+                  .length;
+          final int totalInProgressTasks =
+              inProgressLessons + inProgressLetters;
 
-            final int inProgressAudioLessons =
-                audioLessonsProgress.values
-                    .where((progress) => progress > 0 && progress < 100)
-                    .length;
-            final int inProgressPracticeTests =
-                practiceTestsProgress.values
-                    .where((progress) => progress > 0 && progress < 100)
-                    .length;
-            final int totalInProgressLessons =
-                inProgressAudioLessons + inProgressPracticeTests;
+          final double overallCompletionPercentage =
+              totalWritingTasks > 0
+                  ? (totalCompletedTasks / totalWritingTasks) * 100
+                  : 0.0;
+          final double lessonsCompletionPercentage =
+              totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0.0;
+          final double lettersCompletionPercentage =
+              totalLetters > 0 ? (completedLetters / totalLetters) * 100 : 0.0;
 
-            final double overallCompletionPercentage =
-                totalLessons > 0
-                    ? (totalCompletedLessons / totalLessons) * 100
-                    : 0.0;
-            final double audioLessonsCompletionPercentage =
-                totalAudioLessons > 0
-                    ? (completedAudioLessons / totalAudioLessons) * 100
-                    : 0.0;
-            final double practiceTestsCompletionPercentage =
-                totalPracticeTests > 0
-                    ? (completedPracticeTests / totalPracticeTests) * 100
-                    : 0.0;
-
-            return Right({
-              'overall_completion_percentage': overallCompletionPercentage,
-              'audio_lessons_completion_percentage':
-                  audioLessonsCompletionPercentage,
-              'practice_tests_completion_percentage':
-                  practiceTestsCompletionPercentage,
-              'total_completed_lessons': totalCompletedLessons,
-              'total_in_progress_lessons': totalInProgressLessons,
-              'completed_audio_lessons': completedAudioLessons,
-              'completed_practice_tests': completedPracticeTests,
-              'in_progress_audio_lessons': inProgressAudioLessons,
-              'in_progress_practice_tests': inProgressPracticeTests,
-              'total_lessons': totalLessons,
-              'total_audio_lessons': totalAudioLessons,
-              'total_practice_tests': totalPracticeTests,
-            });
-          },
-        ),
+          return Right({
+            'overall_completion_percentage': overallCompletionPercentage,
+            'lessons_completion_percentage': lessonsCompletionPercentage,
+            'letters_completion_percentage': lettersCompletionPercentage,
+            'total_completed_tasks': totalCompletedTasks,
+            'total_in_progress_tasks': totalInProgressTasks,
+            'completed_lessons': completedLessons,
+            'completed_letters': completedLetters,
+            'in_progress_lessons': inProgressLessons,
+            'in_progress_letters': inProgressLetters,
+            'total_writing_tasks': totalWritingTasks,
+            'total_lessons': totalLessons,
+            'total_letters': totalLetters,
+          });
+        }),
       );
     } catch (e) {
       return Left('Unexpected error: $e');
     }
   }
 
-  /// Dispose method to clean up resources
   void dispose() {
     _authStateController.close();
   }

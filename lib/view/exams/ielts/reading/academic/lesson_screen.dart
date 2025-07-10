@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'lessons/academic_lesson_1.dart' as lesson1;
@@ -99,6 +99,7 @@ class _LessonScreenState extends State<LessonScreen> {
   late Map<String, dynamic> lessonData;
   late List<Map<String, dynamic>> selectedQuestions;
   int _currentQuestionIndex = 0;
+  final ReadingController _readingController = Get.find<ReadingController>();
 
   final ScrollController _scrollController = ScrollController();
   final ScrollController _questionScrollController = ScrollController();
@@ -138,19 +139,29 @@ class _LessonScreenState extends State<LessonScreen> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ReadingProgressController>()) {
-      Get.put(ReadingProgressController());
-    }
     lessonData = _getLessonData();
     selectedQuestions = _getRandomQuestions();
+    _markLessonAsOpened();
     _scrollController.addListener(() {
       final maxScroll = _scrollController.position.maxScrollExtent;
       final currentScroll = _scrollController.position.pixels;
-      if (maxScroll > 0) {
+      if (maxScroll > 0 && !_isQuestionScreen) {
         final progress = (currentScroll / maxScroll).clamp(0.0, 1.0) * 0.5;
-        Get.find<ReadingProgressController>().updateProgress(progress);
+        if (progress >= 0.5) {
+          _markLessonAsStarted();
+        }
       }
     });
+  }
+
+  Future<void> _markLessonAsOpened() async {
+    await _readingController.markAcademicLessonAsOpened(widget.lessonId);
+  }
+
+  Future<void> _markLessonAsStarted() async {
+    if (_readingController.getAcademicLessonProgress(widget.lessonId) < 75) {
+      await _readingController.markAcademicLessonAsStarted(widget.lessonId);
+    }
   }
 
   Map<String, dynamic> _getLessonData() {
@@ -289,19 +300,9 @@ class _LessonScreenState extends State<LessonScreen> {
   List<Map<String, dynamic>> _getRandomQuestions() {
     final random = Random();
     final questions = lessonData['questions'] as List<dynamic>? ?? [];
-    int questionsToAsk;
-    if (widget.lessonId <= 10) {
-      questionsToAsk = 10;
-    } else if (widget.lessonId <= 20) {
-      questionsToAsk = 15;
-    } else if (widget.lessonId <= 30) {
-      questionsToAsk = 20;
-    } else {
-      questionsToAsk = 25;
-    }
-    questionsToAsk =
+    int questionsToAsk =
         (lessonData['questionsToAsk'] as int?)?.clamp(1, questions.length) ??
-        questionsToAsk;
+        10;
 
     final List<Map<String, dynamic>> shuffledQuestions =
         questions.isNotEmpty
@@ -537,6 +538,7 @@ class _LessonScreenState extends State<LessonScreen> {
                       _isQuestionScreen = true;
                       _currentQuestionIndex = 0;
                     });
+                    _markLessonAsStarted();
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
@@ -817,9 +819,11 @@ class _LessonScreenState extends State<LessonScreen> {
                               selectedQuestions
                                   .where((q) => q['selectedIndex'] != -1)
                                   .length;
-                          Get.find<ReadingProgressController>().updateProgress(
-                            0.5 + (answered / selectedQuestions.length) * 0.5,
-                          );
+                          final progress =
+                              0.5 + (answered / selectedQuestions.length) * 0.5;
+                          if (progress >= 0.75) {
+                            _markLessonAsStarted();
+                          }
                         });
                       },
                       child: AnimatedContainer(
@@ -840,27 +844,13 @@ class _LessonScreenState extends State<LessonScreen> {
                             width: isSelected ? 2 : 1,
                           ),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              isSelected
-                                  ? Icons.radio_button_checked
-                                  : Icons.radio_button_unchecked,
-                              color: isSelected ? Colors.white : Colors.white70,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                question['options'][optionIndex],
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ],
+                        child: Text(
+                          question['options'][optionIndex],
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     );
@@ -875,76 +865,272 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   void _handleBack() {
-    setState(() {
-      if (_currentQuestionIndex == 0) {
-        _isQuestionScreen = false;
-      } else {
+    if (_currentQuestionIndex > 0) {
+      setState(() {
         _currentQuestionIndex--;
-        _questionScrollController.jumpTo(0);
-      }
-    });
+      });
+    } else {
+      setState(() {
+        _isQuestionScreen = false;
+      });
+    }
   }
 
   void _nextQuestion() {
-    setState(() {
-      if (_currentQuestionIndex < selectedQuestions.length - 1) {
+    if (_currentQuestionIndex < selectedQuestions.length - 1) {
+      setState(() {
         _currentQuestionIndex++;
-        _questionScrollController.jumpTo(0);
-      } else {
-        _submitAnswers();
-      }
-    });
+      });
+    } else {
+      _submitAnswers();
+    }
   }
 
-  void _submitAnswers() {
-    int correctAnswers = _calculateScore();
-    int totalQuestions = selectedQuestions.length;
-    List<int> selectedAnswers =
-        selectedQuestions.map((q) => q['selectedIndex'] as int).toList();
-
-    final requiredCorrect =
-        lessonData['requiredCorrectAnswers'] as int? ??
-        (widget.lessonId <= 10
-            ? 5
-            : widget.lessonId <= 20
-            ? 7
-            : widget.lessonId <= 30
-            ? 10
-            : 13);
-    if (correctAnswers >= requiredCorrect) {
-      Get.find<ReadingProgressController>().completeAcademicLesson(
-        lessonId: widget.lessonId,
-        score: '$correctAnswers/$totalQuestions',
-      );
-      widget.onComplete();
+  void _submitAnswers() async {
+    int correctAnswers = 0;
+    for (var question in selectedQuestions) {
+      final selectedIndex = question['selectedIndex'] as int;
+      if (selectedIndex != -1) {
+        final selectedAnswer = question['options'][selectedIndex];
+        if (selectedAnswer == question['correctAnswer']) {
+          correctAnswers++;
+        }
+      }
     }
 
+    final requiredCorrectAnswers =
+        lessonData['requiredCorrectAnswers'] as int? ?? 5;
+    final score = (correctAnswers / selectedQuestions.length * 100)
+        .toStringAsFixed(1);
+    final passed = correctAnswers >= requiredCorrectAnswers;
+
+    if (passed) {
+      await _readingController.completeAcademicLesson(
+        lessonId: widget.lessonId,
+        score: score,
+      );
+    }
+
+    widget.onComplete();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder:
-            (context) => AcademicResult(
-              totalQuestions: totalQuestions,
-              correctAnswers: correctAnswers,
-              selectedAnswers: selectedAnswers,
-              questions: selectedQuestions,
-              onComplete: widget.onComplete,
+            (context) => AcademicResultScreen(
               lessonId: widget.lessonId,
+              score: score,
+              passed: passed,
+              correctAnswers: correctAnswers,
+              totalQuestions: selectedQuestions.length,
+              requiredCorrectAnswers: requiredCorrectAnswers,
             ),
       ),
     );
   }
+}
 
-  int _calculateScore() {
-    int score = 0;
-    for (var question in selectedQuestions) {
-      if (question['selectedIndex'] >= 0 &&
-          question['selectedIndex'] < question['options'].length &&
-          question['options'][question['selectedIndex']] ==
-              question['correctAnswer']) {
-        score++;
-      }
-    }
-    return score;
+class AcademicResultScreen extends StatelessWidget {
+  final int lessonId;
+  final String score;
+  final bool passed;
+  final int correctAnswers;
+  final int totalQuestions;
+  final int requiredCorrectAnswers;
+
+  const AcademicResultScreen({
+    super.key,
+    required this.lessonId,
+    required this.score,
+    required this.passed,
+    required this.correctAnswers,
+    required this.totalQuestions,
+    required this.requiredCorrectAnswers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = {
+      'gradientStart': const Color(0xFF3E1E68),
+      'gradientEnd': const Color.fromARGB(255, 84, 65, 228),
+      'accent': const Color(0xFF00BFA6),
+      'textPrimary': Colors.white,
+      'textSecondary': Colors.white70,
+      'card': const Color(0xFFF5F5FF),
+      'cardAccent': const Color(0xFFE8E6FF),
+    };
+
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [colors['gradientStart']!, colors['gradientEnd']!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FadeInDown(
+                  duration: const Duration(milliseconds: 500),
+                  child: Text(
+                    passed ? 'Congratulations!' : 'Try Again!',
+                    style: GoogleFonts.poppins(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: colors['textPrimary'],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FadeIn(
+                  duration: const Duration(milliseconds: 600),
+                  child: Text(
+                    'Lesson $lessonId Results',
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: colors['textPrimary'],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                FadeInUp(
+                  duration: const Duration(milliseconds: 700),
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: colors['card']!.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: colors['textPrimary']!.withOpacity(0.3),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Score: $score%',
+                          style: GoogleFonts.poppins(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: colors['accent'],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Correct Answers: $correctAnswers / $totalQuestions',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: colors['textPrimary'],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Required: $requiredCorrectAnswers correct',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: colors['textSecondary'],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          passed
+                              ? 'You have successfully completed this lesson!'
+                              : 'You need $requiredCorrectAnswers correct answers to pass.',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: colors['textPrimary'],
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                FadeInUp(
+                  duration: const Duration(milliseconds: 800),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => LessonScreen(
+                                    lessonId: lessonId,
+                                    onComplete: () {
+                                      Get.find<ReadingController>()
+                                          .refreshProgress();
+                                    },
+                                  ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colors['accent'],
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: Text(
+                          'Retry Lesson',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: colors['textPrimary'],
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => const AcademicLessonsScreen(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colors['textPrimary']!.withOpacity(
+                            0.2,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: Text(
+                          'Back to Lessons',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: colors['textPrimary'],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

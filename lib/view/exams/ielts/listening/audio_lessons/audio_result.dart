@@ -1,5 +1,3 @@
-// lib/view/exams/ielts/listening/audio_lessons/audio_result.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -40,7 +38,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
   bool _isPassed = false;
   int _countdown = 5;
   late Timer _timer;
-  final ListeningProgressController _progressController = Get.find();
+  final ListeningController _progressController = Get.find();
 
   final Color _passColor = const Color(0xFF4CAF50);
   final Color _failColor = const Color(0xFFF44336);
@@ -56,6 +54,15 @@ class _AudioResultScreenState extends State<AudioResultScreen>
       duration: const Duration(milliseconds: 1500),
     );
 
+    // Update progress to completed if passed
+    if (_isPassed) {
+      _progressController.updateLessonProgress(
+        widget.lessonId.toString(),
+        'lesson_completed',
+      );
+      widget.onComplete();
+    }
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
         _controller.forward();
@@ -70,9 +77,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
         }
       } else {
         timer.cancel();
-        if (_isPassed) {
-          widget.onComplete();
-        }
         _navigateBackToLessons();
       }
     });
@@ -121,7 +125,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                 ),
               ),
             ),
-
             if (_isPassed)
               Positioned(
                 top: 0.15.sh,
@@ -137,7 +140,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                   ),
                 ),
               ),
-
             Padding(
               padding: EdgeInsets.all(24.w),
               child: Column(
@@ -171,9 +173,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                       SizedBox(width: 48.w),
                     ],
                   ),
-
                   SizedBox(height: 40.h),
-
                   FadeIn(
                     delay: const Duration(milliseconds: 200),
                     child: Container(
@@ -225,9 +225,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                       ),
                     ),
                   ),
-
                   SizedBox(height: 40.h),
-
                   SlideInUp(
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -260,9 +258,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                       ),
                     ),
                   ),
-
                   SizedBox(height: 40.h),
-
                   if (_showContent) ...[
                     FadeInLeft(
                       delay: const Duration(milliseconds: 400),
@@ -284,9 +280,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                       ),
                     ),
                   ],
-
                   const Spacer(),
-
                   if (_showContent)
                     FadeInUp(
                       delay: const Duration(milliseconds: 600),
@@ -309,9 +303,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                         ),
                       ),
                     ),
-
                   SizedBox(height: 24.h),
-
                   if (_showContent)
                     FadeIn(
                       delay: const Duration(milliseconds: 700),

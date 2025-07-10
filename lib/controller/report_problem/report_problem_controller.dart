@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:langtest_pro/repo/report_problem/report_problem_impl.dart';
@@ -34,27 +32,33 @@ class ReportProblemController extends GetxController {
   }
 
   void submitReport() {
-    
     if (description.value.trim().isEmpty) {
       Utils.snakBar("Error", "Please describe the issue.");
       return;
     }
     isLoading.value = true;
-    reportProblemApi.reportProblem(
-      title: selectedIssue.value,
-      description: description.value,
-      image: image.value,
-    ).then((value){
-      value.fold((f){
-        isLoading.value = false;
-        Utils.snakBar("Error", f.toString());
-      }, (s){
-        isLoading.value = false;
-        Utils.snakBar("Success", "Your report has been submitted successfully.");
-      });
-    });
+    reportProblemApi
+        .reportProblem(
+          title: selectedIssue.value,
+          description: description.value,
+          image: image.value,
+        )
+        .then((value) {
+          value.fold(
+            (f) {
+              isLoading.value = false;
+              Utils.snakBar("Error", f.toString());
+            },
+            (s) {
+              isLoading.value = false;
+              Utils.snakBar(
+                "Success",
+                "Your report has been submitted successfully.",
+              );
+            },
+          );
+        });
 
-    
     description.value = '';
     image.value = null;
     selectedIssue.value = 'App Crash';

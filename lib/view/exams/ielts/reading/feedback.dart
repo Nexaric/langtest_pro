@@ -2,7 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_controller.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/general/general_lessons.dart';
 
 class FeedbackScreen extends StatelessWidget {
   const FeedbackScreen({super.key});
@@ -55,7 +56,7 @@ class FeedbackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressController = Get.find<ReadingProgressController>();
+    final progressController = Get.find<ReadingController>();
     const totalLessons = 54; // 40 Academic + 14 General
     final size = MediaQuery.of(context).size;
 
@@ -71,15 +72,66 @@ class FeedbackScreen extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: SingleChildScrollView(
-              child: Obx(() {
-                final academicProgress =
-                    progressController.completedAcademicLessons;
-                final generalProgress =
-                    progressController.completedGeneralLessons;
-                final totalProgress = academicProgress + generalProgress;
+            child: Obx(() {
+              if (progressController.isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                );
+              }
 
-                return Column(
+              if (progressController.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        progressController.errorMessage,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await progressController.refreshProgress();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00BFA6),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: Text(
+                          'Retry',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final academicProgress =
+                  progressController.completedAcademicLessons;
+              final generalProgress =
+                  progressController.completedGeneralLessons;
+              final totalProgress = academicProgress + generalProgress;
+              final overallPercentage =
+                  totalLessons > 0 ? (totalProgress / totalLessons) * 100 : 0.0;
+
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
@@ -89,7 +141,24 @@ class FeedbackScreen extends StatelessWidget {
                             Icons.arrow_back_ios,
                             color: Colors.white,
                           ),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () {
+                            try {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => const GeneralLessonsScreen(),
+                                ),
+                              );
+                            } catch (e) {
+                              Get.snackbar(
+                                'Error',
+                                'Failed to navigate back: $e',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                            }
+                          },
                         ),
                         Expanded(
                           child: Text(
@@ -102,7 +171,21 @@ class FeedbackScreen extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                         ),
-                        const SizedBox(width: 48),
+                        IconButton(
+                          icon: const Icon(Icons.refresh, color: Colors.white),
+                          onPressed: () async {
+                            try {
+                              await progressController.refreshProgress();
+                            } catch (e) {
+                              Get.snackbar(
+                                'Error',
+                                'Failed to refresh progress: $e',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                            }
+                          },
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -143,14 +226,14 @@ class FeedbackScreen extends StatelessWidget {
                                   width: size.width * 0.4,
                                   height: size.width * 0.4,
                                   child: CircularProgressIndicator(
-                                    value: totalProgress / totalLessons,
+                                    value: overallPercentage / 100,
                                     strokeWidth: 12,
                                     backgroundColor: Colors.white.withOpacity(
                                       0.2,
                                     ),
                                     valueColor:
                                         const AlwaysStoppedAnimation<Color>(
-                                          Colors.greenAccent,
+                                          Color(0xFF00BFA6),
                                         ),
                                   ),
                                 ),
@@ -159,7 +242,7 @@ class FeedbackScreen extends StatelessWidget {
                                   child: Column(
                                     children: [
                                       Text(
-                                        '${((totalProgress / totalLessons) * 100).toStringAsFixed(0)}%',
+                                        '${overallPercentage.toStringAsFixed(0)}%',
                                         style: GoogleFonts.poppins(
                                           fontSize: 32,
                                           fontWeight: FontWeight.bold,
@@ -255,13 +338,10 @@ class FeedbackScreen extends StatelessWidget {
                             FadeIn(
                               delay: const Duration(milliseconds: 300),
                               child: Text(
-                                academicProgress < 10 && generalProgress < 5
-                                    ? 'Focus on completing more lessons to get detailed feedback.'
-                                    : generalProgress < 5
-                                    ? 'Great start on Academic! Try completing more General Training lessons.'
-                                    : academicProgress < 10
-                                    ? 'Good work on General Training! Complete more Academic lessons to balance your progress.'
-                                    : 'Excellent progress! Keep practicing to maintain your high performance.',
+                                _getFeedbackMessage(
+                                  academicProgress,
+                                  generalProgress,
+                                ),
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   color: Colors.white.withOpacity(0.9),
@@ -278,22 +358,36 @@ class FeedbackScreen extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            ...progressController.academicLessonScores.entries
-                                .take(5)
-                                .map(
-                                  (entry) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    child: Text(
-                                      'Lesson ${entry.key}: ${entry.value}',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.white.withOpacity(0.8),
+                            if (progressController.academicLessonScores.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                ),
+                                child: Text(
+                                  'No scores available yet.',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: Colors.white.withOpacity(0.8),
+                                  ),
+                                ),
+                              )
+                            else
+                              ...progressController.academicLessonScores.entries
+                                  .take(5)
+                                  .map(
+                                    (entry) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
+                                      ),
+                                      child: Text(
+                                        'Lesson ${entry.key}: ${entry.value}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                             const SizedBox(height: 15),
                             Text(
                               'Recent General Training Scores',
@@ -303,22 +397,36 @@ class FeedbackScreen extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            ...progressController.generalLessonScores.entries
-                                .take(5)
-                                .map(
-                                  (entry) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    child: Text(
-                                      'Lesson ${entry.key}: ${entry.value}',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        color: Colors.white.withOpacity(0.8),
+                            if (progressController.generalLessonScores.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
+                                ),
+                                child: Text(
+                                  'No scores available yet.',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: Colors.white.withOpacity(0.8),
+                                  ),
+                                ),
+                              )
+                            else
+                              ...progressController.generalLessonScores.entries
+                                  .take(5)
+                                  .map(
+                                    (entry) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
+                                      ),
+                                      child: Text(
+                                        'Lesson ${entry.key}: ${entry.value}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          color: Colors.white.withOpacity(0.8),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                           ],
                         ),
                       ),
@@ -364,12 +472,27 @@ class FeedbackScreen extends StatelessWidget {
                       ),
                     ),
                   ],
-                );
-              }),
-            ),
+                ),
+              );
+            }),
           ),
         ),
       ),
     );
+  }
+
+  String _getFeedbackMessage(int academicProgress, int generalProgress) {
+    if (academicProgress < 0 || generalProgress < 0) {
+      return 'Error: Invalid progress data. Please refresh.';
+    }
+    if (academicProgress < 10 && generalProgress < 5) {
+      return 'Focus on completing more lessons to get detailed feedback.';
+    } else if (generalProgress < 5) {
+      return 'Great start on Academic Reading! Try completing more General Training lessons.';
+    } else if (academicProgress < 10) {
+      return 'Good work on General Training! Complete more Academic Reading lessons to balance your progress.';
+    } else {
+      return 'Excellent progress! Keep practicing to maintain your high performance.';
+    }
   }
 }

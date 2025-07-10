@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/general/general_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/general/general_lessons.dart';
 import 'lessons/general_lesson_1.dart' as lesson1;
@@ -60,6 +60,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
   late Map<String, dynamic> lessonData;
   late List<Map<String, dynamic>> selectedQuestions;
   int _currentQuestionIndex = 0;
+  final ReadingController _readingController = Get.find<ReadingController>();
 
   final ScrollController _scrollController = ScrollController();
   final ScrollController _questionScrollController = ScrollController();
@@ -99,19 +100,22 @@ class _GeneralScreenState extends State<GeneralScreen> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ReadingProgressController>()) {
-      Get.put(ReadingProgressController());
-    }
     lessonData = _getLessonData();
     selectedQuestions = _getRandomQuestions();
-    _scrollController.addListener(() {
-      final maxScroll = _scrollController.position.maxScrollExtent;
-      final currentScroll = _scrollController.position.pixels;
-      if (maxScroll > 0) {
-        final progress = (currentScroll / maxScroll).clamp(0.0, 1.0) * 0.5;
-        Get.find<ReadingProgressController>().updateProgress(progress);
-      }
-    });
+    _scrollController.addListener(_updateScrollProgress);
+    _markLessonAsOpened();
+  }
+
+  Future<void> _markLessonAsOpened() async {
+    await _readingController.markGeneralLessonAsOpened(widget.lessonId);
+  }
+
+  void _updateScrollProgress() {
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    if (maxScroll > 0 && currentScroll >= maxScroll * 0.5) {
+      _readingController.markGeneralLessonAsStarted(widget.lessonId);
+    }
   }
 
   Map<String, dynamic> _getLessonData() {
@@ -162,15 +166,8 @@ class _GeneralScreenState extends State<GeneralScreen> {
   List<Map<String, dynamic>> _getRandomQuestions() {
     final random = Random();
     final questions = lessonData['questions'] as List<dynamic>? ?? [];
-    int questionsToAsk = 10;
-    if (widget.lessonId > 5 && widget.lessonId <= 10) {
-      questionsToAsk = 12;
-    } else if (widget.lessonId > 10) {
-      questionsToAsk = 15;
-    }
-    questionsToAsk =
-        (lessonData['questionsToAsk'] as int?)?.clamp(1, questions.length) ??
-        questionsToAsk;
+    int questionsToAsk = lessonData['questionsToAsk'] as int? ?? 10;
+    questionsToAsk = questionsToAsk.clamp(1, questions.length);
 
     final List<Map<String, dynamic>> shuffledQuestions =
         questions.isNotEmpty
@@ -377,23 +374,23 @@ class _GeneralScreenState extends State<GeneralScreen> {
             FadeIn(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ...lessonData['passage']
-                      .toString()
-                      .split('\n')
-                      .asMap()
-                      .entries
-                      .where((entry) => entry.value.trim().isNotEmpty)
-                      .map(
-                        (entry) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Text(
-                            '${entry.key + 1}. ${entry.value.trim()}',
-                            style: passageTextStyle,
+                children:
+                    lessonData['passage']
+                        .toString()
+                        .split('\n')
+                        .asMap()
+                        .entries
+                        .where((entry) => entry.value.trim().isNotEmpty)
+                        .map(
+                          (entry) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Text(
+                              '${entry.key + 1}. ${entry.value.trim()}',
+                              style: passageTextStyle,
+                            ),
                           ),
-                        ),
-                      ),
-                ],
+                        )
+                        .toList(),
               ),
             ),
             const SizedBox(height: 24),
@@ -410,7 +407,6 @@ class _GeneralScreenState extends State<GeneralScreen> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     transform: Matrix4.identity()..scale(1.0),
-                    onEnd: () => setState(() {}),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,
                       vertical: 16,
@@ -435,7 +431,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Next',
+                          'Start Questions',
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -462,12 +458,13 @@ class _GeneralScreenState extends State<GeneralScreen> {
   }
 
   Widget _buildQuestionScaffold() {
+    final colors = _isDarkMode ? _darkColors : _lightColors;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3E1E68), Color.fromARGB(255, 84, 65, 228)],
+            colors: [colors['gradientStart']!, colors['gradientEnd']!],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -485,14 +482,14 @@ class _GeneralScreenState extends State<GeneralScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: colors['textPrimary'],
                     ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 Expanded(
                   child: FadeIn(
-                    child: _buildQuestionCard(_currentQuestionIndex),
+                    child: _buildQuestionCard(_currentQuestionIndex, colors),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -607,7 +604,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
     );
   }
 
-  Widget _buildQuestionCard(int questionIndex) {
+  Widget _buildQuestionCard(int questionIndex, Map<String, Color> colors) {
     if (questionIndex >= selectedQuestions.length) {
       return const SizedBox.shrink();
     }
@@ -632,9 +629,9 @@ class _GeneralScreenState extends State<GeneralScreen> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: colors['card']!.withOpacity(0.15),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.3)),
+            border: Border.all(color: colors['textPrimary']!.withOpacity(0.3)),
           ),
           child: Scrollbar(
             controller: _questionScrollController,
@@ -651,7 +648,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                             : isParagraph
                             ? Icons.format_list_numbered
                             : Icons.radio_button_checked,
-                        color: Colors.white,
+                        color: colors['textPrimary'],
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -660,7 +657,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white70,
+                          color: colors['textSecondary'],
                         ),
                       ),
                     ],
@@ -671,7 +668,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: colors['textPrimary'],
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -686,9 +683,11 @@ class _GeneralScreenState extends State<GeneralScreen> {
                               selectedQuestions
                                   .where((q) => q['selectedIndex'] != -1)
                                   .length;
-                          Get.find<ReadingProgressController>().updateProgress(
-                            0.5 + (answered / selectedQuestions.length) * 0.5,
-                          );
+                          if (answered >= selectedQuestions.length / 2) {
+                            _readingController.markGeneralLessonAsStarted(
+                              widget.lessonId,
+                            );
+                          }
                         });
                       },
                       child: AnimatedContainer(
@@ -698,14 +697,14 @@ class _GeneralScreenState extends State<GeneralScreen> {
                         decoration: BoxDecoration(
                           color:
                               isSelected
-                                  ? Colors.white.withOpacity(0.25)
-                                  : Colors.white.withOpacity(0.1),
+                                  ? colors['accent']!.withOpacity(0.2)
+                                  : colors['card']!.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color:
                                 isSelected
-                                    ? Colors.white
-                                    : Colors.white.withOpacity(0.3),
+                                    ? colors['accent']!
+                                    : colors['textPrimary']!.withOpacity(0.3),
                             width: isSelected ? 2 : 1,
                           ),
                         ),
@@ -715,7 +714,10 @@ class _GeneralScreenState extends State<GeneralScreen> {
                               isSelected
                                   ? Icons.radio_button_checked
                                   : Icons.radio_button_unchecked,
-                              color: isSelected ? Colors.white : Colors.white70,
+                              color:
+                                  isSelected
+                                      ? colors['accent']
+                                      : colors['textSecondary'],
                               size: 20,
                             ),
                             const SizedBox(width: 12),
@@ -724,7 +726,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
                                 question['options'][optionIndex],
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
-                                  color: Colors.white,
+                                  color: colors['textPrimary'],
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -765,53 +767,50 @@ class _GeneralScreenState extends State<GeneralScreen> {
     });
   }
 
-  void _submitAnswers() {
-    int correctAnswers = _calculateScore();
-    int totalQuestions = selectedQuestions.length;
-    List<int> selectedAnswers =
-        selectedQuestions.map((q) => q['selectedIndex'] as int).toList();
+  void _submitAnswers() async {
+    int correctAnswers = 0;
+    for (var question in selectedQuestions) {
+      final selectedIndex = question['selectedIndex'] as int;
+      if (selectedIndex != -1 && selectedIndex < question['options'].length) {
+        final selectedAnswer = question['options'][selectedIndex];
+        if (selectedAnswer == question['correctAnswer']) {
+          correctAnswers++;
+        }
+      }
+    }
 
-    final requiredCorrect =
+    final requiredCorrectAnswers =
         lessonData['requiredCorrectAnswers'] as int? ??
         (widget.lessonId <= 5
             ? 4
             : widget.lessonId <= 10
             ? 5
             : 6);
-    if (correctAnswers >= requiredCorrect) {
-      Get.find<ReadingProgressController>().completeGeneralLesson(
+    final score = '$correctAnswers/${selectedQuestions.length}';
+    final passed = correctAnswers >= requiredCorrectAnswers;
+
+    if (passed) {
+      await _readingController.completeGeneralLesson(
         lessonId: widget.lessonId,
-        score: '$correctAnswers/$totalQuestions',
+        score: score,
       );
-      widget.onComplete();
     }
 
+    widget.onComplete();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder:
             (context) => GeneralResult(
-              totalQuestions: totalQuestions,
-              correctAnswers: correctAnswers,
-              selectedAnswers: selectedAnswers,
-              questions: selectedQuestions,
-              onComplete: widget.onComplete,
               lessonId: widget.lessonId,
+              score: score,
+              passed: passed,
+              correctAnswers: correctAnswers,
+              totalQuestions: selectedQuestions.length,
+              requiredCorrectAnswers: requiredCorrectAnswers,
+              onComplete: widget.onComplete,
             ),
       ),
     );
-  }
-
-  int _calculateScore() {
-    int score = 0;
-    for (var question in selectedQuestions) {
-      if (question['selectedIndex'] >= 0 &&
-          question['selectedIndex'] < question['options'].length &&
-          question['options'][question['selectedIndex']] ==
-              question['correctAnswer']) {
-        score++;
-      }
-    }
-    return score;
   }
 }

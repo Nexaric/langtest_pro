@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
-import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-
+import 'package:lottie/lottie.dart';
+import 'package:langtest_pro/controller/writing_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_screen.dart';
 
 class LessonListScreen extends StatelessWidget {
@@ -14,178 +13,189 @@ class LessonListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          "IELTS Writing Task 2 Mastery",
-          style: GoogleFonts.poppins(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: theme.colorScheme.surface,
-        actions: [
-          IconButton(
-            icon: Icon(Iconsax.medal, color: theme.colorScheme.primary),
-            onPressed: () => _showAchievements(context),
-            tooltip: 'View Achievements',
-          ),
-        ],
-      ),
+      appBar: _buildAppBar(context, theme),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Obx(() {
-                final progressController =
-                    Get.find<WritingProgressController>();
-                final completedLessons = progressController.completedLessons;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FadeInDown(
-                      duration: const Duration(milliseconds: 600),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Your Writing Journey",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: theme.colorScheme.onSurface,
-                                ),
-                              ),
-                              Chip(
-                                backgroundColor: theme.colorScheme.primary
-                                    .withOpacity(0.2),
-                                label: Text(
-                                  "${progressController.completionPercentage}% Complete",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: theme.colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Stack(
-                            children: [
-                              Container(
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color:
-                                      theme.colorScheme.surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 800),
-                                curve: Curves.easeOutQuart,
-                                height: 10,
-                                width:
-                                    MediaQuery.of(context).size.width *
-                                    0.9 *
-                                    progressController.progress,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      theme.colorScheme.primary,
-                                      theme.colorScheme.primaryContainer,
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    FadeInUp(
-                      delay: const Duration(milliseconds: 100),
-                      duration: const Duration(milliseconds: 600),
-                      child: Row(
-                        children: [
-                          _buildStatCard(
-                            context,
-                            "Completed",
-                            "$completedLessons",
-                            Iconsax.tick_circle,
-                            theme.colorScheme.primaryContainer,
-                          ),
-                          const SizedBox(width: 12),
-                          _buildStatCard(
-                            context,
-                            "Next Lesson",
-                            completedLessons < 40
-                                ? "Lesson ${completedLessons + 1}"
-                                : "All Done!",
-                            Iconsax.arrow_up,
-                            theme.colorScheme.tertiaryContainer,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              }),
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                _buildSectionHeader(
-                  context,
-                  "✍️ Writing Task 2 Lessons",
-                  "40 Lessons to Master Essay Writing",
-                ),
-                ...List.generate(40, (index) {
-                  final lessonNumber = index + 1;
-                  return FadeInUp(
-                    delay: Duration(milliseconds: 100 * index),
-                    child: Obx(() {
-                      final progressController =
-                          Get.find<WritingProgressController>();
-                      final isCompleted = progressController.isLessonCompleted(
-                        lessonNumber,
-                      );
-                      final isUnlocked =
-                          lessonNumber <=
-                          progressController.completedLessons + 1;
-
-                      return _buildLessonCard(
-                        context,
-                        lessonNumber,
-                        _getTask2Title(lessonNumber),
-                        _getTask2Subtitle(lessonNumber),
-                        isUnlocked,
-                        isCompleted,
-                        _getTask2Icon(lessonNumber),
-                        progressController,
-                      );
-                    }),
-                  );
-                }),
-              ]),
-            ),
-          ),
+          _buildProgressSection(context, theme),
+          _buildLessonsSection(context, theme),
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
+      ),
+    );
+  }
+
+  AppBar _buildAppBar(BuildContext context, ThemeData theme) {
+    return AppBar(
+      title: Text(
+        "IELTS Writing Task 2 Mastery",
+        style: GoogleFonts.poppins(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: theme.colorScheme.onSurface,
+        ),
+      ),
+      centerTitle: true,
+      elevation: 0,
+      backgroundColor: theme.colorScheme.surface,
+      actions: [
+        IconButton(
+          icon: Icon(Iconsax.medal, color: theme.colorScheme.primary),
+          onPressed: () => _showAchievements(context),
+          tooltip: 'View Achievements',
+        ),
+      ],
+    );
+  }
+
+  SliverToBoxAdapter _buildProgressSection(
+    BuildContext context,
+    ThemeData theme,
+  ) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: Obx(() {
+          final controller = Get.find<WritingController>();
+          final completedLessons = controller.completedLessons;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FadeInDown(
+                duration: const Duration(milliseconds: 600),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Your Writing Journey",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        Chip(
+                          backgroundColor: theme.colorScheme.primary
+                              .withOpacity(0.2),
+                          label: Text(
+                            "${controller.completionPercentage}% Complete",
+                            style: GoogleFonts.poppins(
+                              fontSize: 12,
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _buildProgressBar(context, theme, controller.progress),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              FadeInUp(
+                delay: const Duration(milliseconds: 100),
+                duration: const Duration(milliseconds: 600),
+                child: Row(
+                  children: [
+                    _buildStatCard(
+                      context,
+                      "Completed",
+                      "$completedLessons",
+                      Iconsax.tick_circle,
+                      theme.colorScheme.primaryContainer,
+                    ),
+                    const SizedBox(width: 12),
+                    _buildStatCard(
+                      context,
+                      "Next Lesson",
+                      completedLessons < 40
+                          ? "Lesson ${completedLessons + 1}"
+                          : "All Done!",
+                      Iconsax.arrow_up,
+                      theme.colorScheme.tertiaryContainer,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildProgressBar(
+    BuildContext context,
+    ThemeData theme,
+    double progress,
+  ) {
+    return Stack(
+      children: [
+        Container(
+          height: 10,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeOutQuart,
+          height: 10,
+          width: MediaQuery.of(context).size.width * 0.9 * progress,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.primary,
+                theme.colorScheme.primaryContainer,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ],
+    );
+  }
+
+  SliverPadding _buildLessonsSection(BuildContext context, ThemeData theme) {
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      sliver: SliverList(
+        delegate: SliverChildListDelegate([
+          _buildSectionHeader(
+            context,
+            "✍️ Writing Task 2 Lessons",
+            "40 Lessons to Master Essay Writing",
+          ),
+          ...List.generate(40, (index) {
+            final lessonNumber = index + 1;
+            return FadeInUp(
+              delay: Duration(milliseconds: 100 * index),
+              child: Obx(() {
+                final controller = Get.find<WritingController>();
+                final isCompleted = controller.isLessonCompleted(lessonNumber);
+                final isUnlocked =
+                    lessonNumber <= controller.completedLessons + 1;
+                return _buildLessonCard(
+                  context,
+                  lessonNumber,
+                  _getTask2Title(lessonNumber),
+                  _getTask2Subtitle(lessonNumber),
+                  isUnlocked,
+                  isCompleted,
+                  _getTask2Icon(lessonNumber),
+                  controller,
+                );
+              }),
+            );
+          }),
+        ]),
       ),
     );
   }
@@ -286,10 +296,9 @@ class LessonListScreen extends StatelessWidget {
     bool isUnlocked,
     bool isCompleted,
     IconData icon,
-    WritingProgressController progressController,
+    WritingController controller,
   ) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -305,14 +314,12 @@ class LessonListScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           onTap:
               isUnlocked
-                  ? () {
-                    _openLesson(
-                      context,
-                      lessonNumber,
-                      progressController,
-                      isCompleted,
-                    );
-                  }
+                  ? () => _openLesson(
+                    context,
+                    lessonNumber,
+                    controller,
+                    isCompleted,
+                  )
                   : null,
           child: Container(
             padding: const EdgeInsets.all(16),
@@ -448,7 +455,7 @@ class LessonListScreen extends StatelessWidget {
   void _openLesson(
     BuildContext context,
     int lessonNumber,
-    WritingProgressController controller,
+    WritingController controller,
     bool isCompleted,
   ) {
     Navigator.push(
@@ -504,7 +511,7 @@ class LessonListScreen extends StatelessWidget {
   }
 
   void _showAchievements(BuildContext context) {
-    final progressController = Get.find<WritingProgressController>();
+    final controller = Get.find<WritingController>();
     showDialog(
       context: context,
       builder:
@@ -515,7 +522,7 @@ class LessonListScreen extends StatelessWidget {
             ),
             content: SingleChildScrollView(
               child: Obx(() {
-                final completedLessons = progressController.completedLessons;
+                final completedLessons = controller.completedLessons;
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

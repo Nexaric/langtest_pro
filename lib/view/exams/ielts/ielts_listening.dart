@@ -11,7 +11,7 @@ class IeltsListeningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progressController = Get.find<ListeningProgressController>();
+    final progressController = Get.find<ListeningController>();
 
     return Obx(() {
       if (progressController.isLoading) {
@@ -26,13 +26,29 @@ class IeltsListeningScreen extends StatelessWidget {
               ),
             ),
             child: Center(
-              child: CircularProgressIndicator(color: Colors.white),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(color: Colors.white),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'Loading your progress...',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14.sp,
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       }
 
       if (progressController.hasError) {
+        debugPrint(
+          'Error in IeltsListeningScreen: ${progressController.errorMessage}',
+        );
         return Scaffold(
           body: Container(
             decoration: const BoxDecoration(
@@ -48,7 +64,9 @@ class IeltsListeningScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    progressController.errorMessage ?? 'Error loading progress',
+                    progressController.errorMessage.isNotEmpty
+                        ? progressController.errorMessage
+                        : 'Failed to load listening progress. Please try again.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 16.sp,
@@ -58,7 +76,7 @@ class IeltsListeningScreen extends StatelessWidget {
                   SizedBox(height: 16.h),
                   ElevatedButton(
                     onPressed: () async {
-                      await progressController.restoreFromCloud();
+                      await progressController.refreshProgress();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00BFA6),
@@ -153,7 +171,7 @@ class IeltsListeningScreen extends StatelessWidget {
                       FadeInUp(
                         child: GestureDetector(
                           onTap:
-                              () => Get.toNamed(RoutesName.audioLessonsScreen),
+                              () => _navigateTo(RoutesName.audioLessonsScreen),
                           child: _buildFeatureCard(
                             Icons.headset_rounded,
                             "Audio Lessons",
@@ -166,7 +184,7 @@ class IeltsListeningScreen extends StatelessWidget {
                         delay: const Duration(milliseconds: 50),
                         child: GestureDetector(
                           onTap:
-                              () => Get.toNamed(RoutesName.practiceTestScreen),
+                              () => _navigateTo(RoutesName.practiceTestScreen),
                           child: _buildFeatureCard(
                             Icons.quiz_rounded,
                             "Practice Tests",
@@ -178,7 +196,7 @@ class IeltsListeningScreen extends StatelessWidget {
                       FadeInUp(
                         delay: const Duration(milliseconds: 100),
                         child: GestureDetector(
-                          onTap: () => Get.toNamed(RoutesName.feedbackScreen),
+                          onTap: () => _navigateTo(RoutesName.feedbackScreen),
                           child: _buildFeatureCard(
                             Icons.feedback_rounded,
                             "Feedback",
@@ -192,7 +210,7 @@ class IeltsListeningScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap:
                               () =>
-                                  Get.toNamed(RoutesName.strategiesTipsScreen),
+                                  _navigateTo(RoutesName.strategiesTipsScreen),
                           child: _buildFeatureCard(
                             Icons.lightbulb_rounded,
                             "Tips",
@@ -213,11 +231,25 @@ class IeltsListeningScreen extends StatelessWidget {
     });
   }
 
+  void _navigateTo(String routeName) {
+    try {
+      Get.toNamed(routeName);
+    } catch (e) {
+      Get.snackbar(
+        'Navigation Error',
+        'Route $routeName not found. Please check your route configuration.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   Widget _buildHeader(
     BuildContext context,
-    ListeningProgressController progressController,
+    ListeningController progressController,
   ) {
-    final progress = progressController.lessonProgressPercentage / 100;
+    final progress = (progressController.overallProgress / 100).clamp(0.0, 1.0);
 
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -235,7 +267,7 @@ class IeltsListeningScreen extends StatelessWidget {
                 width: 100.w,
                 height: 100.h,
                 child: CircularProgressIndicator(
-                  value: progress.clamp(0.0, 1.0),
+                  value: progress,
                   strokeWidth: 8.w,
                   backgroundColor: Colors.white.withOpacity(0.2),
                   color: Colors.white,

@@ -1,5 +1,3 @@
-// lib/view/exams/ielts/listening/practice_test_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,34 +28,38 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
       "title": "Practice Test 1: Part 1",
       "part": "Part 1",
       "description": "Everyday conversations and basic comprehension",
-      "isLocked": false,
+      "lessonId": 1,
     },
     {
       "title": "Practice Test 2: Part 2",
       "part": "Part 2",
       "description": "Monologues and informational audio",
-      "isLocked": true,
+      "lessonId": 2,
     },
     {
       "title": "Practice Test 3: Part 3",
       "part": "Part 3",
       "description": "Academic discussions",
-      "isLocked": true,
+      "lessonId": 3,
     },
     {
       "title": "Practice Test 4: Part 4",
       "part": "Part 4",
       "description": "Complex lectures and scenarios",
-      "isLocked": true,
+      "lessonId": 4,
     },
   ];
 
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ListeningProgressController>()) {
-      Get.put(ListeningProgressController());
+    if (!Get.isRegistered<ListeningController>()) {
+      Get.put(ListeningController());
     }
+    final progressController = Get.find<ListeningController>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      progressController.refreshProgress();
+    });
   }
 
   @override
@@ -124,93 +126,111 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
                     toolbarHeight: kToolbarHeight,
                   ),
                   SliverPadding(padding: EdgeInsets.only(top: 10.h)),
-                  GetBuilder<ListeningProgressController>(
-                    builder: (progressController) {
-                      if (progressController.isLoading) {
-                        return SliverFillRemaining(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: _gradientStart,
-                            ),
+                  Obx(() {
+                    final progressController = Get.find<ListeningController>();
+                    if (progressController.isLoading) {
+                      return SliverFillRemaining(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: _gradientStart,
                           ),
-                        );
-                      }
-
-                      if (progressController.hasError) {
-                        return SliverFillRemaining(
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  progressController.errorMessage ??
-                                      'Error loading progress',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
-                                    color: _textLight,
-                                  ),
-                                ),
-                                SizedBox(height: 16.h),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    await progressController.restoreFromCloud();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _accentColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 10.h,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Retry',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14.sp,
-                                      color: _textLight,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-
-                      return SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            final test = _practiceTests[index];
-                            final isLocked = _isTestLocked(
-                              index,
-                              progressController,
-                            );
-                            final isCompleted = progressController
-                                .isPracticeTestComplete(test['part']);
-
-                            return FadeInUp(
-                              delay: Duration(milliseconds: 100 * index),
-                              child: _buildTestCard(
-                                context,
-                                test: test,
-                                isLocked: isLocked,
-                                isCompleted: isCompleted,
-                                progressController: progressController,
-                              ),
-                            );
-                          }, childCount: _practiceTests.length),
                         ),
                       );
-                    },
-                  ),
+                    }
+
+                    if (progressController.hasError) {
+                      return SliverFillRemaining(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                progressController.errorMessage ??
+                                    'Error loading progress',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16.sp,
+                                  color: _textLight,
+                                ),
+                              ),
+                              SizedBox(height: 16.h),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await progressController.refreshProgress();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: _accentColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 10.h,
+                                  ),
+                                ),
+                                child: Text(
+                                  'Retry',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14.sp,
+                                    color: _textLight,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    return SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final test = _practiceTests[index];
+                          return FutureBuilder<bool>(
+                            future:
+                                index == 0
+                                    ? Future.value(true)
+                                    : progressController
+                                        .isPracticeTestAccessible(
+                                          test['lessonId'] - 1,
+                                        ),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.w,
+                                    color: _gradientStart,
+                                  ),
+                                );
+                              }
+                              final isLocked = index > 0 && !snapshot.data!;
+                              final isCompleted =
+                                  progressController.getPracticeTestProgress(
+                                    test['lessonId'],
+                                  ) ==
+                                  100;
+
+                              return Obx(
+                                () => FadeInUp(
+                                  delay: Duration(milliseconds: 100 * index),
+                                  child: _buildTestCard(
+                                    context,
+                                    test: test,
+                                    isLocked: isLocked,
+                                    isCompleted: isCompleted,
+                                    progressController: progressController,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }, childCount: _practiceTests.length),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -220,22 +240,12 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
     );
   }
 
-  bool _isTestLocked(
-    int index,
-    ListeningProgressController progressController,
-  ) {
-    if (index == 0) return false; // Part 1 is always unlocked
-    return !progressController.isPracticeTestComplete(
-      _practiceTests[index - 1]['part'],
-    );
-  }
-
   Widget _buildTestCard(
     BuildContext context, {
     required Map<String, dynamic> test,
     required bool isLocked,
     required bool isCompleted,
-    required ListeningProgressController progressController,
+    required ListeningController progressController,
   }) {
     return Material(
       elevation: 4,

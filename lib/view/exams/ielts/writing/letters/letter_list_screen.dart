@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_data.dart';
 import 'package:lottie/lottie.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_controller.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_data.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_screen.dart';
 
 class LetterListScreen extends StatelessWidget {
@@ -14,15 +14,15 @@ class LetterListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final progressController = Get.find<WritingProgressController>();
+    final progressController = Get.find<WritingController>();
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          "IELTS Writing Task 1: Letters",
+          'IELTS Writing Task 1: Letters',
           style: GoogleFonts.poppins(
-            fontSize: 22,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
             color: theme.colorScheme.onSurface,
           ),
@@ -32,22 +32,27 @@ class LetterListScreen extends StatelessWidget {
         backgroundColor: theme.colorScheme.surface,
         actions: [
           IconButton(
-            icon: Icon(Iconsax.medal, color: theme.colorScheme.primary),
+            icon: Icon(
+              Iconsax.medal,
+              color: theme.colorScheme.primary,
+              size: 22,
+            ),
             onPressed: () => _showAchievements(context, progressController),
             tooltip: 'View Achievements',
           ),
         ],
       ),
       body: Obx(() {
-        final completedLetterLessons =
-            progressController.completedLetterLessons;
+        final completedLetters =
+            progressController
+                .completedLetters; // Fixed: completedLetterLessons -> completedLetters
         return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 16,
+                  horizontal: 16,
+                  vertical: 12,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +66,7 @@ class LetterListScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Your Letter Writing Journey",
+                                'Your Letter Writing Journey',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -70,38 +75,37 @@ class LetterListScreen extends StatelessWidget {
                               ),
                               Chip(
                                 backgroundColor: theme.colorScheme.primary
-                                    .withOpacity(0.2),
+                                    .withOpacity(0.1),
                                 label: Text(
-                                  "${(completedLetterLessons / letterLessons.length * 100).round()}% Complete",
+                                  '${(completedLetters / letterLessons.length * 100).round()}% Complete',
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     color: theme.colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           Stack(
                             children: [
                               Container(
-                                height: 10,
+                                height: 6,
                                 decoration: BoxDecoration(
                                   color:
                                       theme.colorScheme.surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(3),
                                 ),
                               ),
                               AnimatedContainer(
                                 duration: const Duration(milliseconds: 800),
                                 curve: Curves.easeOutQuart,
-                                height: 10,
+                                height: 6,
                                 width:
                                     MediaQuery.of(context).size.width *
                                     0.9 *
-                                    (completedLetterLessons /
-                                        letterLessons.length),
+                                    (completedLetters / letterLessons.length),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
@@ -109,7 +113,7 @@ class LetterListScreen extends StatelessWidget {
                                       theme.colorScheme.primaryContainer,
                                     ],
                                   ),
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(3),
                                 ),
                               ),
                             ],
@@ -117,28 +121,27 @@ class LetterListScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
                     FadeInUp(
-                      delay: const Duration(milliseconds: 100),
                       duration: const Duration(milliseconds: 600),
                       child: Row(
                         children: [
                           _buildStatCard(
                             context,
-                            "Completed",
-                            "$completedLetterLessons",
+                            'Completed',
+                            '$completedLetters',
                             Iconsax.tick_circle,
                             theme.colorScheme.primaryContainer,
                           ),
                           const SizedBox(width: 12),
                           _buildStatCard(
                             context,
-                            "Next Letter",
-                            completedLetterLessons < letterLessons.length
-                                ? "Letter ${completedLetterLessons + 1}"
-                                : "All Done!",
+                            'Next Letter',
+                            completedLetters < letterLessons.length
+                                ? 'Letter ${completedLetters + 1}'
+                                : 'All Done!',
                             Iconsax.arrow_up,
-                            theme.colorScheme.tertiaryContainer,
+                            theme.colorScheme.secondaryContainer,
                           ),
                         ],
                       ),
@@ -148,7 +151,7 @@ class LetterListScreen extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final lesson = letterLessons[index];
@@ -160,7 +163,7 @@ class LetterListScreen extends StatelessWidget {
                       letterId,
                       lesson['title'] as String,
                       lesson['question'] as String,
-                      letterId <= completedLetterLessons + 1,
+                      letterId <= completedLetters + 1,
                       progressController.isLetterLessonCompleted(letterId),
                       lesson['icon'] as IconData,
                       progressController,
@@ -188,11 +191,11 @@ class LetterListScreen extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: color,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 8,
+              color: Colors.grey.withOpacity(0.05),
+              blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
@@ -234,36 +237,6 @@ class LetterListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(
-    BuildContext context,
-    String title,
-    String subtitle,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24, bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          Text(
-            subtitle,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildLetterCard(
     BuildContext context,
     int letterId,
@@ -272,50 +245,46 @@ class LetterListScreen extends StatelessWidget {
     bool isUnlocked,
     bool isCompleted,
     IconData icon,
-    WritingProgressController progressController,
+    WritingController progressController,
   ) {
     final theme = Theme.of(context);
-
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Material(
         color:
             isCompleted
-                ? theme.colorScheme.primary.withOpacity(0.2)
+                ? theme.colorScheme.primary.withOpacity(0.1)
                 : isUnlocked
                 ? theme.colorScheme.surface
                 : theme.colorScheme.surface.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(14),
-        elevation: 0,
+        borderRadius: BorderRadius.circular(8),
         child: InkWell(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(8),
           onTap:
               isUnlocked
-                  ? () {
-                    _openLetter(
-                      context,
-                      letterId,
-                      progressController,
-                      isCompleted,
-                    );
-                  }
+                  ? () => _openLetter(
+                    context,
+                    letterId,
+                    progressController,
+                    isCompleted,
+                  )
                   : null,
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color:
                     isCompleted
-                        ? theme.colorScheme.primary.withOpacity(0.3)
+                        ? theme.colorScheme.primary.withOpacity(0.2)
                         : theme.colorScheme.outline.withOpacity(0.1),
               ),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
                     color:
                         isCompleted
@@ -329,7 +298,7 @@ class LetterListScreen extends StatelessWidget {
                   child:
                       isUnlocked
                           ? Text(
-                            "$letterId",
+                            '$letterId',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -345,7 +314,7 @@ class LetterListScreen extends StatelessWidget {
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,7 +322,7 @@ class LetterListScreen extends StatelessWidget {
                       Text(
                         title,
                         style: GoogleFonts.poppins(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color:
                               isUnlocked
@@ -363,11 +332,11 @@ class LetterListScreen extends StatelessWidget {
                                   ),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         subtitle,
                         style: GoogleFonts.poppins(
-                          fontSize: 13,
+                          fontSize: 12,
                           color:
                               isUnlocked
                                   ? theme.colorScheme.onSurface.withOpacity(0.7)
@@ -375,6 +344,8 @@ class LetterListScreen extends StatelessWidget {
                                     0.4,
                                   ),
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -386,8 +357,8 @@ class LetterListScreen extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(12),
+                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -399,7 +370,7 @@ class LetterListScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "Done",
+                          'Done',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: theme.colorScheme.primary,
@@ -411,15 +382,15 @@ class LetterListScreen extends StatelessWidget {
                 else if (isUnlocked)
                   Icon(
                     Iconsax.arrow_right_3,
-                    size: 20,
+                    size: 18,
                     color: theme.colorScheme.onSurface.withOpacity(0.4),
                   )
                 else
                   Tooltip(
-                    message: "Complete Letter ${letterId - 1} to unlock",
+                    message: 'Complete Letter ${letterId - 1} to unlock',
                     child: Icon(
                       Iconsax.lock_1,
-                      size: 20,
+                      size: 18,
                       color: theme.colorScheme.onSurface.withOpacity(0.3),
                     ),
                   ),
@@ -434,7 +405,7 @@ class LetterListScreen extends StatelessWidget {
   void _openLetter(
     BuildContext context,
     int letterId,
-    WritingProgressController controller,
+    WritingController controller,
     bool isCompleted,
   ) {
     final lesson = letterLessons.firstWhere(
@@ -454,7 +425,11 @@ class LetterListScreen extends StatelessWidget {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: Lesson $letterId not found')),
+        SnackBar(
+          content: Text('Error: Letter $letterId not found'),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       );
     }
   }
@@ -465,26 +440,34 @@ class LetterListScreen extends StatelessWidget {
       builder:
           (context) => AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
             ),
             title: Text(
-              "Letter Completed!",
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+              'Letter Completed!',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
             ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Lottie.asset('assets/animations/success.json', height: 100),
-                const SizedBox(height: 16),
+                Lottie.asset(
+                  'assets/animations/success.json',
+                  height: 80,
+                  width: 80,
+                ),
+                const SizedBox(height: 12),
                 Text(
-                  "Great job completing Letter $letterId!",
-                  style: GoogleFonts.poppins(),
+                  'Great job completing Letter $letterId!',
+                  style: GoogleFonts.poppins(fontSize: 14),
                   textAlign: TextAlign.center,
                 ),
                 if (letterId < letterLessons.length)
                   Text(
-                    "Letter ${letterId + 1} is now unlocked!",
+                    'Letter ${letterId + 1} is now unlocked!',
                     style: GoogleFonts.poppins(
+                      fontSize: 12,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                     textAlign: TextAlign.center,
@@ -494,58 +477,68 @@ class LetterListScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("Continue", style: GoogleFonts.poppins()),
+                child: Text(
+                  'Continue',
+                  style: GoogleFonts.poppins(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
+                  ),
+                ),
               ),
             ],
           ),
     );
   }
 
-  void _showAchievements(
-    BuildContext context,
-    WritingProgressController controller,
-  ) {
+  void _showAchievements(BuildContext context, WritingController controller) {
     showDialog(
       context: context,
       builder:
           (context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             title: Text(
-              "Your Letter Achievements",
-              style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+              'Your Letter Achievements',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+              ),
             ),
             content: SingleChildScrollView(
               child: Obx(() {
-                final completedLetterLessons =
-                    controller.completedLetterLessons;
+                final completedLetters =
+                    controller
+                        .completedLetters; // Fixed: completedLetterLessons -> completedLetters
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildAchievementItem(
                       context,
-                      "Letter Beginner",
-                      "Complete Letter 1: Complaint About Product",
-                      completedLetterLessons >= 1,
+                      'Letter Beginner',
+                      'Complete Letter 1: Complaint About Product',
+                      completedLetters >= 1,
                       Iconsax.edit_2,
                     ),
                     _buildAchievementItem(
                       context,
-                      "Formal Letter Expert",
-                      "Complete all 7 formal letters",
-                      completedLetterLessons >= 7,
+                      'Formal Letter Expert',
+                      'Complete all 7 formal letters',
+                      completedLetters >= 7,
                       Iconsax.chart_success,
                     ),
                     _buildAchievementItem(
                       context,
-                      "Informal Letter Starter",
-                      "Complete Letter 8: Inviting a Friend",
-                      completedLetterLessons >= 8,
+                      'Informal Letter Starter',
+                      'Complete Letter 8: Inviting a Friend',
+                      completedLetters >= 8,
                       Iconsax.star,
                     ),
                     _buildAchievementItem(
                       context,
-                      "Letter Master",
-                      "Complete all 14 letters",
-                      completedLetterLessons >= 14,
+                      'Letter Master',
+                      'Complete all 14 letters',
+                      completedLetters >= 14,
                       Iconsax.award,
                     ),
                   ],
@@ -555,7 +548,13 @@ class LetterListScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("Close", style: GoogleFonts.poppins()),
+                child: Text(
+                  'Close',
+                  style: GoogleFonts.poppins(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
+                  ),
+                ),
               ),
             ],
           ),
@@ -576,11 +575,13 @@ class LetterListScreen extends StatelessWidget {
             achieved
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+        size: 20,
       ),
       title: Text(
         title,
         style: GoogleFonts.poppins(
           fontWeight: FontWeight.w500,
+          fontSize: 14,
           color:
               achieved
                   ? Theme.of(context).colorScheme.onSurface
@@ -602,6 +603,7 @@ class LetterListScreen extends StatelessWidget {
               ? Icon(
                 Iconsax.verify,
                 color: Theme.of(context).colorScheme.primary,
+                size: 20,
               )
               : null,
     );

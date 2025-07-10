@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_data.dart';
 import 'package:lottie/lottie.dart';
+import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_data.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_list_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/letters/letter_screen.dart';
 
@@ -33,8 +33,11 @@ class WritingResultScreen extends StatelessWidget {
     if (currentIntId < letterLessons.length) {
       final nextLesson = letterLessons.firstWhere(
         (lesson) => lesson['intId'] == currentIntId + 1,
+        orElse: () => <String, dynamic>{},
       );
-      return LetterScreen(lessonData: nextLesson);
+      if (nextLesson.isNotEmpty) {
+        return LetterScreen(lessonData: nextLesson);
+      }
     }
     return null;
   }
@@ -46,13 +49,13 @@ class WritingResultScreen extends StatelessWidget {
       builder:
           (context) => AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
             ),
             title: Text(
-              "Congratulations!",
+              'Congratulations!',
               style: GoogleFonts.poppins(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                fontSize: 18,
               ),
             ),
             content: Column(
@@ -60,20 +63,21 @@ class WritingResultScreen extends StatelessWidget {
               children: [
                 Lottie.asset(
                   'assets/animations/success.json',
-                  height: 120,
+                  height: 100,
+                  width: 100,
                   repeat: false,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Text(
-                  "You've completed all ${letterLessons.length} letter lessons!",
-                  style: GoogleFonts.poppins(fontSize: 16, height: 1.5),
+                  'You\'ve completed all ${letterLessons.length} letter lessons!',
+                  style: GoogleFonts.poppins(fontSize: 14, height: 1.5),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Amazing work mastering IELTS Writing Task 1!",
+                  'Amazing work mastering IELTS Writing Task 1!',
                   style: GoogleFonts.poppins(
-                    fontSize: 14,
+                    fontSize: 12,
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   textAlign: TextAlign.center,
@@ -83,7 +87,7 @@ class WritingResultScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const LetterListScreen(),
@@ -91,10 +95,11 @@ class WritingResultScreen extends StatelessWidget {
                   );
                 },
                 child: Text(
-                  "Back to Letter List",
+                  'Back to Letter List',
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.primary,
+                    fontSize: 14,
                   ),
                 ),
               ),
@@ -107,7 +112,7 @@ class WritingResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final isHighScore = score >= 7.0;
-    final isLetterLesson = taskType == "Letter";
+    final isLetterLesson = taskType.toLowerCase().contains('letter');
     final points = isLetterLesson && wordCount > 0 ? wordCount ~/ 5 : 0;
 
     if (isLetterLesson && lessonData['intId'] == letterLessons.length) {
@@ -121,28 +126,28 @@ class WritingResultScreen extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.topRight,
-            radius: 1.5,
+            radius: 1.8,
             colors: [
-              colorScheme.primary.withOpacity(0.1),
-              colorScheme.primary.withOpacity(0.05),
+              colorScheme.primary.withOpacity(0.08),
+              colorScheme.primary.withOpacity(0.03),
               Colors.transparent,
             ],
-            stops: const [0.1, 0.4, 1.0],
+            stops: const [0.1, 0.5, 1.0],
           ),
         ),
         child: Stack(
           children: [
             Positioned(
-              top: -50,
-              right: -50,
+              top: -40,
+              right: -40,
               child: Container(
-                width: 200,
-                height: 200,
+                width: 160,
+                height: 160,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     colors: [
-                      colorScheme.primary.withOpacity(0.15),
+                      colorScheme.primary.withOpacity(0.1),
                       Colors.transparent,
                     ],
                     begin: Alignment.topCenter,
@@ -154,10 +159,10 @@ class WritingResultScreen extends StatelessWidget {
             Column(
               children: [
                 Container(
-                  padding: const EdgeInsets.fromLTRB(16, 40, 16, 16),
-                  decoration: const BoxDecoration(
+                  padding: const EdgeInsets.fromLTRB(16, 48, 16, 12),
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF3E1E68), Color(0xFF6A5AE0)],
+                      colors: [Colors.blue[800]!, Colors.blue[600]!],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -169,13 +174,15 @@ class WritingResultScreen extends StatelessWidget {
                         icon: const Icon(
                           Icons.arrow_back_rounded,
                           color: Colors.white,
+                          size: 24,
                         ),
                         onPressed: () => Navigator.pop(context),
+                        tooltip: 'Back',
                       ),
                       Text(
-                        "Writing Result",
+                        'Writing Result',
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -186,93 +193,114 @@ class WritingResultScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
                         FadeInUp(
                           delay: const Duration(milliseconds: 100),
+                          duration: const Duration(milliseconds: 600),
                           child: GlassCard(
-                            child: Padding(
-                              padding: const EdgeInsets.all(24),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "Your IELTS Writing Score",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.8,
-                                      ),
+                            borderRadius: 12,
+                            padding: 16,
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Your IELTS Writing Score',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.8,
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      SizedBox(
-                                        width: 180,
-                                        height: 180,
-                                        child: CircularProgressIndicator(
-                                          value: score / 9.0,
-                                          strokeWidth: 12,
-                                          backgroundColor: colorScheme.surface
-                                              .withOpacity(0.3),
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                isHighScore
-                                                    ? const Color(0xFF4CAF50)
-                                                    : const Color(0xFF2196F3),
-                                              ),
-                                        ),
+                                ),
+                                const SizedBox(height: 12),
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 160,
+                                      height: 160,
+                                      child: CircularProgressIndicator(
+                                        value: score / 9.0,
+                                        strokeWidth: 10,
+                                        backgroundColor: colorScheme.surface
+                                            .withOpacity(0.2),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              isHighScore
+                                                  ? Colors.green[600]!
+                                                  : Colors.blue[600]!,
+                                            ),
                                       ),
+                                    ),
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          score.toStringAsFixed(1),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 40,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.onSurface,
+                                          ),
+                                        ),
+                                        Text(
+                                          'Band Score',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            color: colorScheme.onSurface
+                                                .withOpacity(0.6),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.surface.withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
                                       Column(
-                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            score.toStringAsFixed(1),
+                                            'Task Type',
                                             style: GoogleFonts.poppins(
-                                              fontSize: 48,
-                                              fontWeight: FontWeight.bold,
-                                              color: colorScheme.onSurface,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Band Score",
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
+                                              fontSize: 12,
                                               color: colorScheme.onSurface
                                                   .withOpacity(0.6),
                                             ),
                                           ),
+                                          Text(
+                                            taskType,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 24),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.surface.withOpacity(
-                                        0.3,
-                                      ),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          if (wordCount > 0) ...[
                                             Text(
-                                              "Task Type",
+                                              'Word Count',
                                               style: GoogleFonts.poppins(
                                                 fontSize: 12,
                                                 color: colorScheme.onSurface
@@ -280,215 +308,164 @@ class WritingResultScreen extends StatelessWidget {
                                               ),
                                             ),
                                             Text(
-                                              taskType,
+                                              '$wordCount',
                                               style: GoogleFonts.poppins(
-                                                fontSize: 16,
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                           ],
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            if (wordCount > 0) ...[
-                                              Text(
-                                                "Word Count",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  color: colorScheme.onSurface
-                                                      .withOpacity(0.6),
-                                                ),
+                                          if (isLetterLesson &&
+                                              wordCount > 0) ...[
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Points Earned',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                color: colorScheme.onSurface
+                                                    .withOpacity(0.6),
                                               ),
-                                              Text(
-                                                "$wordCount",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                            ),
+                                            Text(
+                                              '$points',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: colorScheme.primary,
                                               ),
-                                            ],
-                                            if (isLetterLesson && wordCount > 0)
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    "Points Earned",
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 12,
-                                                      color: colorScheme
-                                                          .onSurface
-                                                          .withOpacity(0.6),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "$points",
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color:
-                                                          colorScheme.primary,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                            ),
                                           ],
-                                        ),
-                                      ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 600),
+                          child: GlassCard(
+                            borderRadius: 12,
+                            padding: 16,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/icons/feedback.svg',
+                                      width: 20,
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Expert Feedback',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: colorScheme.onSurface,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  feedback,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 13,
+                                    height: 1.5,
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.8,
                                     ),
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 600),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color:
+                                  isHighScore
+                                      ? Colors.green[600]!.withOpacity(0.1)
+                                      : Colors.blue[600]!.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color:
+                                    isHighScore
+                                        ? Colors.green[600]!.withOpacity(0.2)
+                                        : Colors.blue[600]!.withOpacity(0.2),
                               ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  isHighScore
+                                      ? Icons.celebration_rounded
+                                      : Icons.lightbulb_outline_rounded,
+                                  color:
+                                      isHighScore
+                                          ? Colors.green[600]
+                                          : Colors.blue[600],
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    isHighScore
+                                        ? 'Excellent! Your score meets most university requirements.'
+                                        : 'Good attempt! Focus on the feedback to improve further.',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                          isHighScore
+                                              ? Colors.green[600]
+                                              : Colors.blue[600],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                         const SizedBox(height: 24),
                         FadeInUp(
-                          delay: const Duration(milliseconds: 200),
-                          child: GlassCard(
-                            child: Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/icons/feedback.svg',
-                                        width: 24,
-                                        color: colorScheme.primary,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        "Expert Feedback",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    feedback,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      height: 1.6,
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.8,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        if (isHighScore)
-                          FadeInUp(
-                            delay: const Duration(milliseconds: 300),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF4CAF50).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: const Color(
-                                    0xFF4CAF50,
-                                  ).withOpacity(0.3),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.celebration_rounded,
-                                    color: Color(0xFF4CAF50),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      "Excellent! Your score meets most university requirements.",
-                                      style: GoogleFonts.poppins(
-                                        color: const Color(0xFF4CAF50),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        else
-                          FadeInUp(
-                            delay: const Duration(milliseconds: 300),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF2196F3).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: const Color(
-                                    0xFF2196F3,
-                                  ).withOpacity(0.3),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.lightbulb_outline_rounded,
-                                    color: Color(0xFF2196F3),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      "Good attempt! Focus on the feedback to improve further.",
-                                      style: GoogleFonts.poppins(
-                                        color: const Color(0xFF2196F3),
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        const SizedBox(height: 32),
-                        FadeInUp(
                           delay: const Duration(milliseconds: 400),
+                          duration: const Duration(milliseconds: 600),
                           child: Row(
                             children: [
                               Expanded(
                                 child: ElevatedButton(
                                   onPressed: () {
                                     final nextLesson = getNextLessonWidget();
-                                    if (nextLesson != null) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => nextLesson,
-                                        ),
-                                      );
-                                    } else {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (_) => const LetterListScreen(),
-                                        ),
-                                      );
-                                    }
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) =>
+                                                nextLesson ??
+                                                const LetterListScreen(),
+                                      ),
+                                    );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: colorScheme.primary,
+                                    foregroundColor: colorScheme.onPrimary,
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 16,
+                                      vertical: 14,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
                                     elevation: 0,
                                   ),
@@ -497,17 +474,17 @@ class WritingResultScreen extends StatelessWidget {
                                     children: [
                                       const Icon(
                                         Icons.arrow_forward_rounded,
-                                        size: 20,
+                                        size: 18,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
                                         lessonData['intId'] ==
                                                 letterLessons.length
-                                            ? "Back to Letter List"
-                                            : "Next Lesson",
+                                            ? 'Back to Letter List'
+                                            : 'Next Lesson',
                                         style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.w500,
-                                          color: colorScheme.onPrimary,
+                                          fontSize: 14,
                                         ),
                                       ),
                                     ],
@@ -517,12 +494,13 @@ class WritingResultScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         FadeInUp(
                           delay: const Duration(milliseconds: 500),
+                          duration: const Duration(milliseconds: 600),
                           child: TextButton(
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => getCurrentLessonWidget(),
@@ -530,10 +508,11 @@ class WritingResultScreen extends StatelessWidget {
                               );
                             },
                             child: Text(
-                              "Try Again",
+                              'Try Again',
                               style: GoogleFonts.poppins(
-                                color: colorScheme.primary,
                                 fontWeight: FontWeight.w500,
+                                color: colorScheme.primary,
+                                fontSize: 14,
                               ),
                             ),
                           ),
@@ -559,7 +538,7 @@ class GlassCard extends StatelessWidget {
   const GlassCard({
     super.key,
     required this.child,
-    this.borderRadius = 20,
+    this.borderRadius = 12,
     this.padding = 0,
   });
 
@@ -570,22 +549,23 @@ class GlassCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            spreadRadius: 2,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
           child: Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
-                color: Theme.of(context).colorScheme.surface.withOpacity(0.2),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.15),
                 width: 1,
               ),
             ),

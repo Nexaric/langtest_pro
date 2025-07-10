@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading_controller.dart';
 import 'lesson_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 
@@ -51,253 +51,53 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
   ];
 
   final List<Map<String, dynamic>> lessons = [
-    {
-      'title': 'Lesson 1: The Origins of Human Language',
-      'progress': 0.0,
-      'isLocked': false,
-      'lessonId': 1,
-    },
-    {
-      'title': 'Lesson 2: The Rise of Urban Farming',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 2,
-    },
-    {
-      'title': 'Lesson 3: Understanding Ecosystems',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 3,
-    },
-    {
-      'title': 'Lesson 4: History of the Printing Press',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 4,
-    },
-    {
-      'title': 'Lesson 5: The Psychology of Color',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 5,
-    },
-    {
-      'title': 'Lesson 6: The Global Water Crisis',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 6,
-    },
-    {
-      'title': 'Lesson 7: Space Exploration and Satellites',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 7,
-    },
-    {
-      'title': 'Lesson 8: Marine Life in Deep Oceans',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 8,
-    },
-    {
-      'title': 'Lesson 9: Innovations in Agriculture',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 9,
-    },
-    {
-      'title': 'Lesson 10: The Rise of Artificial Intelligence',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 10,
-    },
-    {
-      'title': 'Lesson 11: Climate Change and Its Impact',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 11,
-    },
-    {
-      'title': 'Lesson 12: The Science of Memory',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 12,
-    },
-    {
-      'title': 'Lesson 13: Ancient Egyptian Engineering',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 13,
-    },
-    {
-      'title': 'Lesson 14: The Story of Flight',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 14,
-    },
-    {
-      'title': 'Lesson 15: Ocean Currents and Weather Patterns',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 15,
-    },
-    {
-      'title': 'Lesson 16: Endangered Languages',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 16,
-    },
-    {
-      'title': 'Lesson 17: Renewable Energy Sources',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 17,
-    },
-    {
-      'title': 'Lesson 18: The Internet and Education',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 18,
-    },
-    {
-      'title': 'Lesson 19: Robotic Surgery',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 19,
-    },
-    {
-      'title': 'Lesson 20: The Science of Sleep',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 20,
-    },
-    {
-      'title': 'Lesson 21: History of Timekeeping',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 21,
-    },
-    {
-      'title': 'Lesson 22: The Human Brain',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 22,
-    },
-    {
-      'title': 'Lesson 23: Urban Planning and Green Cities',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 23,
-    },
-    {
-      'title': 'Lesson 24: Plastic Pollution in the Oceans',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 24,
-    },
-    {
-      'title': 'Lesson 25: The Evolution of Music',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 25,
-    },
-    {
-      'title': 'Lesson 26: The Industrial Revolution',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 26,
-    },
-    {
-      'title': 'Lesson 27: The Future of Transportation',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 27,
-    },
-    {
-      'title': 'Lesson 28: How Volcanoes Work',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 28,
-    },
-    {
-      'title': 'Lesson 29: The World of Microorganisms',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 29,
-    },
-    {
-      'title': 'Lesson 30: Space Tourism',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 30,
-    },
-    {
-      'title': 'Lesson 31: Animal Intelligence',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 31,
-    },
-    {
-      'title': 'Lesson 32: Renewable vs Non-renewable Energy',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 32,
-    },
-    {
-      'title': 'Lesson 33: Artificial Photosynthesis',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 33,
-    },
-    {
-      'title': 'Lesson 34: Climate Migration',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 34,
-    },
-    {
-      'title': 'Lesson 35: The Structure of DNA',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 35,
-    },
-    {
-      'title': 'Lesson 36: Historical Trade Routes',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 36,
-    },
-    {
-      'title': 'Lesson 37: Pollution and Public Health',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 37,
-    },
-    {
-      'title': 'Lesson 38: The Deep Web',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 38,
-    },
-    {
-      'title': 'Lesson 39: Architecture of the Future',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 39,
-    },
-    {
-      'title': 'Lesson 40: Space-Time and Relativity',
-      'progress': 0.0,
-      'isLocked': true,
-      'lessonId': 40,
-    },
+    {'title': 'Lesson 1: The Origins of Human Language', 'lessonId': 1},
+    {'title': 'Lesson 2: The Rise of Urban Farming', 'lessonId': 2},
+    {'title': 'Lesson 3: Understanding Ecosystems', 'lessonId': 3},
+    {'title': 'Lesson 4: History of the Printing Press', 'lessonId': 4},
+    {'title': 'Lesson 5: The Psychology of Color', 'lessonId': 5},
+    {'title': 'Lesson 6: The Global Water Crisis', 'lessonId': 6},
+    {'title': 'Lesson 7: Space Exploration and Satellites', 'lessonId': 7},
+    {'title': 'Lesson 8: Marine Life in Deep Oceans', 'lessonId': 8},
+    {'title': 'Lesson 9: Innovations in Agriculture', 'lessonId': 9},
+    {'title': 'Lesson 10: The Rise of Artificial Intelligence', 'lessonId': 10},
+    {'title': 'Lesson 11: Climate Change and Its Impact', 'lessonId': 11},
+    {'title': 'Lesson 12: The Science of Memory', 'lessonId': 12},
+    {'title': 'Lesson 13: Ancient Egyptian Engineering', 'lessonId': 13},
+    {'title': 'Lesson 14: The Story of Flight', 'lessonId': 14},
+    {'title': 'Lesson 15: Ocean Currents and Weather Patterns', 'lessonId': 15},
+    {'title': 'Lesson 16: Endangered Languages', 'lessonId': 16},
+    {'title': 'Lesson 17: Renewable Energy Sources', 'lessonId': 17},
+    {'title': 'Lesson 18: The Internet and Education', 'lessonId': 18},
+    {'title': 'Lesson 19: Robotic Surgery', 'lessonId': 19},
+    {'title': 'Lesson 20: The Science of Sleep', 'lessonId': 20},
+    {'title': 'Lesson 21: History of Timekeeping', 'lessonId': 21},
+    {'title': 'Lesson 22: The Human Brain', 'lessonId': 22},
+    {'title': 'Lesson 23: Urban Planning and Green Cities', 'lessonId': 23},
+    {'title': 'Lesson 24: Plastic Pollution in the Oceans', 'lessonId': 24},
+    {'title': 'Lesson 25: The Evolution of Music', 'lessonId': 25},
+    {'title': 'Lesson 26: The Industrial Revolution', 'lessonId': 26},
+    {'title': 'Lesson 27: The Future of Transportation', 'lessonId': 27},
+    {'title': 'Lesson 28: How Volcanoes Work', 'lessonId': 28},
+    {'title': 'Lesson 29: The World of Microorganisms', 'lessonId': 29},
+    {'title': 'Lesson 30: Space Tourism', 'lessonId': 30},
+    {'title': 'Lesson 31: Animal Intelligence', 'lessonId': 31},
+    {'title': 'Lesson 32: Renewable vs Non-renewable Energy', 'lessonId': 32},
+    {'title': 'Lesson 33: Artificial Photosynthesis', 'lessonId': 33},
+    {'title': 'Lesson 34: Climate Migration', 'lessonId': 34},
+    {'title': 'Lesson 35: The Structure of DNA', 'lessonId': 35},
+    {'title': 'Lesson 36: Historical Trade Routes', 'lessonId': 36},
+    {'title': 'Lesson 37: Pollution and Public Health', 'lessonId': 37},
+    {'title': 'Lesson 38: The Deep Web', 'lessonId': 38},
+    {'title': 'Lesson 39: Architecture of the Future', 'lessonId': 39},
+    {'title': 'Lesson 40: Space-Time and Relativity', 'lessonId': 40},
   ];
 
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ReadingProgressController>()) {
-      Get.put(ReadingProgressController());
+    if (!Get.isRegistered<ReadingController>()) {
+      Get.put(ReadingController());
     }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
@@ -309,6 +109,14 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );
+    _markFirstLessonAccessible();
+  }
+
+  Future<void> _markFirstLessonAccessible() async {
+    final controller = Get.find<ReadingController>();
+    if (controller.isAuthenticated) {
+      await controller.markAcademicLessonAsOpened(1);
+    }
   }
 
   @override
@@ -355,7 +163,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                   ),
                 ),
                 centerTitle: true,
-                backgroundColor: Color(0xFF402175),
+                backgroundColor: _gradientStart,
                 elevation: 0,
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -375,138 +183,156 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                 toolbarHeight: kToolbarHeight,
               ),
               const SliverPadding(padding: EdgeInsets.only(top: 10)),
-              GetBuilder<ReadingProgressController>(
-                builder: (progressController) {
-                  if (progressController.isLoading) {
-                    return const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
+              Obx(() {
+                final progressController = Get.find<ReadingController>();
+                if (progressController.isLoading) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
 
-                  if (progressController.hasError) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              progressController.errorMessage ??
-                                  'Error loading progress',
-                              textAlign: TextAlign.center,
+                if (progressController.hasError) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            progressController.errorMessage,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              color: _textLight,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () async {
+                              await progressController.refreshProgress();
+                              setState(() {});
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: _accentColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: Text(
+                              'Retry',
                               style: GoogleFonts.poppins(
-                                fontSize: 16,
+                                fontSize: 14,
                                 color: _textLight,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await progressController.restoreFromCloud();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: _accentColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              child: Text(
-                                'Retry',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  color: _textLight,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    );
-                  }
-
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((
-                        context,
-                        sectionIndex,
-                      ) {
-                        final section = _sections[sectionIndex];
-                        final startIndex = section["start"] - 1;
-                        final endIndex = section["end"] - 1;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    section["title"],
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: _textLight,
-                                    ),
-                                  ),
-                                  Text(
-                                    section["description"],
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: _textLight.withOpacity(0.7),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (section["start"] > 10)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  "Note: Lessons ${section["start"]}–${section["end"]} are under development and use placeholder content.",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: _textLight.withOpacity(0.8),
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 20,
-                                    mainAxisSpacing: 20,
-                                    childAspectRatio: 0.85,
-                                  ),
-                              itemCount: endIndex - startIndex + 1,
-                              itemBuilder: (context, index) {
-                                final lessonIndex = startIndex + index;
-                                final lesson = lessons[lessonIndex];
-
-                                return FadeInUp(
-                                  delay: Duration(milliseconds: 100 * index),
-                                  child: _buildLessonCard(
-                                    context,
-                                    lesson: lesson,
-                                    lessonIndex: lessonIndex,
-                                    progressController: progressController,
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        );
-                      }, childCount: _sections.length),
                     ),
                   );
-                },
-              ),
+                }
+
+                return SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((
+                      context,
+                      sectionIndex,
+                    ) {
+                      final section = _sections[sectionIndex];
+                      final startIndex = section["start"] - 1;
+                      final endIndex = section["end"] - 1;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  section["title"],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: _textLight,
+                                  ),
+                                ),
+                                Text(
+                                  section["description"],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: _textLight.withOpacity(0.7),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (section["start"] > 10)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                "Note: Lessons ${section["start"]}–${section["end"]} are under development and use placeholder content.",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: _textLight.withOpacity(0.8),
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 20,
+                                  mainAxisSpacing: 20,
+                                  childAspectRatio: 0.85,
+                                ),
+                            itemCount: endIndex - startIndex + 1,
+                            itemBuilder: (context, index) {
+                              final lessonIndex = startIndex + index;
+                              final lesson = lessons[lessonIndex];
+                              return FutureBuilder<bool>(
+                                future: progressController
+                                    .isAcademicLessonAccessible(
+                                      lessonIndex + 1,
+                                    ),
+                                builder: (context, snapshot) {
+                                  final isLocked =
+                                      snapshot.data == false ||
+                                      !snapshot.hasData;
+                                  final progress =
+                                      progressController
+                                          .getAcademicLessonProgress(
+                                            lessonIndex + 1,
+                                          )
+                                          .toDouble() /
+                                      100;
+                                  return FadeInUp(
+                                    delay: Duration(milliseconds: 100 * index),
+                                    child: _buildLessonCard(
+                                      context,
+                                      lesson: lesson,
+                                      lessonIndex: lessonIndex,
+                                      progressController: progressController,
+                                      isLocked: isLocked,
+                                      progress: progress,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    }, childCount: _sections.length),
+                  ),
+                );
+              }),
             ],
           ),
         ),
@@ -518,17 +344,11 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
     BuildContext context, {
     required Map<String, dynamic> lesson,
     required int lessonIndex,
-    required ReadingProgressController progressController,
+    required ReadingController progressController,
+    required bool isLocked,
+    required double progress,
   }) {
     final lessonNumber = lessonIndex + 1;
-    final isLocked =
-        !progressController.isAcademicLessonAccessible(lessonNumber);
-    final progress =
-        lessonNumber <= progressController.completedAcademicLessons
-            ? 1.0
-            : (lessonNumber == progressController.completedAcademicLessons + 1
-                ? progressController.currentLessonProgress
-                : 0.0);
     final lessonId = lesson['lessonId'] as int?;
 
     return Material(
@@ -566,7 +386,10 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
           onTap:
               isLocked || lessonId == null
                   ? null
-                  : () {
+                  : () async {
+                    await progressController.markAcademicLessonAsOpened(
+                      lessonId,
+                    );
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -574,13 +397,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                             (context) => LessonScreen(
                               lessonId: lessonId,
                               onComplete: () async {
-                                await progressController.completeAcademicLesson(
-                                  lessonId: lessonId,
-                                  score:
-                                      progressController
-                                          .academicLessonScores[lessonId] ??
-                                      '0/0',
-                                );
+                                await progressController.refreshProgress();
                                 setState(() {});
                               },
                             ),

@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:langtest_pro/controller/payments/payment_controller.dart';
 import 'package:langtest_pro/model/payments_model.dart';
-import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/utils/utils.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/profile/profile_screen.dart';

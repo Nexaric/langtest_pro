@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
+import 'package:langtest_pro/controller/writing_controller.dart';
 
 class FeedbackScreen extends StatelessWidget {
   const FeedbackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final progressController = Get.find<WritingProgressController>();
+    final progressController = Get.find<WritingController>();
     return Obx(() {
       final writingProgress = progressController.completedLessons;
-      final letterProgress = progressController.completedLetterLessons;
+      final letterProgress =
+          progressController
+              .completedLetters; // Fixed: completedLetterLessons -> completedLetters
       final totalProgress = writingProgress + letterProgress;
-      final totalLessons = WritingProgressController.totalLessons;
+      final totalLessons = WritingController.totalLessons;
 
       return Scaffold(
         body: Container(
@@ -52,7 +54,7 @@ class FeedbackScreen extends StatelessWidget {
                               "Your Progress & Feedback",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
@@ -70,7 +72,7 @@ class FeedbackScreen extends StatelessWidget {
                       child: Text(
                         "Your Writing Journey",
                         style: GoogleFonts.poppins(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -86,15 +88,15 @@ class FeedbackScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.3),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 20,
-                              spreadRadius: 2,
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 15,
+                              spreadRadius: 1,
                             ),
                           ],
                         ),
@@ -104,7 +106,7 @@ class FeedbackScreen extends StatelessWidget {
                               child: Text(
                                 "Overall Progress",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -115,11 +117,11 @@ class FeedbackScreen extends StatelessWidget {
                               alignment: Alignment.center,
                               children: [
                                 SizedBox(
-                                  width: 150,
-                                  height: 150,
+                                  width: 140,
+                                  height: 140,
                                   child: CircularProgressIndicator(
                                     value: totalProgress / totalLessons,
-                                    strokeWidth: 12,
+                                    strokeWidth: 10,
                                     backgroundColor: Colors.white.withOpacity(
                                       0.2,
                                     ),
@@ -133,7 +135,7 @@ class FeedbackScreen extends StatelessWidget {
                                       Text(
                                         "${((totalProgress / totalLessons) * 100).toStringAsFixed(0)}%",
                                         style: GoogleFonts.poppins(
-                                          fontSize: 32,
+                                          fontSize: 28,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -141,7 +143,7 @@ class FeedbackScreen extends StatelessWidget {
                                       Text(
                                         "$totalProgress / $totalLessons",
                                         style: GoogleFonts.poppins(
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           color: Colors.white.withOpacity(0.8),
                                         ),
                                       ),
@@ -165,7 +167,7 @@ class FeedbackScreen extends StatelessWidget {
                           Expanded(
                             child: _buildProgressCard(
                               "Writing Lessons",
-                              "$writingProgress / ${WritingProgressController.totalWritingLessons}",
+                              "$writingProgress / ${WritingController.totalWritingLessons}",
                               Colors.blueAccent,
                             ),
                           ),
@@ -173,7 +175,7 @@ class FeedbackScreen extends StatelessWidget {
                           Expanded(
                             child: _buildProgressCard(
                               "Letter Lessons",
-                              "$letterProgress / ${WritingProgressController.totalLetterLessons}",
+                              "$letterProgress / ${WritingController.totalLetterLessons}",
                               Colors.greenAccent,
                             ),
                           ),
@@ -191,7 +193,7 @@ class FeedbackScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.3),
                           ),
@@ -212,7 +214,7 @@ class FeedbackScreen extends StatelessWidget {
                                   child: Icon(
                                     Icons.feedback_rounded,
                                     color: Colors.orange.shade200,
-                                    size: 28,
+                                    size: 24,
                                   ),
                                 ),
                                 const SizedBox(width: 10),
@@ -220,7 +222,7 @@ class FeedbackScreen extends StatelessWidget {
                                   child: Text(
                                     "Recent Feedback",
                                     style: GoogleFonts.poppins(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white,
                                     ),
@@ -238,7 +240,7 @@ class FeedbackScreen extends StatelessWidget {
                                     ? "Great start! Try completing more letter lessons to improve your score."
                                     : "Excellent progress! Keep practicing to maintain your high performance.",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   color: Colors.white.withOpacity(0.9),
                                   height: 1.6,
                                 ),
@@ -258,7 +260,7 @@ class FeedbackScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: Colors.white.withOpacity(0.3),
                           ),
@@ -269,7 +271,7 @@ class FeedbackScreen extends StatelessWidget {
                               child: const Icon(
                                 Icons.auto_awesome_rounded,
                                 color: Colors.amber,
-                                size: 36,
+                                size: 32,
                               ),
                             ),
                             const SizedBox(height: 15),
@@ -277,7 +279,7 @@ class FeedbackScreen extends StatelessWidget {
                               "Every word you write brings you closer to mastery!",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
-                                fontSize: 18,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.white,
                                 fontStyle: FontStyle.italic,
@@ -304,7 +306,7 @@ class FeedbackScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.white.withOpacity(0.3)),
           boxShadow: [
             BoxShadow(
@@ -320,7 +322,7 @@ class FeedbackScreen extends StatelessWidget {
               child: Text(
                 title,
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Colors.white.withOpacity(0.9),
                 ),
               ),
@@ -331,7 +333,7 @@ class FeedbackScreen extends StatelessWidget {
               child: Text(
                 progress,
                 style: GoogleFonts.poppins(
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: color,
                 ),

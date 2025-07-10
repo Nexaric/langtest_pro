@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:langtest_pro/controller/writing_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/lesson_list_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_screen.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
 
 class LessonResult extends StatefulWidget {
   final int academicWordCount;
@@ -34,6 +35,11 @@ class _LessonResultState extends State<LessonResult>
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
+    _animationController.forward();
+  }
+
+  void _initializeAnimations() {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -69,8 +75,6 @@ class _LessonResultState extends State<LessonResult>
         curve: const Interval(0.6, 1.0, curve: Curves.easeOut),
       ),
     );
-
-    _animationController.forward();
   }
 
   @override
@@ -115,16 +119,16 @@ class _LessonResultState extends State<LessonResult>
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
                 ),
                 const Spacer(),
                 Text(
                   '$wordCount words',
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: Colors.grey[600],
                     fontWeight: FontWeight.w500,
@@ -136,54 +140,54 @@ class _LessonResultState extends State<LessonResult>
             Stack(
               children: [
                 Container(
-                  height: 12,
+                  height: 10,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(4),
                   ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 800),
-                        curve: Curves.easeOutQuart,
-                        width: constraints.maxWidth * progress,
-                        height: 12,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors:
-                                wordCount >= 150
-                                    ? [Colors.teal[400]!, Colors.teal[600]!]
-                                    : [Colors.amber[400]!, Colors.amber[600]!],
-                          ),
-                          borderRadius: BorderRadius.circular(6),
-                          boxShadow: [
-                            BoxShadow(
-                              color: (wordCount >= 150
-                                      ? Colors.teal
-                                      : Colors.amber)
-                                  .withOpacity(0.3),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                ),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 800),
+                  curve: Curves.easeOutQuart,
+                  width: MediaQuery.of(context).size.width * 0.9 * progress,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors:
+                          wordCount >= 150
+                              ? [Colors.teal[400]!, Colors.teal[600]!]
+                              : [Colors.amber[400]!, Colors.amber[600]!],
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (wordCount >= 150 ? Colors.teal : Colors.amber)
+                            .withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Row(
               children: [
                 Text(
                   '${(progress * 100).round()}% of target',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
                 ),
                 const Spacer(),
                 Text(
                   'Goal: 150 words',
-                  style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
                 ),
               ],
             ),
@@ -196,7 +200,6 @@ class _LessonResultState extends State<LessonResult>
   Widget _buildScoreCircle(int wordCount, String label) {
     final progress = _getProgress(wordCount);
     final color = wordCount >= 150 ? Colors.teal : Colors.amber;
-
     return AnimatedBuilder(
       animation: _progressAnimation,
       builder: (context, child) {
@@ -211,8 +214,8 @@ class _LessonResultState extends State<LessonResult>
             alignment: Alignment.center,
             children: [
               SizedBox(
-                width: 84,
-                height: 84,
+                width: 90,
+                height: 90,
                 child: CircularProgressIndicator(
                   value: progress * _progressAnimation.value,
                   strokeWidth: 8,
@@ -225,15 +228,18 @@ class _LessonResultState extends State<LessonResult>
                 children: [
                   Text(
                     wordCount.toString(),
-                    style: TextStyle(
-                      fontSize: 24,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: color,
+                      color: Colors.blue[800],
                     ),
                   ),
                   Text(
                     label,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      color: Colors.grey[500],
+                    ),
                   ),
                 ],
               ),
@@ -246,16 +252,16 @@ class _LessonResultState extends State<LessonResult>
 
   Widget _buildTipItem(String title, String description) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.only(top: 4, right: 12),
-            width: 8,
-            height: 8,
+            margin: const EdgeInsets.only(top: 4, right: 8),
+            width: 6,
+            height: 6,
             decoration: BoxDecoration(
-              color: Colors.purple[400],
+              color: Colors.blue[400],
               shape: BoxShape.circle,
             ),
           ),
@@ -265,12 +271,15 @@ class _LessonResultState extends State<LessonResult>
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
                 ),
               ],
             ),
@@ -288,13 +297,13 @@ class _LessonResultState extends State<LessonResult>
       appBar: AppBar(
         title: Text(
           "Lesson $lessonNumber",
-          style: const TextStyle(fontWeight: FontWeight.w600),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
         ),
       ),
       body: Center(
         child: Text(
           "Lesson $lessonNumber content not found",
-          style: const TextStyle(fontSize: 18),
+          style: GoogleFonts.poppins(fontSize: 14),
         ),
       ),
     );
@@ -311,7 +320,7 @@ class _LessonResultState extends State<LessonResult>
         cardTheme: theme.cardTheme.copyWith(
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           margin: EdgeInsets.zero,
         ),
@@ -321,13 +330,13 @@ class _LessonResultState extends State<LessonResult>
         appBar: AppBar(
           title: Text(
             'Lesson ${widget.lessonNumber} Results',
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
           ),
           centerTitle: true,
-          backgroundColor: const Color(0xFF3949AB),
+          backgroundColor: Colors.blue[800],
           elevation: 0,
           automaticallyImplyLeading: false,
           iconTheme: const IconThemeData(color: Colors.white),
@@ -340,49 +349,51 @@ class _LessonResultState extends State<LessonResult>
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  // Header Card
                   AnimatedBuilder(
                     animation: _headerColorAnimation,
                     builder: (context, child) {
                       return Card(
                         color: _headerColorAnimation.value,
                         child: Padding(
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(20),
                           child: Column(
                             children: [
                               Icon(
                                 isSuccess
                                     ? Icons.celebration
                                     : Icons.auto_awesome,
-                                size: 48,
-                                color: isSuccess ? Colors.teal : Colors.amber,
+                                size: 36,
+                                color:
+                                    isSuccess
+                                        ? Colors.teal[600]
+                                        : Colors.amber[600],
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 8),
                               Text(
                                 isSuccess ? 'Great Work!' : 'Keep Practicing!',
-                                style: const TextStyle(
-                                  fontSize: 24,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
                                 ),
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 8),
                               Text(
                                 _getFeedback(widget.academicWordCount),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[700],
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
                                   height: 1.5,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 6),
                               Text(
                                 _getSubFeedback(widget.academicWordCount),
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.grey[500],
                                   fontStyle: FontStyle.italic,
                                 ),
                               ),
@@ -392,9 +403,7 @@ class _LessonResultState extends State<LessonResult>
                       );
                     },
                   ),
-                  const SizedBox(height: 24),
-
-                  // Score Circles
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -403,192 +412,164 @@ class _LessonResultState extends State<LessonResult>
                         _buildScoreCircle(widget.generalWordCount, 'General'),
                     ],
                   ),
-                  const SizedBox(height: 24),
-
-                  // Progress Section
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Writing Progress',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Track your progress toward IELTS writing goals',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          _buildProgressIndicator(
-                            widget.academicWordCount,
-                            'Academic Writing',
-                          ),
-                          if (widget.generalWordCount > 0) ...[
-                            const SizedBox(height: 24),
-                            _buildProgressIndicator(
-                              widget.generalWordCount,
-                              'General Writing',
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Tips Section
-                  if (widget.academicWordCount < 150)
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.lightbulb_outline,
-                                  color: Colors.purple[400],
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Quick Tips',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            _buildTipItem(
-                              'Add examples',
-                              'Support each main point with a specific example',
-                            ),
-                            _buildTipItem(
-                              'Explain fully',
-                              'Don\'t assume the reader knows what you mean',
-                            ),
-                            _buildTipItem(
-                              'Use transitions',
-                              'Words like "however" and "furthermore" add length',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 24),
-
-                  // Action Buttons
-                  Row(
-                    children: [
-                      // Review Button - Goes back to current lesson
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {
-                            HapticFeedback.lightImpact();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        _getLessonScreen(widget.lessonNumber),
-                              ),
-                            );
-                          },
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            side: BorderSide(
-                              color: Colors.purple[200]!,
-                              width: 1.5,
-                            ),
-                            backgroundColor: Colors.white,
-                          ),
-                          child: Text(
-                            'Review Again',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.purple[700],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-
-                      // Next Lesson Button - Goes to next lesson or lesson list
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            HapticFeedback.lightImpact();
-                            final progressController =
-                                Get.find<WritingProgressController>();
-
-                            // Mark current lesson as completed
-                            progressController.completeLesson(
-                              widget.lessonNumber,
-                            );
-
-                            if (isLastLesson) {
-                              // If last lesson, go back to lesson list
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const LessonListScreen(),
-                                ),
-                              );
-                            } else {
-                              // Go to next lesson
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => _getLessonScreen(
-                                        widget.lessonNumber + 1,
-                                      ),
-                                ),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.purple[600],
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 2,
-                            shadowColor: Colors.purple.withOpacity(0.3),
-                          ),
-                          child: Text(
-                            isLastLesson ? 'Finish Course' : 'Next Lesson',
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
+                  _buildProgressSection(),
+                  if (widget.academicWordCount < 150) _buildTipsSection(),
+                  const SizedBox(height: 16),
+                  _buildActionButtons(isLastLesson),
                 ],
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildProgressSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Writing Progress',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Track your progress toward IELTS writing goals',
+              style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[500]),
+            ),
+            const SizedBox(height: 12),
+            _buildProgressIndicator(
+              widget.academicWordCount,
+              'Academic Writing',
+            ),
+            if (widget.generalWordCount > 0) ...[
+              const SizedBox(height: 12),
+              _buildProgressIndicator(
+                widget.generalWordCount,
+                'General Writing',
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTipsSection() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.lightbulb, color: Colors.blue[400]),
+                const SizedBox(width: 6),
+                Text(
+                  'Quick Tips',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            _buildTipItem(
+              'Add examples',
+              'Support each main point with a specific example',
+            ),
+            _buildTipItem(
+              'Explain fully',
+              'Don\'t assume the reader knows what you mean',
+            ),
+            _buildTipItem(
+              'Use transitions',
+              'Words like “however” and “furthermore” add length',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(bool isLastLesson) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => _getLessonScreen(widget.lessonNumber),
+                ),
+              );
+            },
+            child: Text(
+              'Review Again',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w500,
+                color: Colors.blue[600],
+              ),
+            ),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              side: BorderSide(color: Colors.blue[200]!, width: 1),
+              backgroundColor: Colors.white,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () {
+              HapticFeedback.lightImpact();
+              final controller = Get.find<WritingController>();
+              controller.completeLesson(widget.lessonNumber);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) =>
+                          isLastLesson
+                              ? const LessonListScreen()
+                              : _getLessonScreen(widget.lessonNumber + 1),
+                ),
+              );
+            },
+            child: Text(
+              isLastLesson ? 'Back to Lessons' : 'Next Lesson',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue[600],
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
