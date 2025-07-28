@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:get/get.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
-import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
 
 class FeedbackScreen extends StatelessWidget {
   const FeedbackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final progressController = Get.find<ListeningProgressController>();
-    final lessonProgress = progressController.completedLessons;
-    final testProgress =
-        (progressController.testProgressPercentage / 25)
-            .floor(); // 4 tests, each 25%
-    final totalProgress =
-        (lessonProgress / 50) * 0.6 +
-        (testProgress / 4) * 0.4; // Weighted: 60% lessons, 40% tests
-    const totalLessons = ListeningProgressController.totalLessons; // 50 lessons
-    const totalTests = 4; // 4 practice tests
+    // Mock data
+    const lessonProgress = 32;
+    const testProgress = 2;
+    const totalProgress = 0.68; // 68%
+    const totalLessons = 50;
+    const totalTests = 4;
 
     return Scaffold(
       body: Container(
@@ -48,14 +41,7 @@ class FeedbackScreen extends StatelessWidget {
                             size: 20,
                             color: Colors.white,
                           ),
-                          onPressed:
-                              () => Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const IeltsListeningScreen(),
-                                ),
-                              ),
+                          onPressed: () => Navigator.pop(context),
                         ),
                       ),
                       Expanded(
@@ -133,9 +119,7 @@ class FeedbackScreen extends StatelessWidget {
                                 child: CircularProgressIndicator(
                                   value: totalProgress.clamp(0.0, 1.0),
                                   strokeWidth: 12,
-                                  backgroundColor: Colors.white.withOpacity(
-                                    0.2,
-                                  ),
+                                  backgroundColor: Colors.white.withOpacity(0.2),
                                   color: Colors.amberAccent,
                                 ),
                               ),
@@ -177,7 +161,6 @@ class FeedbackScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _buildProgressCard(
-                            context,
                             "Lessons",
                             "$lessonProgress / $totalLessons",
                             Colors.blueAccent,
@@ -186,7 +169,6 @@ class FeedbackScreen extends StatelessWidget {
                         const SizedBox(width: 15),
                         Expanded(
                           child: _buildProgressCard(
-                            context,
                             "Tests",
                             "$testProgress / $totalTests",
                             Colors.greenAccent,
@@ -308,7 +290,6 @@ class FeedbackScreen extends StatelessWidget {
   }
 
   Widget _buildProgressCard(
-    BuildContext context,
     String title,
     String progress,
     Color color,

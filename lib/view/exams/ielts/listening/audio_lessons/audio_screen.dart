@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:get/get.dart';
@@ -49,7 +48,6 @@ class _AudioScreenState extends State<AudioScreen> {
   bool _isTransitioning = false;
   List<Map<String, dynamic>> _currentQuestions = [];
   List<String?> _userAnswers = [];
-  final ListeningProgressController _progressController = Get.find();
 
   final Color _gradientStart = const Color(0xFF3E1E68);
   final Color _gradientEnd = const Color.fromARGB(255, 84, 65, 228);
@@ -58,15 +56,7 @@ class _AudioScreenState extends State<AudioScreen> {
   void initState() {
     super.initState();
     _loadAudio();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_isInitialized) {
-        final lessonId = widget.lesson["lessonId"] as int;
-        _progressController.updateLessonProgress(
-          lessonId.toString(),
-          'audio_started',
-        );
-      }
-    });
+   
   }
 
   void _loadQuestions() {
@@ -188,10 +178,10 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
             final lessonId = widget.lesson["lessonId"] as int;
             if (widget.lesson["isIntroduction"] == true) {
               // Mark lesson 1 as completed
-              _progressController.updateLessonProgress(
-                lessonId.toString(),
-                'lesson_completed',
-              );
+              // _progressController.updateLessonProgress(
+              //   lessonId.toString(),
+              //   'lesson_completed',
+              // );
               widget.onComplete();
               Navigator.pushAndRemoveUntil(
                 context,
@@ -206,10 +196,10 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
                 showQuestions = true;
                 _isPlaying = false;
                 _isTransitioning = false;
-                _progressController.updateLessonProgress(
-                  lessonId.toString(),
-                  'question_opened',
-                );
+                // _progressController.updateLessonProgress(
+                //   lessonId.toString(),
+                //   'question_opened',
+                // );
               });
             }
           }
@@ -400,15 +390,15 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          Obx(
-                            () => Text(
-                              '${(_progressController.getProgress((widget.lesson["lessonId"] as int).toString()) * 100).toStringAsFixed(0)}%',
+                          Text(
+                              "_progressController.getProgress",
+                              // '${(_progressController.getProgress((widget.lesson["lessonId"] as int).toString()) * 100).toStringAsFixed(0)}%',
                               style: GoogleFonts.poppins(
                                 fontSize: 14.sp,
                                 color: Colors.white,
                               ),
                             ),
-                          ),
+                          
                         ],
                       ),
                     ),

@@ -1,23 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
-import 'package:langtest_pro/controller/speaking_progress_provider.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
-import '../../core/widgets/progress_bar.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final listeningProgress = Get.find<ListeningProgressController>();
-    final readingProgress = Get.find<ReadingProgressController>();
-    final writingProgress = Get.find<WritingProgressController>();
-    final speakingProgress = Get.find<SpeakingProgressController>();
-
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -58,14 +47,7 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10.h),
-                      Obx(
-                        () => _buildSkillProgress(
-                          listeningProgress: listeningProgress,
-                          readingProgress: readingProgress,
-                          writingProgress: writingProgress,
-                          speakingProgress: speakingProgress,
-                        ),
-                      ),
+                      _buildSkillProgress(),
                     ],
                   ),
                 ),
@@ -77,64 +59,92 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSkillProgress({
-    required ListeningProgressController listeningProgress,
-    required ReadingProgressController readingProgress,
-    required WritingProgressController writingProgress,
-    required SpeakingProgressController speakingProgress,
-  }) {
-    final completedReadingLessons =
-        readingProgress.completedAcademicLessons +
-        readingProgress.completedGeneralLessons;
-    final totalReadingLessons =
-        ReadingProgressController.totalAcademicLessons +
-        ReadingProgressController.totalGeneralLessons;
+  Widget _buildSkillProgress() {
+    // Mock data for demonstration
+    final mockData = [
+      {"title": "Listening", "completed": 12, "total": 20},
+      {"title": "Reading", "completed": 8, "total": 15},
+      {"title": "Writing", "completed": 5, "total": 10},
+      {"title": "Speaking", "completed": 3, "total": 8},
+    ];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Expanded(
-          child: ProgressCard(
-            title: "Listening",
-            completed:
-                (listeningProgress.lessonProgressPercentage /
-                        100 *
-                        ListeningProgressController.totalLessons)
-                    .round(),
-            total: ListeningProgressController.totalLessons,
+        for (var skill in mockData) ...[
+          if (skill != mockData.first) SizedBox(width: 8.w),
+          Expanded(
+            child: ProgressCard(
+              title: skill["title"] as String,
+              completed: skill["completed"] as int,
+              total: skill["total"] as int,
+            ),
           ),
-        ),
-        SizedBox(width: 8.w),
-        Expanded(
-          child: ProgressCard(
-            title: "Reading",
-            completed: completedReadingLessons,
-            total: totalReadingLessons,
-          ),
-        ),
-        SizedBox(width: 8.w),
-        Expanded(
-          child: ProgressCard(
-            title: "Writing",
-            completed:
-                (writingProgress.progress *
-                        WritingProgressController.totalLessons)
-                    .round(),
-            total: WritingProgressController.totalLessons,
-          ),
-        ),
-        SizedBox(width: 8.w),
-        Expanded(
-          child: ProgressCard(
-            title: "Speaking",
-            completed:
-                (speakingProgress.progress *
-                        SpeakingProgressController.totalLessons)
-                    .round(),
-            total: SpeakingProgressController.totalLessons,
-          ),
-        ),
+        ],
       ],
     );
+  }
+}
+
+class ProgressCard extends StatelessWidget {
+  final String title;
+  final int completed;
+  final int total;
+
+  const ProgressCard({
+    super.key,
+    required this.title,
+    required this.completed,
+    required this.total,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final percentage = total > 0 ? (completed / total) : 0;
+    
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          SizedBox(
+            height: 6.h,
+            child: LinearProgressIndicator(
+              value: 30,
+              backgroundColor: Colors.white.withOpacity(0.3),
+              color: _getProgressColor(30),
+              borderRadius: BorderRadius.circular(3.r),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            '$completed/$total',
+            style: GoogleFonts.poppins(
+              fontSize: 12.sp,
+              color: Colors.white.withOpacity(0.8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getProgressColor(double percentage) {
+    if (percentage < 0.3) return Colors.red;
+    if (percentage < 0.6) return Colors.orange;
+    if (percentage < 0.8) return Colors.yellow;
+    return Colors.green;
   }
 }

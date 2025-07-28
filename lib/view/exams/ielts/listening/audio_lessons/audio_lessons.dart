@@ -1,11 +1,12 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:get/get.dart';
-import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
-import 'audio_screen.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
+import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_result.dart';
+import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_screen.dart';
 
 class AudioLessonsScreen extends StatefulWidget {
   const AudioLessonsScreen({super.key});
@@ -75,7 +76,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
     {
       "title": "Lesson 2: Booking a Hotel Room",
       "progress": 0.0,
-      "isLocked": true,
+      "isLocked": false,
       "lessonId": 2,
       "isIntroduction": false,
     },
@@ -86,7 +87,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
       "lessonId": 3,
       "isIntroduction": false,
     },
-    {
+      {
       "title": "Lesson 4: Ordering Food at a Restaurant",
       "progress": 0.0,
       "isLocked": true,
@@ -418,37 +419,25 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    if (!Get.isRegistered<ListeningProgressController>()) {
-      Get.put(ListeningProgressController());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const IeltsListeningScreen()),
-        );
-        return false;
-      },
-      child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [_gradientStart, _gradientEnd],
-            ),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [_gradientStart, _gradientEnd],
           ),
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                title: Text(
+        ),
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              title: InkWell(
+                onDoubleTap: (){
+                  Get.off(AudioResultScreen(score: 3, totalQuestions: 10, correctAnswers: 3, wrongAnswers: 7, lessonId: 1, onComplete: (){}));
+                },
+                child: Text(
                   "IELTS Listening Lessons",
                   style: GoogleFonts.poppins(
                     fontSize: 20.sp,
@@ -457,160 +446,100 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                     letterSpacing: 0.5,
                   ),
                 ),
-                centerTitle: true,
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 24.sp,
-                  ),
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const IeltsListeningScreen(),
-                      ),
-                    );
-                  },
-                ),
-                pinned: true,
-                floating: false,
-                snap: false,
-                expandedHeight: 0,
-                toolbarHeight: kToolbarHeight,
               ),
-              SliverPadding(padding: EdgeInsets.only(top: 10.h)),
-              Obx(() {
-                final progressController =
-                    Get.find<ListeningProgressController>();
-                if (progressController.isLoading) {
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: CircularProgressIndicator(strokeWidth: 4.w),
-                    ),
-                  );
-                }
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 24.sp,
+                ),
+                onPressed: () {
+                  Get.back();
+                },
+              ),
+              pinned: true,
+              floating: false,
+              snap: false,
+              expandedHeight: 0,
+              toolbarHeight: kToolbarHeight,
+            ),
+            SliverPadding(padding: EdgeInsets.only(top: 10.h)),
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate((
+                  context,
+                  sectionIndex,
+                ) {
+                  final section = _sections[sectionIndex];
+                  final startIndex = int.parse(section["start"].toString()) - 1;
+                  final endIndex = int.parse(section["end"].toString()) - 1;
 
-                if (progressController.hasError) {
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            progressController.errorMessage ??
-                                'Error loading progress',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 16.sp,
-                              color: _textLight,
-                            ),
-                          ),
-                          SizedBox(height: 16.h),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await progressController.restoreFromCloud();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: _accentColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 24.w,
-                                vertical: 12.h,
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              section["title"],
+                              style: GoogleFonts.poppins(
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
+                                color: _textLight,
                               ),
                             ),
-                            child: Text(
-                              'Retry',
+                            Text(
+                              section["description"],
                               style: GoogleFonts.poppins(
                                 fontSize: 14.sp,
-                                color: _textLight,
-                                fontWeight: FontWeight.w600,
+                                color: _textLight.withOpacity(0.7),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 20.w,
+                          mainAxisSpacing: 20.h,
+                          childAspectRatio: 0.85,
+                        ),
+                        itemCount: endIndex - startIndex + 1,
+                        itemBuilder: (context, index) {
+                          final lessonIndex = startIndex + index;
+                          final lesson = audioLessons[lessonIndex];
+                          final isLocked = lesson["isLocked"] as bool;
+                          final progress = lesson["progress"] as double;
+                          final isIntroduction = lesson["isIntroduction"] as bool;
 
-                return SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((
-                      context,
-                      sectionIndex,
-                    ) {
-                      final section = _sections[sectionIndex];
-                      final startIndex =
-                          int.parse(section["start"].toString()) - 1;
-                      final endIndex = int.parse(section["end"].toString()) - 1;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 10.h),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  section["title"],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 20.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: _textLight,
-                                  ),
-                                ),
-                                Text(
-                                  section["description"],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14.sp,
-                                    color: _textLight.withOpacity(0.7),
-                                  ),
-                                ),
-                              ],
+                          return FadeInUp(
+                            delay: Duration(milliseconds: 100 * index),
+                            child: _buildLessonCard(
+                              context,
+                              lesson: lesson,
+                              isLocked: isLocked,
+                              progress: progress,
+                              isIntroduction: isIntroduction,
                             ),
-                          ),
-                          GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 20.w,
-                                  mainAxisSpacing: 20.h,
-                                  childAspectRatio: 0.85,
-                                ),
-                            itemCount: endIndex - startIndex + 1,
-                            itemBuilder: (context, index) {
-                              final lessonIndex = startIndex + index;
-                              final lesson = audioLessons[lessonIndex];
-
-                              return FadeInUp(
-                                delay: Duration(milliseconds: 100 * index),
-                                child: _buildLessonCard(
-                                  context,
-                                  lesson: lesson,
-                                  lessonIndex: lessonIndex,
-                                  progressController: progressController,
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: 20.h),
-                        ],
-                      );
-                    }, childCount: _sections.length),
-                  ),
-                );
-              }),
-            ],
-          ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 20.h),
+                    ],
+                  );
+                }, childCount: _sections.length),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -619,43 +548,28 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   Widget _buildLessonCard(
     BuildContext context, {
     required Map<String, dynamic> lesson,
-    required int lessonIndex,
-    required ListeningProgressController progressController,
+    required bool isLocked,
+    required double progress,
+    required bool isIntroduction,
   }) {
-    final lessonId =
-        int.tryParse(lesson["lessonId"].toString())?.toString() ?? '0';
-    final isIntroduction = lesson["isIntroduction"] as bool;
-    // Unlock lesson if previous lesson is completed
-    final isLocked =
-        lessonIndex > 0
-            ? progressController.getProgress((lessonIndex).toString()) == 0.0 &&
-                progressController.getProgress((lessonIndex - 1).toString()) <
-                    1.0
-            : false;
-    final progress = progressController.getProgress(lessonId);
-
     return Material(
-      elevation: 4,
-      borderRadius: BorderRadius.circular(20.r),
       color: Colors.transparent,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
-          gradient:
-              isLocked
-                  ? LinearGradient(
-                    colors: [_lockedColor.withOpacity(0.7), _lockedColor],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                  : LinearGradient(
-                    colors:
-                        progress == 1.0
-                            ? [_accentColor.withOpacity(0.8), _accentColor]
-                            : [_unlockedStart, _unlockedEnd],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+          gradient: isLocked
+              ? LinearGradient(
+                  colors: [_lockedColor.withOpacity(0.7), _lockedColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : LinearGradient(
+                  colors: progress == 1.0
+                      ? [_accentColor.withOpacity(0.8), _accentColor]
+                      : [_unlockedStart, _unlockedEnd],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -666,39 +580,9 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(20.r),
-          onTap:
-              isLocked
-                  ? null
-                  : () {
-                    debugPrint('Navigating to lesson: $lesson');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => AudioScreen(
-                              lesson: {
-                                ...lesson,
-                                "isLocked": isLocked,
-                                "progress": progress,
-                              },
-                              onComplete: () {
-                                if (!isIntroduction) {
-                                  // Only for non-introduction lessons
-                                  if (progressController.getProgress(
-                                        lessonId,
-                                      ) ==
-                                      1.0) {
-                                    progressController.updateLessonProgress(
-                                      (lessonIndex + 1).toString(),
-                                      'audio_started',
-                                    );
-                                  }
-                                }
-                              },
-                            ),
-                      ),
-                    );
-                  },
+          onTap: () {
+            Get.off(AudioScreen(lesson: lesson, onComplete: (){}));
+          },
           child: Padding(
             padding: EdgeInsets.all(16.w),
             child: Column(
@@ -711,9 +595,9 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                     Text(
                       isIntroduction
                           ? "Introduction"
-                          : "Lesson ${int.tryParse(lesson["lessonId"].toString()) ?? 'N/A'}",
+                          : "Lesson ${lesson["lessonId"]}",
                       style: GoogleFonts.poppins(
-                        fontSize: 12.sp,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: _textLight.withOpacity(0.8),
                       ),
@@ -729,7 +613,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                         color: _textLight,
                         height: 1.3,
                       ),
-                      maxLines: 2,
+                      // maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -750,10 +634,10 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                       isLocked
                           ? "Complete previous lesson"
                           : progress == 1.0
-                          ? isIntroduction
-                              ? "Completed 🎧"
-                              : "Completed ✅"
-                          : "${(progress * 100).toStringAsFixed(0)}% complete",
+                              ? isIntroduction
+                                  ? "Completed 🎧"
+                                  : "Completed ✅"
+                              : "${(progress * 100).toStringAsFixed(0)}% complete",
                       style: GoogleFonts.poppins(
                         fontSize: 12.sp,
                         color: _textLight.withOpacity(0.9),
@@ -762,47 +646,42 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                   ],
                 ),
                 Center(
-                  child:
-                      isLocked
-                          ? Container(
-                            padding: EdgeInsets.all(10.w),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _textLight.withOpacity(0.1),
-                            ),
-                            child: Icon(
-                              Icons.lock_outline,
-                              color: _textLight.withOpacity(0.7),
-                              size: 24.sp,
-                            ),
-                          )
-                          : Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 10.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _textLight.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(
-                                color: _textLight.withOpacity(0.3),
-                                width: 1.w,
-                              ),
-                            ),
-                            child: Text(
-                              progress == 1.0
-                                  ? "Review"
-                                  : isIntroduction
-                                  ? "Listen Now"
-                                  : "Start Now",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                color: _textLight,
-                                letterSpacing: 0.5,
-                              ),
+                  child: isLocked
+                      ? Container(
+                          padding: EdgeInsets.all(10.w),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _textLight.withOpacity(0.1),
+                          ),
+                          child: Icon(
+                            Icons.lock_outline,
+                            color: _textLight.withOpacity(0.7),
+                            size: 24.sp,
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 10.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _textLight.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: _textLight.withOpacity(0.3),
+                              width: 1.w,
                             ),
                           ),
+                          child: Text(
+                            "Start Now",
+                            style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              color: _textLight,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
                 ),
               ],
             ),

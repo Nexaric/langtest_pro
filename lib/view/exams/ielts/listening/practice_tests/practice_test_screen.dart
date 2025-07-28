@@ -1,13 +1,7 @@
-// lib/view/exams/ielts/listening/practice_test_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:get/get.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
-import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
-import 'practice_test_questions_screen.dart';
 
 class PracticeTestScreen extends StatefulWidget {
   const PracticeTestScreen({super.key});
@@ -31,34 +25,30 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
       "part": "Part 1",
       "description": "Everyday conversations and basic comprehension",
       "isLocked": false,
+      "isCompleted": false,
     },
     {
       "title": "Practice Test 2: Part 2",
       "part": "Part 2",
       "description": "Monologues and informational audio",
-      "isLocked": true,
+      "isLocked": false,
+      "isCompleted": true,
     },
     {
       "title": "Practice Test 3: Part 3",
       "part": "Part 3",
       "description": "Academic discussions",
       "isLocked": true,
+      "isCompleted": false,
     },
     {
       "title": "Practice Test 4: Part 4",
       "part": "Part 4",
       "description": "Complex lectures and scenarios",
       "isLocked": true,
+      "isCompleted": false,
     },
   ];
-
-  @override
-  void initState() {
-    super.initState();
-    if (!Get.isRegistered<ListeningProgressController>()) {
-      Get.put(ListeningProgressController());
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,152 +57,65 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return WillPopScope(
-          onWillPop: () async {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const IeltsListeningScreen(),
+        return Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [_gradientStart, _gradientEnd],
               ),
-            );
-            return false;
-          },
-          child: Scaffold(
-            body: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [_gradientStart, _gradientEnd],
-                ),
-              ),
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverAppBar(
-                    title: Text(
-                      "IELTS Practice Tests",
-                      style: GoogleFonts.poppins(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: _textLight,
-                        letterSpacing: 0.5,
-                      ),
+            ),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverAppBar(
+                  title: Text(
+                    "IELTS Practice Tests",
+                    style: GoogleFonts.poppins(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w600,
+                      color: _textLight,
+                      letterSpacing: 0.5,
                     ),
-                    centerTitle: true,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    leading: IconButton(
-                      icon: Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                        size: 24.sp,
-                      ),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const IeltsListeningScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    pinned: true,
-                    floating: false,
-                    snap: false,
-                    expandedHeight: 0,
-                    toolbarHeight: kToolbarHeight,
                   ),
-                  SliverPadding(padding: EdgeInsets.only(top: 10.h)),
-                  GetBuilder<ListeningProgressController>(
-                    builder: (progressController) {
-                      if (progressController.isLoading) {
-                        return SliverFillRemaining(
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: _gradientStart,
-                            ),
-                          ),
-                        );
-                      }
-
-                      if (progressController.hasError) {
-                        return SliverFillRemaining(
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  progressController.errorMessage ??
-                                      'Error loading progress',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
-                                    color: _textLight,
-                                  ),
-                                ),
-                                SizedBox(height: 16.h),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    await progressController.restoreFromCloud();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: _accentColor,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 10.h,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Retry',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14.sp,
-                                      color: _textLight,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }
-
-                      return SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate((
-                            context,
-                            index,
-                          ) {
-                            final test = _practiceTests[index];
-                            final isLocked = _isTestLocked(
-                              index,
-                              progressController,
-                            );
-                            final isCompleted = progressController
-                                .isPracticeTestComplete(test['part']);
-
-                            return FadeInUp(
-                              delay: Duration(milliseconds: 100 * index),
-                              child: _buildTestCard(
-                                context,
-                                test: test,
-                                isLocked: isLocked,
-                                isCompleted: isCompleted,
-                                progressController: progressController,
-                              ),
-                            );
-                          }, childCount: _practiceTests.length),
+                  centerTitle: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 24.sp,
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  pinned: true,
+                  floating: false,
+                  snap: false,
+                  expandedHeight: 0,
+                  toolbarHeight: kToolbarHeight,
+                ),
+                SliverPadding(padding: EdgeInsets.only(top: 10.h)),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((
+                      context,
+                      index,
+                    ) {
+                      final test = _practiceTests[index];
+                      return FadeInUp(
+                        delay: Duration(milliseconds: 100 * index),
+                        child: _buildTestCard(
+                          context,
+                          test: test,
                         ),
                       );
-                    },
+                    }, childCount: _practiceTests.length),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );
@@ -220,22 +123,9 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
     );
   }
 
-  bool _isTestLocked(
-    int index,
-    ListeningProgressController progressController,
-  ) {
-    if (index == 0) return false; // Part 1 is always unlocked
-    return !progressController.isPracticeTestComplete(
-      _practiceTests[index - 1]['part'],
-    );
-  }
-
   Widget _buildTestCard(
     BuildContext context, {
     required Map<String, dynamic> test,
-    required bool isLocked,
-    required bool isCompleted,
-    required ListeningProgressController progressController,
   }) {
     return Material(
       elevation: 4,
@@ -246,17 +136,16 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
           gradient:
-              isLocked
+              test['isLocked']
                   ? LinearGradient(
                     colors: [_lockedColor.withOpacity(0.7), _lockedColor],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
                   : LinearGradient(
-                    colors:
-                        isCompleted
-                            ? [_accentColor.withOpacity(0.8), _accentColor]
-                            : [_unlockedStart, _unlockedEnd],
+                    colors: test['isCompleted']
+                        ? [_accentColor.withOpacity(0.8), _accentColor]
+                        : [_unlockedStart, _unlockedEnd],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -270,19 +159,7 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(20.r),
-          onTap:
-              isLocked
-                  ? null
-                  : () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                PracticeTestQuestionsScreen(part: test['part']),
-                      ),
-                    );
-                  },
+          onTap: test['isLocked'] ? null : () {},
           child: Padding(
             padding: EdgeInsets.all(16.w),
             child: Column(
@@ -303,7 +180,7 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    if (isCompleted)
+                    if (test['isCompleted'])
                       Icon(
                         Icons.check_circle,
                         color: Colors.white,
@@ -323,43 +200,42 @@ class _PracticeTestScreenState extends State<PracticeTestScreen> {
                 ),
                 SizedBox(height: 12.h),
                 Center(
-                  child:
-                      isLocked
-                          ? Container(
-                            padding: EdgeInsets.all(10.w),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _textLight.withOpacity(0.1),
-                            ),
-                            child: Icon(
-                              Icons.lock_outline,
-                              color: _textLight.withOpacity(0.7),
-                              size: 24.sp,
-                            ),
-                          )
-                          : Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 10.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _textLight.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(
-                                color: _textLight.withOpacity(0.3),
-                                width: 1.w,
-                              ),
-                            ),
-                            child: Text(
-                              isCompleted ? "Review" : "Start Test",
-                              style: GoogleFonts.poppins(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                                color: _textLight,
-                                letterSpacing: 0.5,
-                              ),
+                  child: test['isLocked']
+                      ? Container(
+                          padding: EdgeInsets.all(10.w),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _textLight.withOpacity(0.1),
+                          ),
+                          child: Icon(
+                            Icons.lock_outline,
+                            color: _textLight.withOpacity(0.7),
+                            size: 24.sp,
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 10.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _textLight.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: _textLight.withOpacity(0.3),
+                              width: 1.w,
                             ),
                           ),
+                          child: Text(
+                            test['isCompleted'] ? "Review" : "Start Test",
+                            style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              color: _textLight,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
                 ),
               ],
             ),

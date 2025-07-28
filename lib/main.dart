@@ -5,11 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
-import 'package:langtest_pro/controller/speaking_progress_provider.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
 import 'package:langtest_pro/controller/push_notification/notification_controller.dart';
 import 'package:langtest_pro/res/routes/routes.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
@@ -49,7 +45,7 @@ void main() async {
 
 Future<void> initialise() async {
 
-  final notificationController = Get.put(NotificationController());
+  // final notificationController = Get.put(NotificationController());
   // Initialize Hive
   try {
    
@@ -158,22 +154,7 @@ class MyApp extends StatelessWidget {
           ),
           getPages: AppRoutes.appRoutes(),
           initialRoute: RoutesName.splashScreen,
-          initialBinding: BindingsBuilder(() {
-            // Lazy initialize controllers to reduce main thread work
-            Get.lazyPut<ListeningProgressController>(
-              () => ListeningProgressController(),
-            );
-            Get.lazyPut<ReadingProgressController>(
-              () => ReadingProgressController(),
-            );
-            Get.lazyPut<WritingProgressController>(
-              () => WritingProgressController(),
-            );
-            Get.lazyPut<SpeakingProgressController>(
-              () => SpeakingProgressController(),
-            );
-            // Get.lazyPut<NotificationController>(() => NotificationController());
-          }),
+         
         );
       },
     );

@@ -3,17 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
-import 'package:langtest_pro/controller/speaking_progress_provider.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
-import 'package:langtest_pro/core/loading/under_maintenance.dart';
+import 'package:langtest_pro/res/colors/app_colors.dart';
+import 'package:langtest_pro/view/exams/ielts/ielts_listening.dart';
+import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
+import 'package:langtest_pro/view/exams/ielts/ielts_speaking.dart';
+import 'package:langtest_pro/view/exams/ielts/ielts_writing.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:get/get.dart';
-
-import 'ielts_listening.dart';
-import 'ielts_reading.dart';
-import 'ielts_writing.dart';
 
 class IeltsScreen extends StatelessWidget {
   const IeltsScreen({super.key});
@@ -25,6 +20,7 @@ class IeltsScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        foregroundColor: AppColors.whiteColor,
         title: Text(
           "IELTS Preparation",
           style: GoogleFonts.poppins(
@@ -72,63 +68,53 @@ class IeltsScreen extends StatelessWidget {
   }
 
   Widget _buildProgressOverview(BuildContext context) {
-    final listeningController = Get.find<ListeningProgressController>();
-    final readingController = Get.find<ReadingProgressController>();
-    final writingController = Get.find<WritingProgressController>();
-    final speakingController = Get.find<SpeakingProgressController>();
+    // Mock progress data
+    final mockProgress = {
+      'Listening': 0.65,
+      'Reading': 0.42,
+      'Writing': 0.38,
+      'Speaking': 0.25,
+    };
 
-    return Obx(() {
-      return GlassmorphicContainer(
-        width: double.infinity,
-        height: 200.h,
-        borderRadius: 20.r,
-        blur: 20,
-        alignment: Alignment.center,
-        linearGradient: LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.1),
-            Colors.white.withOpacity(0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: 1,
-        borderGradient: LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.4),
-            Colors.white.withOpacity(0.1),
-          ],
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Column(
-            children: [
-              Text(
-                "📊 Skill Progress",
-                style: GoogleFonts.poppins(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+    return GlassmorphicContainer(
+      width: double.infinity,
+      height: 200.h,
+      borderRadius: 20.r,
+      blur: 20,
+      alignment: Alignment.center,
+      linearGradient: LinearGradient(
+        colors: [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      border: 1,
+      borderGradient: LinearGradient(
+        colors: [Colors.white.withOpacity(0.4), Colors.white.withOpacity(0.1)],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          children: [
+            Text(
+              "📊 Skill Progress",
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(height: 16.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildProgressCircle(
-                    "Listening",
-                    listeningController.lessonProgressPercentage / 100,
-                  ),
-                  _buildProgressCircle("Reading", readingController.progress),
-                  _buildProgressCircle("Writing", writingController.progress),
-                  _buildProgressCircle("Speaking", speakingController.progress),
-                ],
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: 16.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                for (var entry in mockProgress.entries)
+                  _buildProgressCircle(entry.key, entry.value),
+              ],
+            ),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildProgressCircle(String skill, double progress) {
@@ -163,9 +149,33 @@ class IeltsScreen extends StatelessWidget {
   Widget _buildModulesGrid(BuildContext context, Size size) {
     final isTablet = size.width > 600;
 
+    // Mock module data
+    final modules = [
+      {
+        'title': '🎧 Listening',
+        'subtitle': 'Practice exercises',
+        'color': Colors.blue,
+      },
+      {
+        'title': '📖 Reading',
+        'subtitle': 'Comprehension practice',
+        'color': Colors.green,
+      },
+      {
+        'title': '✍ Writing',
+        'subtitle': 'Practice tasks',
+        'color': Colors.orange,
+      },
+      {
+        'title': '🗣 Speaking',
+        'subtitle': 'Fluency practice',
+        'color': Colors.purple,
+      },
+    ];
+
     return GlassmorphicContainer(
       width: double.infinity,
-      height: isTablet ? 550.h : 450.h,
+      height: 350.h,
       borderRadius: 20.r,
       blur: 20,
       alignment: Alignment.center,
@@ -196,39 +206,63 @@ class IeltsScreen extends StatelessWidget {
             SizedBox(height: 30.h),
             Expanded(
               child: GridView.count(
-                crossAxisCount: isTablet ? 3 : 2,
+                crossAxisCount: 2,
                 mainAxisSpacing: 16.h,
                 crossAxisSpacing: 16.w,
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 children: [
                   _buildModuleCard(
-                    context,
-                    "🎧 Listening",
-                    "Practice exercises",
+                    '🎧 Listening',
+                    'Practice exercises',
                     Colors.blue,
-                    const IeltsListeningScreen(),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => IeltsListeningScreen(),
+                        ), // Replace with your screen
+                      );
+                    },
                   ),
                   _buildModuleCard(
-                    context,
-                    "📖 Reading",
-                    "Comprehension practice",
+                    '📖 Reading',
+                    'Comprehension practice',
                     Colors.green,
-                    const IeltsReadingScreen(),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => IeltsReadingScreen(),
+                        ), // Replace with your screen
+                      );
+                    },
                   ),
                   _buildModuleCard(
-                    context,
-                    "✍ Writing",
-                    "Practice tasks",
+                    '✍ Writing',
+                    'Practice tasks',
                     Colors.orange,
-                    const IeltsWritingScreen(),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => IeltsWritingScreen(),
+                        ), // Replace with your screen
+                      );
+                    },
                   ),
                   _buildModuleCard(
-                    context,
-                    "🗣 Speaking",
-                    "Fluency practice",
+                    '🗣 Speaking',
+                    'Fluency practice',
                     Colors.purple,
-                    const UnderMaintenanceScreen(),
+                    () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => IeltsSpeakingScreen(),
+                        ), // Replace with your screen
+                      );
+                    },
                   ),
                 ],
               ),
@@ -240,22 +274,17 @@ class IeltsScreen extends StatelessWidget {
   }
 
   Widget _buildModuleCard(
-    BuildContext context,
     String title,
     String subtitle,
     Color color,
-    Widget screen,
+    VoidCallback onTap,
   ) {
     return GestureDetector(
-      onTap:
-          () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => screen),
-          ),
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.92),
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(color: Colors.black12, blurRadius: 6, spreadRadius: 2),
           ],
@@ -264,7 +293,7 @@ class IeltsScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.school_rounded, color: color, size: 40.sp),
+            Icon(Icons.school_rounded, color: color, size: 30.sp),
             SizedBox(height: 10.h),
             Text(
               title,

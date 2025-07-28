@@ -1,13 +1,11 @@
-// lib/view/exams/ielts/listening/audio_lessons/audio_result.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:lottie/lottie.dart';
-import 'package:get/get.dart';
+import 'package:langtest_pro/res/colors/app_colors.dart';
+
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
-import 'package:langtest_pro/controller/listening_controller.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'questions/question_manager.dart';
 import 'dart:async';
 
@@ -40,7 +38,6 @@ class _AudioResultScreenState extends State<AudioResultScreen>
   bool _isPassed = false;
   int _countdown = 5;
   late Timer _timer;
-  final ListeningProgressController _progressController = Get.find();
 
   final Color _passColor = const Color(0xFF4CAF50);
   final Color _failColor = const Color(0xFFF44336);
@@ -73,7 +70,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
         if (_isPassed) {
           widget.onComplete();
         }
-        _navigateBackToLessons();
+        // _navigateBackToLessons();
       }
     });
   }
@@ -103,241 +100,191 @@ class _AudioResultScreenState extends State<AudioResultScreen>
     final requiredScore = _getRequiredScore();
 
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: AppColors.whiteColor,
+        backgroundColor: backgroundColor,
+        title: Text(
+          'Lesson ${widget.lessonId} Results',
+          // 'Lesson ${widget.lessonId} Results (${(_progressController.getProgress(widget.lessonId.toString()) * 100).toStringAsFixed(0)}%)',
+          style: GoogleFonts.poppins(
+            color: AppColors.whiteColor,
+            fontWeight: FontWeight.w600,
+            fontSize: 18.sp,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
       backgroundColor: backgroundColor,
       body: SafeArea(
-        child: Stack(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 1000),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    backgroundColor.withOpacity(0.8),
-                    backgroundColor.withOpacity(0.9),
-                    backgroundColor,
-                  ],
-                ),
-              ),
-            ),
-
-            if (_isPassed)
-              Positioned(
-                top: 0.15.sh,
-                left: 0,
-                right: 0,
-                child: SizedBox(
-                  height: 0.7.sh,
-                  child: Lottie.asset(
-                    'assets/animations/confetti.json',
-                    fit: BoxFit.contain,
-                    repeat: false,
-                    controller: _controller,
-                  ),
-                ),
-              ),
-
-            Padding(
-              padding: EdgeInsets.all(24.w),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.arrow_back_rounded,
-                          color: Colors.white,
-                          size: 24.sp,
-                        ),
-                        onPressed: () {
-                          _timer.cancel();
-                          _navigateBackToLessons();
-                        },
-                      ),
-                      Expanded(
-                        child: Obx(
-                          () => Text(
-                            'Lesson ${widget.lessonId} Results (${(_progressController.getProgress(widget.lessonId.toString()) * 100).toStringAsFixed(0)}%)',
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18.sp,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 48.w),
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 1000),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      backgroundColor.withOpacity(0.8),
+                      backgroundColor.withOpacity(0.9),
+                      backgroundColor,
                     ],
                   ),
+                ),
+              ),
 
-                  SizedBox(height: 40.h),
-
-                  FadeIn(
-                    delay: const Duration(milliseconds: 200),
-                    child: Container(
-                      padding: EdgeInsets.all(20.w),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.1),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.3),
-                            blurRadius: 20.r,
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          SizedBox(
-                            width: 160.w,
-                            height: 160.h,
-                            child: CircularProgressIndicator(
-                              value: percentage / 100,
-                              strokeWidth: 12.w,
-                              backgroundColor: Colors.white.withOpacity(0.1),
-                              valueColor: AlwaysStoppedAnimation(progressColor),
-                            ),
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
+              if (_isPassed)
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Column(
+                    children: [
+                      FadeIn(
+                        delay: const Duration(milliseconds: 200),
+                        child: CircularPercentIndicator(
+                          radius: 100.0,
+                          lineWidth: 15.0,
+                          percent: 0.3,
+                          animation: true,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          center: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '${percentage.toStringAsFixed(0)}%',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 36.sp,
+                                "30%",
+                                style: TextStyle(
+                                  fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                 ),
                               ),
                               Text(
-                                '${widget.score}/${widget.totalQuestions}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18.sp,
-                                  color: Colors.white.withOpacity(0.8),
+                                "3/10",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white70,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 40.h),
-
-                  SlideInUp(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 24.w,
-                        vertical: 12.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        borderRadius: BorderRadius.circular(24.r),
-                        border: Border.all(
-                          color: progressColor.withOpacity(0.6),
-                          width: 1.5.w,
+                          backgroundColor: Colors.white.withOpacity(0.1),
+                          progressColor: Colors.white,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10.r,
-                            offset: Offset(0, 4.h),
+                      ),
+
+                       SizedBox(height: 20.h),
+
+                      SlideInUp(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24.w,
+                            vertical: 12.h,
                           ),
-                        ],
-                      ),
-                      child: Text(
-                        _isPassed ? 'PASSED' : 'FAILED',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: progressColor,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 40.h),
-
-                  if (_showContent) ...[
-                    FadeInLeft(
-                      delay: const Duration(milliseconds: 400),
-                      child: _buildStatCard(
-                        icon: Icons.check_circle_rounded,
-                        title: 'Correct Answers',
-                        value: widget.correctAnswers.toString(),
-                        color: _passLight,
-                      ),
-                    ),
-                    SizedBox(height: 16.h),
-                    FadeInRight(
-                      delay: const Duration(milliseconds: 500),
-                      child: _buildStatCard(
-                        icon: Icons.error_rounded,
-                        title: 'Wrong Answers',
-                        value: widget.wrongAnswers.toString(),
-                        color: _failLight,
-                      ),
-                    ),
-                  ],
-
-                  const Spacer(),
-
-                  if (_showContent)
-                    FadeInUp(
-                      delay: const Duration(milliseconds: 600),
-                      child: Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        child: Text(
-                          _isPassed
-                              ? 'You unlocked the next lesson!'
-                              : 'Need $requiredScore+ correct answers to pass',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(24.r),
+                            border: Border.all(
+                              color: progressColor.withOpacity(0.6),
+                              width: 1.5.w,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10.r,
+                                offset: Offset(0, 4.h),
+                              ),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-
-                  SizedBox(height: 24.h),
-
-                  if (_showContent)
-                    FadeIn(
-                      delay: const Duration(milliseconds: 700),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.timer_outlined,
-                            color: Colors.white,
-                            size: 18.sp,
-                          ),
-                          SizedBox(width: 8.w),
-                          Text(
-                            'Redirecting in $_countdown seconds',
+                          child: Text(
+                            _isPassed ? 'PASSED' : 'FAILED',
                             style: GoogleFonts.poppins(
-                              fontSize: 14.sp,
-                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: progressColor,
+                              letterSpacing: 1.5,
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                ],
-              ),
-            ),
-          ],
+
+                      SizedBox(height: 20.h),
+
+                      if (_showContent) ...[
+                        FadeInLeft(
+                          delay: const Duration(milliseconds: 400),
+                          child: _buildStatCard(
+                            icon: Icons.check_circle_rounded,
+                            title: 'Correct Answers',
+                            value: widget.correctAnswers.toString(),
+                            color: _passLight,
+                          ),
+                        ),
+                        SizedBox(height: 16.h),
+                        FadeInRight(
+                          delay: const Duration(milliseconds: 500),
+                          child: _buildStatCard(
+                            icon: Icons.error_rounded,
+                            title: 'Wrong Answers',
+                            value: widget.wrongAnswers.toString(),
+                            color: _failLight,
+                          ),
+                        ),
+                      ],
+
+                      SizedBox(height: 20,),
+                      if (_showContent)
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 600),
+                          child: Container(
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                            
+                            child: Text(
+                              _isPassed
+                                  ? 'You unlocked the next lesson!'
+                                  : 'Need $requiredScore+ correct answers to pass',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+
+                      SizedBox(height: 24.h),
+
+                      if (_showContent)
+                        FadeIn(
+                          delay: const Duration(milliseconds: 700),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.timer_outlined,
+                                color: Colors.white,
+                                size: 18.sp,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                'Redirecting in $_countdown seconds',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -366,7 +313,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(12.w),
+            // padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               color: color.withOpacity(0.2),
               shape: BoxShape.circle,
@@ -380,14 +327,14 @@ class _AudioResultScreenState extends State<AudioResultScreen>
               Text(
                 title,
                 style: GoogleFonts.poppins(
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   color: Colors.white.withOpacity(0.8),
                 ),
               ),
               Text(
                 value,
                 style: GoogleFonts.poppins(
-                  fontSize: 24.sp,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),

@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       duration: const Duration(milliseconds: 1000),
     );
     _animationController.forward();
-    _initializeUser();
+    // _initializeUser();
   }
 
   void _initializeUser() async {
