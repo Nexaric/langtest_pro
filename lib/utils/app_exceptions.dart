@@ -2,7 +2,7 @@ class AppExceptions implements Exception {
   final String? _message;
   final String? _prefix;
 
-  AppExceptions([this._message, this._prefix]);
+  AppExceptions([ this._prefix,this._message]);
 
   @override
   String toString() {
@@ -14,7 +14,7 @@ class AppExceptions implements Exception {
 
 // Custom exceptions for different error scenarios
 class InternetException extends AppExceptions {
-  InternetException([String? message]) : super(message, "No Internet");
+  InternetException([String? message]) : super("Check your internet connection", message??"No Network Error",);
 }
 
 class RequestTimeOut extends AppExceptions {

@@ -83,7 +83,7 @@ class AppRoutes {
     GetPage(name: RoutesName.aboutUsScreen, page: () => const AboutUsScreen()),
     GetPage(
       name: RoutesName.ieltsListeningScreen,
-      page: () => const IeltsListeningScreen(),
+      page: () => IeltsListeningScreen(),
     ),
     GetPage(
       name: RoutesName.audioLessonsScreen,

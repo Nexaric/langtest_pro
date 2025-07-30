@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/instance_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
+import 'package:langtest_pro/model/progress_model.dart';
+import 'package:langtest_pro/utils/utils.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/practice_tests/practice_test_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/feedback.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/strategies_tips.dart';
@@ -13,6 +16,7 @@ class IeltsListeningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final listeningProgressController = Get.put(ListeningController());
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -83,13 +87,37 @@ class IeltsListeningScreen extends StatelessWidget {
                         "Audio Lessons",
                         Colors.blue.shade200,
                         "Real IELTS recordings",
-                        () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => AudioLessonsScreen(),
-                            ), // Your screen
+                        () async {
+                          final uid = await Utils.getString('userId');
+                          final initialDataModel = ProgressModel(
+                            uid: uid!,
+                            progress: [
+                              for (int i = 2; i <= 50; i++)
+                                LessonProgress(
+                                  lesson: i,
+                                  isPassed: false,
+                                  isLocked: true,
+                                  progress: 0,
+                                ),
+                            ],
+                            isInitialized: true,
                           );
+
+                          if (context.mounted) {
+                            listeningProgressController.initializeProgress(
+                              progressModel: initialDataModel,
+                              context: context,
+                            );
+                           
+                          }
+
+                          // LoadingDialog.hide(context);
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (_) => AudioLessonsScreen(),
+                          //   ), // Your screen
+                          // );
                         },
                       ),
                     ),

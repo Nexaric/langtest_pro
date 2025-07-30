@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:langtest_pro/model/userData_model.dart';
@@ -75,7 +77,7 @@ class AuthImpl implements IAuthfacade {
   }
 
 @override
-  Future<bool> checkUserDataAdded({required User userCred}) async {
+  Future<Either<AppExceptions, bool>> checkUserDataAdded({required User userCred}) async {
     print("Reached data checking, ${userCred.id}");
 
     try {
@@ -90,21 +92,25 @@ class AuthImpl implements IAuthfacade {
 
       if (response == null) {
         print("No user data found");
-        return false;
+        return right(false);
       }
 
       final isCompleted = response['isCompleted'] as bool?;
 
       if (isCompleted != null) {
         print("User data found. isCompleted: $isCompleted");
-        return isCompleted;
+        return right(isCompleted);
       } else {
         debugPrint("User data not found");
+        return right(false);
       }
-    } catch (e) {
-      print("Error in data checking: $e");
+    }on SocketException catch (e) {
+      return Left(InternetException());
+    }
+    
+     catch (e) {
+      return Left(AppExceptions("Some Unknown Problem"));
     }
 
-    return false;
   }
 }
