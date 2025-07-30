@@ -1,29 +1,59 @@
-// To parse this JSON data, do
-//
-//     final progressModel = progressModelFromJson(jsonString);
-
 import 'dart:convert';
 
-ProgressModel progressModelFromJson(String str) => ProgressModel.fromJson(json.decode(str));
+class LessonProgress {
+  final int lesson;
+  final bool isPassed;
+  final bool isLocked;
+  final int progress;
 
-String progressModelToJson(ProgressModel data) => json.encode(data.toJson());
+  LessonProgress({
+    required this.lesson,
+    required this.isPassed,
+    required this.isLocked,
+    required this.progress,
+  });
+
+  factory LessonProgress.fromJson(Map<String, dynamic> json) {
+    return LessonProgress(
+      lesson: json['lesson'],
+      isPassed: json['isPassed'],
+      isLocked: json['isLocked'],
+      progress: json['progress'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'lesson': lesson,
+        'isPassed': isPassed,
+        'isLocked': isLocked,
+        'progress': progress,
+      };
+}
 
 class ProgressModel {
-    int id;
-    List<String> progress;
+  final String uid;
+  final List<LessonProgress> progress;
+  final bool? isInitialized;
 
-    ProgressModel({
-        required this.id,
-        required this.progress,
-    });
+  ProgressModel({
+    required this.uid,
+    required this.progress,
+     this.isInitialized
+  });
 
-    factory ProgressModel.fromJson(Map<String, dynamic> json) => ProgressModel(
-        id: json["id"],
-        progress: List<String>.from(json["progress"].map((x) => x)),
+  factory ProgressModel.fromJson(Map<String, dynamic> json) {
+    return ProgressModel(
+      uid: json['uid'],
+      progress: (json['progress'] as List<dynamic>)
+          .map((item) => LessonProgress.fromJson(jsonDecode(item)))
+          .toList(),
+          isInitialized: json['isInitialized']
     );
+  }
 
-    Map<String, dynamic> toJson() => {
-        "id": id,
-        "progress": List<dynamic>.from(progress.map((x) => x)),
-    };
+  Map<String, dynamic> toJson() => {
+        'uid': uid,
+        'progress': progress.map((e) => jsonEncode(e.toJson())).toList(),
+        'isInitialized' : isInitialized
+      };
 }

@@ -11,7 +11,7 @@ class PaymentController extends GetxController {
   void makePayment({
     required PaymentModel model,
     required String period,
-  }) async {
+}) async {
     isLoading.value = true;
     await payment.makePayment(data: model, period: period).then(((value) {
       value.fold((f) {

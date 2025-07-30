@@ -11,7 +11,7 @@ import 'package:langtest_pro/view/exams/ielts/ielts_writing.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class IeltsScreen extends StatelessWidget {
-  const IeltsScreen({super.key});
+  const IeltsScreen({super.key,});
 
   @override
   Widget build(BuildContext context) {

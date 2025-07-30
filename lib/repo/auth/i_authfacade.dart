@@ -14,5 +14,5 @@ abstract class IAuthfacade {
 
   Future<User?> isLoginned();
 
-  Future<bool> checkUserDataAdded({required User userCred});
+  Future<Either<AppExceptions, bool>> checkUserDataAdded({required User userCred});
 }

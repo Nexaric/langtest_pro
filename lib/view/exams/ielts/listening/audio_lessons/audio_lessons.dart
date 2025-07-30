@@ -1,17 +1,17 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:langtest_pro/res/routes/routes_name.dart';
-import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_result.dart';
-import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_screen.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
+import 'package:langtest_pro/model/progress_model.dart';
+import 'package:langtest_pro/utils/utils.dart';
 
 class AudioLessonsScreen extends StatefulWidget {
   const AudioLessonsScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AudioLessonsScreenState createState() => _AudioLessonsScreenState();
 }
 
@@ -23,6 +23,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   final Color _lockedColor = const Color(0xFFA5A6C4);
   final Color _unlockedStart = const Color(0xFF6D28D9);
   final Color _unlockedEnd = const Color(0xFF9333EA);
+  final progressController = Get.put(ListeningController());
 
   final List<Map<String, dynamic>> _sections = [
     {
@@ -87,7 +88,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
       "lessonId": 3,
       "isIntroduction": false,
     },
-      {
+    {
       "title": "Lesson 4: Ordering Food at a Restaurant",
       "progress": 0.0,
       "isLocked": true,
@@ -434,9 +435,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
           slivers: [
             SliverAppBar(
               title: InkWell(
-                onDoubleTap: (){
-                  Get.off(AudioResultScreen(score: 3, totalQuestions: 10, correctAnswers: 3, wrongAnswers: 7, lessonId: 1, onComplete: (){}));
-                },
+                onDoubleTap: () {},
                 child: Text(
                   "IELTS Listening Lessons",
                   style: GoogleFonts.poppins(
@@ -451,11 +450,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: 24.sp,
-                ),
+                icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
                 onPressed: () {
                   Get.back();
                 },
@@ -470,10 +465,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((
-                  context,
-                  sectionIndex,
-                ) {
+                delegate: SliverChildBuilderDelegate((context, sectionIndex) {
                   final section = _sections[sectionIndex];
                   final startIndex = int.parse(section["start"].toString()) - 1;
                   final endIndex = int.parse(section["end"].toString()) - 1;
@@ -519,14 +511,21 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                           final lesson = audioLessons[lessonIndex];
                           final isLocked = lesson["isLocked"] as bool;
                           final progress = lesson["progress"] as double;
-                          final isIntroduction = lesson["isIntroduction"] as bool;
+                          final isIntroduction =
+                              lesson["isIntroduction"] as bool;
 
                           return FadeInUp(
                             delay: Duration(milliseconds: 100 * index),
                             child: _buildLessonCard(
                               context,
                               lesson: lesson,
-                              isLocked: isLocked,
+                              isLocked:
+                                  lesson == 1
+                                      ? false
+                                      : progressController
+                                          .progressList
+                                          .value[index]['isLocked'],
+
                               progress: progress,
                               isIntroduction: isIntroduction,
                             ),
@@ -557,19 +556,21 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20.r),
-          gradient: isLocked
-              ? LinearGradient(
-                  colors: [_lockedColor.withOpacity(0.7), _lockedColor],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : LinearGradient(
-                  colors: progress == 1.0
-                      ? [_accentColor.withOpacity(0.8), _accentColor]
-                      : [_unlockedStart, _unlockedEnd],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+          gradient:
+              isLocked
+                  ? LinearGradient(
+                    colors: [_lockedColor.withOpacity(0.7), _lockedColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                  : LinearGradient(
+                    colors:
+                        progress == 1.0
+                            ? [_accentColor.withOpacity(0.8), _accentColor]
+                            : [_unlockedStart, _unlockedEnd],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -580,8 +581,28 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(20.r),
-          onTap: () {
-            Get.off(AudioScreen(lesson: lesson, onComplete: (){}));
+          onTap: () async {
+            final uid = await Utils.getString("userId");
+            final dataModel = ProgressModel(
+              uid: uid!,
+              progress: [
+                LessonProgress(
+                  lesson: lesson["lessonId"],
+                  isPassed: false,
+                  isLocked: false,
+                  progress: 50,
+                ),
+              ],
+            );
+
+            if (context.mounted) {
+              progressController.initializeProgress(
+                progressModel: dataModel,
+                context: context,
+              );
+            }
+
+            // Get.off(AudioScreen(lesson: lesson, onComplete: (){}));
           },
           child: Padding(
             padding: EdgeInsets.all(16.w),
@@ -634,10 +655,10 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                       isLocked
                           ? "Complete previous lesson"
                           : progress == 1.0
-                              ? isIntroduction
-                                  ? "Completed 🎧"
-                                  : "Completed ✅"
-                              : "${(progress * 100).toStringAsFixed(0)}% complete",
+                          ? isIntroduction
+                              ? "Completed 🎧"
+                              : "Completed ✅"
+                          : "${(progress * 100).toStringAsFixed(0)}% complete",
                       style: GoogleFonts.poppins(
                         fontSize: 12.sp,
                         color: _textLight.withOpacity(0.9),
@@ -646,42 +667,43 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                   ],
                 ),
                 Center(
-                  child: isLocked
-                      ? Container(
-                          padding: EdgeInsets.all(10.w),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _textLight.withOpacity(0.1),
-                          ),
-                          child: Icon(
-                            Icons.lock_outline,
-                            color: _textLight.withOpacity(0.7),
-                            size: 24.sp,
-                          ),
-                        )
-                      : Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 10.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _textLight.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(20.r),
-                            border: Border.all(
-                              color: _textLight.withOpacity(0.3),
-                              width: 1.w,
+                  child:
+                      isLocked
+                          ? Container(
+                            padding: EdgeInsets.all(10.w),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _textLight.withOpacity(0.1),
+                            ),
+                            child: Icon(
+                              Icons.lock_outline,
+                              color: _textLight.withOpacity(0.7),
+                              size: 24.sp,
+                            ),
+                          )
+                          : Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 10.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _textLight.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(
+                                color: _textLight.withOpacity(0.3),
+                                width: 1.w,
+                              ),
+                            ),
+                            child: Text(
+                              "Start Now",
+                              style: GoogleFonts.poppins(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: _textLight,
+                                letterSpacing: 0.5,
+                              ),
                             ),
                           ),
-                          child: Text(
-                            "Start Now",
-                            style: GoogleFonts.poppins(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              color: _textLight,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
                 ),
               ],
             ),
