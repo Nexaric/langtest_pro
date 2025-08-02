@@ -99,9 +99,9 @@ class _GeneralScreenState extends State<GeneralScreen> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ReadingProgressController>()) {
-      Get.put(ReadingProgressController());
-    }
+    // if (!Get.isRegistered<ReadingProgressController>()) {
+    //   Get.put(ReadingProgressController());
+    // }
     lessonData = _getLessonData();
     selectedQuestions = _getRandomQuestions();
     _scrollController.addListener(() {

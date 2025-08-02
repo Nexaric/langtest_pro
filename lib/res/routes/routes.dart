@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/auth/login_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
+import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_result.dart';
+import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/practice_tests/practice_test_screen.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/home/side_menu/about_us.dart';
@@ -49,12 +51,10 @@ class AppRoutes {
       name: RoutesName.subscriptionStatusScreen,
       page: () => const SubscriptionStatusScreen(),
     ),
-    GetPage(name: RoutesName.profileScreen, page: () =>  ProfileScreen()),
+    GetPage(name: RoutesName.profileScreen, page: () => ProfileScreen()),
     GetPage(
       name: RoutesName.editProfileScreen,
-      page: () =>  EditProfileScreen(
-        usrModel: Get.arguments,
-      ),
+      page: () => EditProfileScreen(usrModel: Get.arguments),
     ),
     GetPage(
       name: RoutesName.myCoursesScreen,
@@ -87,7 +87,7 @@ class AppRoutes {
     ),
     GetPage(
       name: RoutesName.audioLessonsScreen,
-      page: () => const AudioLessonsScreen(),
+      page: () =>  AudioLessonsScreen(),
     ),
     GetPage(
       name: RoutesName.practiceTestScreen,
@@ -100,6 +100,32 @@ class AppRoutes {
     GetPage(
       name: RoutesName.strategiesTipsScreen,
       page: () => const StrategiesTipsScreen(),
+    ),
+    GetPage(
+      name: RoutesName.audioScreen,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return AudioScreen(
+          lesson: args['lesson'],
+          onComplete: args['onComplete'],
+        );
+      },
+    ),
+
+    GetPage(
+      name: RoutesName.audioResultScreen,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return AudioResultScreen(
+          isPassed: args['isPassed'],
+          score: args['score'],
+          totalQuestions: args['totalQuestions'],
+          correctAnswers: args['correctAnswers'],
+          wrongAnswers: args['wrongAnswers'],
+          lessonId: args['lessonId'],
+          onComplete: () {},
+        );
+      },
     ),
   ];
 }

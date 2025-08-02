@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
+import 'package:langtest_pro/model/progress_model.dart';
 import 'package:langtest_pro/res/colors/app_colors.dart';
 
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
@@ -10,6 +14,7 @@ import 'questions/question_manager.dart';
 import 'dart:async';
 
 class AudioResultScreen extends StatefulWidget {
+  final bool isPassed;
   final int score;
   final int totalQuestions;
   final int correctAnswers;
@@ -18,6 +23,7 @@ class AudioResultScreen extends StatefulWidget {
   final VoidCallback onComplete;
 
   const AudioResultScreen({
+    required this.isPassed,
     required this.score,
     required this.totalQuestions,
     required this.correctAnswers,
@@ -33,6 +39,7 @@ class AudioResultScreen extends StatefulWidget {
 
 class _AudioResultScreenState extends State<AudioResultScreen>
     with SingleTickerProviderStateMixin {
+  final progressController = Get.find<ListeningController>();
   late AnimationController _controller;
   bool _showContent = false;
   bool _isPassed = false;
@@ -47,11 +54,13 @@ class _AudioResultScreenState extends State<AudioResultScreen>
   @override
   void initState() {
     super.initState();
-    _isPassed = QuestionManager.isLessonPassed(widget.score, widget.lessonId);
+    _isPassed = widget.isPassed;
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
+    // updateProgress();
+ 
 
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) {
@@ -76,11 +85,13 @@ class _AudioResultScreenState extends State<AudioResultScreen>
   }
 
   void _navigateBackToLessons() {
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const AudioLessonsScreen()),
-      (Route<dynamic> route) => false,
-    );
+    progressController.getProgress(ctx: context);
+    
   }
+  // Navigator.of(context).pushAndRemoveUntil(
+    //   MaterialPageRoute(builder: (context) => const AudioLessonsScreen()),
+    //   (Route<dynamic> route) => false,
+    // );
 
   @override
   void dispose() {
@@ -101,6 +112,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
 
     return Scaffold(
       appBar: AppBar(
+        
         foregroundColor: AppColors.whiteColor,
         backgroundColor: backgroundColor,
         title: Text(
@@ -172,7 +184,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                         ),
                       ),
 
-                       SizedBox(height: 20.h),
+                      SizedBox(height: 20.h),
 
                       SlideInUp(
                         child: Container(
@@ -231,7 +243,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                         ),
                       ],
 
-                      SizedBox(height: 20,),
+                      SizedBox(height: 20),
                       if (_showContent)
                         FadeInUp(
                           delay: const Duration(milliseconds: 600),
@@ -241,7 +253,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                               color: Colors.white.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12.r),
                             ),
-                            
+
                             child: Text(
                               _isPassed
                                   ? 'You unlocked the next lesson!'
@@ -283,6 +295,156 @@ class _AudioResultScreenState extends State<AudioResultScreen>
                     ],
                   ),
                 ),
+
+             Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Column(
+                    children: [
+                      FadeIn(
+                        delay: const Duration(milliseconds: 200),
+                        child: CircularPercentIndicator(
+                          radius: 100.0,
+                          lineWidth: 15.0,
+                          percent: 0.3,
+                          animation: true,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          center: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "30%",
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Text(
+                                "3/10",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                          backgroundColor: Colors.white.withOpacity(0.1),
+                          progressColor: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      SlideInUp(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24.w,
+                            vertical: 12.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(24.r),
+                            border: Border.all(
+                              color: progressColor.withOpacity(0.6),
+                              width: 1.5.w,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10.r,
+                                offset: Offset(0, 4.h),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            _isPassed ? 'PASSED' : 'FAILED',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: progressColor,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 20.h),
+
+                      if (_showContent) ...[
+                        FadeInLeft(
+                          delay: const Duration(milliseconds: 400),
+                          child: _buildStatCard(
+                            icon: Icons.check_circle_rounded,
+                            title: 'Correct Answers',
+                            value: widget.correctAnswers.toString(),
+                            color: _passLight,
+                          ),
+                        ),
+                        SizedBox(height: 16.h),
+                        FadeInRight(
+                          delay: const Duration(milliseconds: 500),
+                          child: _buildStatCard(
+                            icon: Icons.error_rounded,
+                            title: 'Wrong Answers',
+                            value: widget.wrongAnswers.toString(),
+                            color: _failLight,
+                          ),
+                        ),
+                      ],
+
+                      SizedBox(height: 20),
+                      if (_showContent)
+                        FadeInUp(
+                          delay: const Duration(milliseconds: 600),
+                          child: Container(
+                            padding: EdgeInsets.all(16.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+
+                            child: Text(
+                              _isPassed
+                                  ? 'You unlocked the next lesson!'
+                                  : 'Need $requiredScore+ correct answers to pass',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+
+                      SizedBox(height: 24.h),
+
+                      if (_showContent)
+                        FadeIn(
+                          delay: const Duration(milliseconds: 700),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.timer_outlined,
+                                color: Colors.white,
+                                size: 18.sp,
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                'Redirecting in $_countdown seconds',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                
             ],
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:langtest_pro/controller/push_notification/notification_controller.dart';
 import 'package:langtest_pro/res/routes/routes.dart';
@@ -39,16 +40,14 @@ void main() async {
 
   // Initialize Hive and other services
   await initialise();
-
+  Get.put(ListeningController());
   runApp(const MyApp());
 }
 
 Future<void> initialise() async {
-
   // final notificationController = Get.put(NotificationController());
   // Initialize Hive
   try {
-   
     await Hive.initFlutter();
     await Hive.openBox('listening_progress');
     await Hive.openBox('reading_progress');
@@ -154,7 +153,6 @@ class MyApp extends StatelessWidget {
           ),
           getPages: AppRoutes.appRoutes(),
           initialRoute: RoutesName.splashScreen,
-         
         );
       },
     );

@@ -15,6 +15,10 @@ abstract class ListeningFacade {
     required ProgressModel progressModel,
   });
 
+  Future<Either<AppExceptions, Unit>> updateLessonProgress({
+    required LessonProgress lessonProgress,
+  });
+
  
 
 }

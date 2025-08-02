@@ -27,4 +27,6 @@ class RoutesName {
   static const String subscriptionStatusScreen = "/subscription_status_screen";
   static const String termsPoliciesScreen = "/terms_policies_screen";
   static const String userDetailsScreen = "/user_details_screen";
+  static const String audioScreen = "/audio_screen";
+  static const String audioResultScreen = '/audioResultScreen';
 }

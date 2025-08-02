@@ -296,9 +296,9 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ReadingProgressController>()) {
-      Get.put(ReadingProgressController());
-    }
+    // if (!Get.isRegistered<ReadingProgressController>()) {
+    //   Get.put(ReadingProgressController());
+    // }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
