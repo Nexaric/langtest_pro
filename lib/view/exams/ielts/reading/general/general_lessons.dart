@@ -71,9 +71,9 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
   @override
   void initState() {
     super.initState();
-    if (!Get.isRegistered<ReadingProgressController>()) {
-      Get.put(ReadingProgressController());
-    }
+    // if (!Get.isRegistered<ReadingProgressController>()) {
+    //   Get.put(ReadingProgressController());
+    // }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(

@@ -3,12 +3,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/get_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:langtest_pro/controller/listening/listening_controller.dart';
+import 'package:langtest_pro/model/progress_model.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_lessons.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:get/get.dart';
 import 'package:langtest_pro/core/loading/internet_signel_low.dart';
 import 'package:langtest_pro/core/loading/loader_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,6 +34,7 @@ class AudioScreen extends StatefulWidget {
 }
 
 class _AudioScreenState extends State<AudioScreen> {
+  final progressController = Get.find<ListeningController>();
   bool _isAudioLoading = true;
   String audioPath = '';
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -56,7 +61,6 @@ class _AudioScreenState extends State<AudioScreen> {
   void initState() {
     super.initState();
     _loadAudio();
-   
   }
 
   void _loadQuestions() {
@@ -71,41 +75,36 @@ class _AudioScreenState extends State<AudioScreen> {
   }
 
   Future<void> _loadAudio() async {
-    await fetchAudioFromSupabase(
-      'lesson${widget.lesson["lessonId"]}.mp3',
-    );
+    await fetchAudioFromSupabase('lesson${widget.lesson["lessonId"]}.mp3');
     _initAudio();
     _loadQuestions();
   }
 
+  Future<void> fetchAudioFromSupabase(String firebasePath) async {
+    try {
+      debugPrint('Fetching audio from Supabase: $firebasePath');
+      final response = await Supabase.instance.client.storage
+          .from('audio')
+          .download(firebasePath);
 
+      // Save the response (bytes) to a temp file
+      final bytes = response;
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${firebasePath.split('/').last}');
+      await file.writeAsBytes(bytes);
 
-Future<void> fetchAudioFromSupabase(String firebasePath) async {
-  try {
-    debugPrint('Fetching audio from Supabase: $firebasePath');
-    final response = await Supabase.instance.client.storage
-        .from('audio')
-        .download(firebasePath);
-
-    // Save the response (bytes) to a temp file
-    final bytes = response;
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/${firebasePath.split('/').last}');
-    await file.writeAsBytes(bytes);
-
-    setState(() {
-      audioPath = file.path; // Use this path in your audio player
-      _isAudioLoading = false;
-    });
-  } catch (e) {
-    print('Error fetching audio: $e');
-    setState(() {
-      _isAudioLoading = false;
-    });
-    rethrow;
+      setState(() {
+        audioPath = file.path; // Use this path in your audio player
+        _isAudioLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching audio: $e');
+      setState(() {
+        _isAudioLoading = false;
+      });
+      rethrow;
+    }
   }
-}
-
 
   Future<void> _initAudio() async {
     try {
@@ -177,20 +176,23 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
           if (mounted) {
             final lessonId = widget.lesson["lessonId"] as int;
             if (widget.lesson["isIntroduction"] == true) {
-              // Mark lesson 1 as completed
-              // _progressController.updateLessonProgress(
-              //   lessonId.toString(),
-              //   'lesson_completed',
-              // );
               widget.onComplete();
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => const AudioLessonsScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => AudioLessonsScreen()),
                 (Route<dynamic> route) => route.isFirst,
               );
             } else {
+              progressController.updateProgress(
+                ctx: context,
+                lessonProgress: LessonProgress(
+                  lesson: lessonId,
+                  isPassed: false,
+                  isLocked: false,
+                  progress: 75,
+                ),
+                onSuccessNavigate: () {},
+              );
               // Show questions for lessons 2-50
               setState(() {
                 showQuestions = true;
@@ -311,19 +313,48 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
         final wrongAnswers = _currentQuestions.length - _score;
         final lessonId = widget.lesson["lessonId"] as int;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => AudioResultScreen(
-                  score: _score,
-                  totalQuestions: _currentQuestions.length,
-                  correctAnswers: correctAnswers,
-                  wrongAnswers: wrongAnswers,
-                  lessonId: lessonId,
-                  onComplete: widget.onComplete,
-                ),
+        //progress writing
+        final isPassed = QuestionManager.isLessonPassed(_score, lessonId);
+        progressController.updateProgress(
+          lessonProgress: LessonProgress(
+            lesson: lessonId,
+            isPassed: isPassed,
+            isLocked: false,
+            progress: 100,
           ),
+          ctx: context,
+          onSuccessNavigate: () {
+            Get.offNamed(
+              RoutesName.audioResultScreen,
+              arguments: {
+                "isPassed": isPassed,
+                "score": _score,
+                "totalQuestions": _currentQuestions.length,
+                "correctAnswers": correctAnswers,
+                "wrongAnswers": wrongAnswers,
+                "lessonId": lessonId,
+                "onComplete": widget.onComplete,
+              },
+            );
+          },
+        );
+        progressController.updateProgress(
+          lessonProgress: LessonProgress(lesson: lessonId + 1, isLocked: false),
+          ctx: context,
+          onSuccessNavigate: () {
+            Get.offNamed(
+              RoutesName.audioResultScreen,
+              arguments: {
+                "isPassed": isPassed,
+                "score": _score,
+                "totalQuestions": _currentQuestions.length,
+                "correctAnswers": correctAnswers,
+                "wrongAnswers": wrongAnswers,
+                "lessonId": lessonId,
+                "onComplete": widget.onComplete,
+              },
+            );
+          },
         );
       }
     });
@@ -391,14 +422,13 @@ Future<void> fetchAudioFromSupabase(String firebasePath) async {
                             ),
                           ),
                           Text(
-                              "_progressController.getProgress",
-                              // '${(_progressController.getProgress((widget.lesson["lessonId"] as int).toString()) * 100).toStringAsFixed(0)}%',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14.sp,
-                                color: Colors.white,
-                              ),
+                            "_progressController.getProgress",
+                            // '${(_progressController.getProgress((widget.lesson["lessonId"] as int).toString()) * 100).toStringAsFixed(0)}%',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14.sp,
+                              color: Colors.white,
                             ),
-                          
+                          ),
                         ],
                       ),
                     ),

@@ -16,7 +16,7 @@ class IeltsListeningScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final listeningProgressController = Get.put(ListeningController());
+    final listeningProgressController = Get.find<ListeningController>();
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -92,7 +92,7 @@ class IeltsListeningScreen extends StatelessWidget {
                           final initialDataModel = ProgressModel(
                             uid: uid!,
                             progress: [
-                              for (int i = 2; i <= 50; i++)
+                              for (int i = 1; i <= 50; i++)
                                 LessonProgress(
                                   lesson: i,
                                   isPassed: false,

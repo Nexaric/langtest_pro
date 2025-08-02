@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:langtest_pro/controller/listening/listening_controller.dart';
 import 'package:langtest_pro/model/progress_model.dart';
-import 'package:langtest_pro/utils/utils.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
+
 
 class AudioLessonsScreen extends StatefulWidget {
   const AudioLessonsScreen({super.key});
@@ -23,8 +24,9 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   final Color _lockedColor = const Color(0xFFA5A6C4);
   final Color _unlockedStart = const Color(0xFF6D28D9);
   final Color _unlockedEnd = const Color(0xFF9333EA);
-  final progressController = Get.put(ListeningController());
+  final progressController = Get.find<ListeningController>();
 
+  
   final List<Map<String, dynamic>> _sections = [
     {
       "title": "Introduction",
@@ -435,7 +437,20 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
           slivers: [
             SliverAppBar(
               title: InkWell(
-                onDoubleTap: () {},
+                onDoubleTap: (){
+                   Get.offNamed(
+              RoutesName.audioResultScreen,
+              arguments: {
+                "isPassed": false,
+                "score": 10,
+                "totalQuestions": 10,
+                "correctAnswers": 3,
+                "wrongAnswers": 7,
+                "lessonId": 2,
+                "onComplete": (){},
+              },
+            );
+                },
                 child: Text(
                   "IELTS Listening Lessons",
                   style: GoogleFonts.poppins(
@@ -508,28 +523,44 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                         itemCount: endIndex - startIndex + 1,
                         itemBuilder: (context, index) {
                           final lessonIndex = startIndex + index;
-                          final lesson = audioLessons[lessonIndex];
-                          final isLocked = lesson["isLocked"] as bool;
-                          final progress = lesson["progress"] as double;
-                          final isIntroduction =
-                              lesson["isIntroduction"] as bool;
 
-                          return FadeInUp(
-                            delay: Duration(milliseconds: 100 * index),
-                            child: _buildLessonCard(
-                              context,
-                              lesson: lesson,
-                              isLocked:
-                                  lesson == 1
-                                      ? false
-                                      : progressController
-                                          .progressList
-                                          .value[index]['isLocked'],
+                          return Obx(() {
+                            
+                            final lesson = audioLessons[lessonIndex];
+                            final isLocked =
+                                progressController.progressList.length >
+                                        lessonIndex
+                                    ? progressController
+                                            .progressList[lessonIndex]['isLocked']
+                                        as bool
+                                    : true;
+                                    print("lessonINdex is $lessonIndex");
 
-                              progress: progress,
-                              isIntroduction: isIntroduction,
-                            ),
-                          );
+                            final progress =
+                                progressController.progressList.length >
+                                        lessonIndex
+                                    ? (progressController
+                                                    .progressList[lessonIndex]['progress']
+                                                as int)
+                                            .toDouble() /
+                                        100
+                                    : 0.0;
+
+                            final isIntroduction =
+                                lesson["isIntroduction"] as bool;
+
+                            return FadeInUp(
+                              delay: Duration(milliseconds: 100 * index),
+                              child: _buildLessonCard(
+                                lessonIndex: lessonIndex,
+                                context,
+                                lesson: lesson,
+                                isLocked: lessonIndex == 0 ? false : isLocked,
+                                progress: progress,
+                                isIntroduction: isIntroduction,
+                              ),
+                            );
+                          });
                         },
                       ),
                       SizedBox(height: 20.h),
@@ -546,6 +577,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
 
   Widget _buildLessonCard(
     BuildContext context, {
+    required int lessonIndex,
     required Map<String, dynamic> lesson,
     required bool isLocked,
     required double progress,
@@ -579,109 +611,111 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
             ),
           ],
         ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20.r),
-          onTap: () async {
-            final uid = await Utils.getString("userId");
-            final dataModel = ProgressModel(
-              uid: uid!,
-              progress: [
-                LessonProgress(
-                  lesson: lesson["lessonId"],
-                  isPassed: false,
-                  isLocked: false,
-                  progress: 50,
-                ),
-              ],
-            );
-
-            if (context.mounted) {
-              progressController.initializeProgress(
-                progressModel: dataModel,
-                context: context,
-              );
-            }
-
-            // Get.off(AudioScreen(lesson: lesson, onComplete: (){}));
-          },
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isIntroduction
-                          ? "Introduction"
-                          : "Lesson ${lesson["lessonId"]}",
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: _textLight.withOpacity(0.8),
-                      ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isIntroduction
+                        ? "Introduction"
+                        : "Lesson ${lesson["lessonId"]}",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: _textLight.withOpacity(0.8),
                     ),
-                    SizedBox(height: 4.h),
-                    Text(
-                      lesson["title"].toString().split(":").length > 1
-                          ? lesson["title"].toString().split(":")[1].trim()
-                          : lesson["title"].toString(),
-                      style: GoogleFonts.poppins(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: _textLight,
-                        height: 1.3,
-                      ),
-                      // maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    lesson["title"].toString().split(":").length > 1
+                        ? lesson["title"].toString().split(":")[1].trim()
+                        : lesson["title"].toString(),
+                    style: GoogleFonts.poppins(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: _textLight,
+                      height: 1.3,
                     ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: _textLight.withOpacity(0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        _textLight.withOpacity(0.8),
-                      ),
-                      minHeight: 6.h,
-                      borderRadius: BorderRadius.circular(10.r),
+                    // maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: _textLight.withOpacity(0.2),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      _textLight.withOpacity(0.8),
                     ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      isLocked
-                          ? "Complete previous lesson"
-                          : progress == 1.0
-                          ? isIntroduction
-                              ? "Completed 🎧"
-                              : "Completed ✅"
-                          : "${(progress * 100).toStringAsFixed(0)}% complete",
-                      style: GoogleFonts.poppins(
-                        fontSize: 12.sp,
-                        color: _textLight.withOpacity(0.9),
-                      ),
+                    minHeight: 6.h,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    isLocked
+                        ? "Complete previous lesson"
+                        : progress == 1.0
+                        ? isIntroduction
+                            ? "Completed 🎧"
+                            : "Completed ✅"
+                        : "${(progress * 100).toStringAsFixed(0)}% complete",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12.sp,
+                      color: _textLight.withOpacity(0.9),
                     ),
-                  ],
-                ),
-                Center(
-                  child:
-                      isLocked
-                          ? Container(
-                            padding: EdgeInsets.all(10.w),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _textLight.withOpacity(0.1),
-                            ),
-                            child: Icon(
-                              Icons.lock_outline,
-                              color: _textLight.withOpacity(0.7),
-                              size: 24.sp,
-                            ),
-                          )
-                          : Container(
+                  ),
+                ],
+              ),
+              Center(
+                child:
+                    isLocked
+                        ? Container(
+                          padding: EdgeInsets.all(10.w),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _textLight.withOpacity(0.1),
+                          ),
+                          child: Icon(
+                            Icons.lock_outline,
+                            color: _textLight.withOpacity(0.7),
+                            size: 24.sp,
+                          ),
+                        )
+                        : InkWell(
+                          onTap: () {
+                            final progressLesson = LessonProgress(
+                              lesson: lesson['lessonId'],
+                              isPassed: false,
+                              isLocked: true,
+                              progress: 50,
+                            );
+                            progressController.updateProgress(
+                              onSuccessNavigate: () {
+                                Get.toNamed(
+                                  RoutesName.audioScreen,
+                                  arguments: {
+                                    'lesson': lesson,
+                                    'onComplete': () {
+                                      // final lessonProgress = LessonProgress(lesson: lesson['lessonId'], isPassed: false, isLocked: false, progress: 75);
+                                      // progressController.updateProgress(lessonProgress: lessonProgress, ctx: context, onSuccessNavigate: (){
+                                      //   Get.toNamed(RoutesName.audioResultScreen);
+                                      // });
+                                    },
+                                  },
+                                );
+                              },
+                              ctx: context,
+                              lessonProgress: progressLesson,
+                            );
+                          },
+                          child: Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: 16.w,
                               vertical: 10.h,
@@ -704,9 +738,9 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                               ),
                             ),
                           ),
-                ),
-              ],
-            ),
+                        ),
+              ),
+            ],
           ),
         ),
       ),

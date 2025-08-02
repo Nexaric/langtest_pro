@@ -2,15 +2,15 @@ import 'dart:convert';
 
 class LessonProgress {
   final int lesson;
-  final bool isPassed;
-  final bool isLocked;
-  final int progress;
+  final bool? isPassed;
+  final bool? isLocked;
+  final int? progress;
 
   LessonProgress({
     required this.lesson,
-    required this.isPassed,
-    required this.isLocked,
-    required this.progress,
+    this.isPassed,
+    this.isLocked,
+    this.progress,
   });
 
   factory LessonProgress.fromJson(Map<String, dynamic> json) {
@@ -22,12 +22,13 @@ class LessonProgress {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'lesson': lesson,
-        'isPassed': isPassed,
-        'isLocked': isLocked,
-        'progress': progress,
-      };
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{'lesson': lesson};
+    if (isPassed != null) data['isPassed'] = isPassed;
+    if (isLocked != null) data['isLocked'] = isLocked;
+    if (progress != null) data['progress'] = progress;
+    return data;
+  }
 }
 
 class ProgressModel {
@@ -38,22 +39,23 @@ class ProgressModel {
   ProgressModel({
     required this.uid,
     required this.progress,
-     this.isInitialized
+    this.isInitialized,
   });
 
   factory ProgressModel.fromJson(Map<String, dynamic> json) {
     return ProgressModel(
       uid: json['uid'],
-      progress: (json['progress'] as List<dynamic>)
-          .map((item) => LessonProgress.fromJson(jsonDecode(item)))
-          .toList(),
-          isInitialized: json['isInitialized']
+      progress:
+          (json['progress'] as List<dynamic>)
+              .map((item) => LessonProgress.fromJson(jsonDecode(item)))
+              .toList(),
+      isInitialized: json['isInitialized'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'uid': uid,
-        'progress': progress.map((e) => jsonEncode(e.toJson())).toList(),
-        'isInitialized' : isInitialized
-      };
+    'uid': uid,
+    'progress': progress.map((e) => jsonEncode(e.toJson())).toList(),
+    'isInitialized': isInitialized,
+  };
 }
