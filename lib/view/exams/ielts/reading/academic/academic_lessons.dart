@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
-import 'lesson_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/academic/lesson_screen.dart';
 
 class AcademicLessonsScreen extends StatefulWidget {
   const AcademicLessonsScreen({super.key});
@@ -293,12 +291,16 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
     },
   ];
 
+  // Mock progress data
+  int completedAcademicLessons = 1;
+  double currentLessonProgress = 0.3;
+  Map<int, String> academicLessonScores = {
+    1: "8/10",
+  };
+
   @override
   void initState() {
     super.initState();
-    // if (!Get.isRegistered<ReadingProgressController>()) {
-    //   Get.put(ReadingProgressController());
-    // }
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -326,6 +328,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
+        // Keep your navigation logic exactly as is
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const IeltsReadingScreen()),
@@ -360,6 +363,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
+                    // Keep your navigation logic exactly as is
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
@@ -375,137 +379,85 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                 toolbarHeight: kToolbarHeight,
               ),
               const SliverPadding(padding: EdgeInsets.only(top: 10)),
-              GetBuilder<ReadingProgressController>(
-                builder: (progressController) {
-                  if (progressController.isLoading) {
-                    return const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((
+                    context,
+                    sectionIndex,
+                  ) {
+                    final section = _sections[sectionIndex];
+                    final startIndex = section["start"] - 1;
+                    final endIndex = section["end"] - 1;
 
-                  if (progressController.hasError) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              progressController.errorMessage ??
-                                  'Error loading progress',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: _textLight,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () async {
-                                await progressController.restoreFromCloud();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: _accentColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                section["title"],
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: _textLight,
                                 ),
                               ),
-                              child: Text(
-                                'Retry',
+                              Text(
+                                section["description"],
                                 style: GoogleFonts.poppins(
                                   fontSize: 14,
-                                  color: _textLight,
-                                  fontWeight: FontWeight.w600,
+                                  color: _textLight.withOpacity(0.7),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
+                        if (section["start"] > 10)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              "Note: Lessons ${section["start"]}–${section["end"]} are under development and use placeholder content.",
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: _textLight.withOpacity(0.8),
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 20,
+                                mainAxisSpacing: 20,
+                                childAspectRatio: 0.85,
+                              ),
+                          itemCount: endIndex - startIndex + 1,
+                          itemBuilder: (context, index) {
+                            final lessonIndex = startIndex + index;
+                            final lesson = lessons[lessonIndex];
+
+                            return FadeInUp(
+                              delay: Duration(milliseconds: 100 * index),
+                              child: _buildLessonCard(
+                                context,
+                                lesson: lesson,
+                                lessonIndex: lessonIndex,
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     );
-                  }
-
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate((
-                        context,
-                        sectionIndex,
-                      ) {
-                        final section = _sections[sectionIndex];
-                        final startIndex = section["start"] - 1;
-                        final endIndex = section["end"] - 1;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    section["title"],
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: _textLight,
-                                    ),
-                                  ),
-                                  Text(
-                                    section["description"],
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: _textLight.withOpacity(0.7),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (section["start"] > 10)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  "Note: Lessons ${section["start"]}–${section["end"]} are under development and use placeholder content.",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: _textLight.withOpacity(0.8),
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 20,
-                                    mainAxisSpacing: 20,
-                                    childAspectRatio: 0.85,
-                                  ),
-                              itemCount: endIndex - startIndex + 1,
-                              itemBuilder: (context, index) {
-                                final lessonIndex = startIndex + index;
-                                final lesson = lessons[lessonIndex];
-
-                                return FadeInUp(
-                                  delay: Duration(milliseconds: 100 * index),
-                                  child: _buildLessonCard(
-                                    context,
-                                    lesson: lesson,
-                                    lessonIndex: lessonIndex,
-                                    progressController: progressController,
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                          ],
-                        );
-                      }, childCount: _sections.length),
-                    ),
-                  );
-                },
+                  }, childCount: _sections.length),
+                ),
               ),
             ],
           ),
@@ -518,17 +470,14 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
     BuildContext context, {
     required Map<String, dynamic> lesson,
     required int lessonIndex,
-    required ReadingProgressController progressController,
   }) {
     final lessonNumber = lessonIndex + 1;
-    final isLocked =
-        !progressController.isAcademicLessonAccessible(lessonNumber);
-    final progress =
-        lessonNumber <= progressController.completedAcademicLessons
-            ? 1.0
-            : (lessonNumber == progressController.completedAcademicLessons + 1
-                ? progressController.currentLessonProgress
-                : 0.0);
+    final isLocked = lessonNumber > completedAcademicLessons + 1;
+    final progress = lessonNumber <= completedAcademicLessons
+        ? 1.0
+        : (lessonNumber == completedAcademicLessons + 1
+            ? currentLessonProgress
+            : 0.0);
     final lessonId = lesson['lessonId'] as int?;
 
     return Material(
@@ -567,21 +516,22 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
               isLocked || lessonId == null
                   ? null
                   : () {
+                    // Keep your navigation logic exactly as is
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder:
                             (context) => LessonScreen(
                               lessonId: lessonId,
-                              onComplete: () async {
-                                await progressController.completeAcademicLesson(
-                                  lessonId: lessonId,
-                                  score:
-                                      progressController
-                                          .academicLessonScores[lessonId] ??
-                                      '0/0',
-                                );
-                                setState(() {});
+                              onComplete: () {
+                                // Mock completion logic
+                                setState(() {
+                                  if (lessonNumber == completedAcademicLessons + 1) {
+                                    completedAcademicLessons++;
+                                    currentLessonProgress = 0.0;
+                                    academicLessonScores[lessonId] = "8/10";
+                                  }
+                                });
                               },
                             ),
                       ),

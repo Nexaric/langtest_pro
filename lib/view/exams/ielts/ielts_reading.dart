@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
+import 'package:langtest_pro/controller/reading/reading_controller.dart';
+import 'package:langtest_pro/model/progress_model.dart';
+import 'package:langtest_pro/utils/utils.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/general/general_lessons.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/feedback.dart';
@@ -13,6 +15,7 @@ class IeltsReadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final readingProgressController = Get.put(ReadingController());
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -80,13 +83,41 @@ class IeltsReadingScreen extends StatelessWidget {
                     FadeInUp(
                       child: GestureDetector(
                         onTap:
-                            () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => const AcademicLessonsScreen(),
-                              ),
-                            ),
+                            () async{
+
+                          final uid = await Utils.getString('userId');
+                          final initialDataModel = ProgressModel(
+                            uid: uid!,
+                            progress: [
+                              for (int i = 1; i <= 50; i++)
+                                LessonProgress(
+                                  lesson: i,
+                                  isPassed: false,
+                                  isLocked: true,
+                                  progress: 0,
+                                ),
+                            ],
+                            isInitialized: true,
+                          );
+
+                          if (context.mounted) {
+                            readingProgressController.initializeProgress(
+                              progressModel: initialDataModel,
+                              context: context,
+                            );
+                           
+                          }
+
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder:
+                          //           (context) => const AcademicLessonsScreen(),
+                          //     ),
+                          //   ),
+
+               
+                            } ,
                         child: _buildFeatureCard(
                           Icons.book_rounded,
                           "Academic Reading",
@@ -162,14 +193,11 @@ class IeltsReadingScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final progressController = Get.find<ReadingProgressController>();
+    // final progressController = Get.find<ReadingProgressController>();
     const totalLessons = 54; // 40 Academic + 14 General
 
-    return Obx(() {
-      final progress =
-          (progressController.completedAcademicLessons +
-              progressController.completedGeneralLessons) /
-          totalLessons;
+    
+      final progress =0.5;
 
       return Container(
         padding: const EdgeInsets.all(20),
@@ -236,7 +264,7 @@ class IeltsReadingScreen extends StatelessWidget {
           ],
         ),
       );
-    });
+    
   }
 
   Widget _buildFeatureCard(

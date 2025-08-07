@@ -315,47 +315,65 @@ class _AudioScreenState extends State<AudioScreen> {
 
         //progress writing
         final isPassed = QuestionManager.isLessonPassed(_score, lessonId);
-        progressController.updateProgress(
-          lessonProgress: LessonProgress(
-            lesson: lessonId,
-            isPassed: isPassed,
-            isLocked: false,
-            progress: 100,
-          ),
-          ctx: context,
-          onSuccessNavigate: () {
-            Get.offNamed(
-              RoutesName.audioResultScreen,
-              arguments: {
-                "isPassed": isPassed,
-                "score": _score,
-                "totalQuestions": _currentQuestions.length,
-                "correctAnswers": correctAnswers,
-                "wrongAnswers": wrongAnswers,
-                "lessonId": lessonId,
-                "onComplete": widget.onComplete,
-              },
-            );
-          },
-        );
-        progressController.updateProgress(
-          lessonProgress: LessonProgress(lesson: lessonId + 1, isLocked: false),
-          ctx: context,
-          onSuccessNavigate: () {
-            Get.offNamed(
-              RoutesName.audioResultScreen,
-              arguments: {
-                "isPassed": isPassed,
-                "score": _score,
-                "totalQuestions": _currentQuestions.length,
-                "correctAnswers": correctAnswers,
-                "wrongAnswers": wrongAnswers,
-                "lessonId": lessonId,
-                "onComplete": widget.onComplete,
-              },
-            );
-          },
-        );
+        if (isPassed == true) {
+          progressController.updateProgress(
+            lessonProgress: LessonProgress(
+              lesson: lessonId,
+              isPassed: isPassed,
+              isLocked: false,
+              progress: 100,
+            ),
+            ctx: context,
+            onSuccessNavigate: () {
+              Get.offNamed(
+                RoutesName.audioResultScreen,
+                arguments: {
+                  "isPassed": isPassed,
+                  "score": _score,
+                  "totalQuestions": _currentQuestions.length,
+                  "correctAnswers": correctAnswers,
+                  "wrongAnswers": wrongAnswers,
+                  "lessonId": lessonId,
+                  "onComplete": widget.onComplete,
+                },
+              );
+            },
+          );
+          progressController.updateProgress(
+            lessonProgress: LessonProgress(
+              lesson: lessonId + 1,
+              isLocked: false,
+            ),
+            ctx: context,
+            onSuccessNavigate: () {
+              Get.offNamed(
+                RoutesName.audioResultScreen,
+                arguments: {
+                  "isPassed": isPassed,
+                  "score": _score,
+                  "totalQuestions": _currentQuestions.length,
+                  "correctAnswers": correctAnswers,
+                  "wrongAnswers": wrongAnswers,
+                  "lessonId": lessonId,
+                  "onComplete": widget.onComplete,
+                },
+              );
+            },
+          );
+        } else {
+          Get.offNamed(
+            RoutesName.audioResultScreen,
+            arguments: {
+              "isPassed": isPassed,
+              "score": _score,
+              "totalQuestions": _currentQuestions.length,
+              "correctAnswers": correctAnswers,
+              "wrongAnswers": wrongAnswers,
+              "lessonId": lessonId,
+              "onComplete": widget.onComplete,
+            },
+          );
+        }
       }
     });
   }

@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
 
 import 'general_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
@@ -152,50 +151,9 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
               const SliverPadding(padding: EdgeInsets.only(top: 10)),
               SliverToBoxAdapter(
                 child: Obx(() {
-                  final progressController =
-                      Get.find<ReadingProgressController>();
-                  if (progressController.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (progressController.hasError) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            progressController.errorMessage ??
-                                'Error loading progress',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              color: _textLight,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () async {
-                              await progressController.restoreFromCloud();
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: _accentColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            child: Text(
-                              'Retry',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: _textLight,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                  
+            
+                  
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -264,7 +222,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                                     context,
                                     lesson: lesson,
                                     lessonIndex: lessonIndex,
-                                    progressController: progressController,
+                                    // progressController: progressController,
                                   ),
                                 );
                               },
@@ -288,17 +246,11 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
     BuildContext context, {
     required Map<String, dynamic> lesson,
     required int lessonIndex,
-    required ReadingProgressController progressController,
+    // required ReadingProgressController progressController,
   }) {
     final lessonNumber = lessonIndex + 1;
-    final isLocked =
-        !progressController.isGeneralLessonAccessible(lessonNumber);
-    final progress =
-        lessonNumber <= progressController.completedGeneralLessons
-            ? 1.0
-            : (lessonNumber == progressController.completedGeneralLessons + 1
-                ? progressController.currentLessonProgress
-                : 0.0);
+    final isLocked = false;
+    final progress = 0.5;
     final lessonId = lesson['lessonId'] as int?;
 
     return Material(
@@ -344,14 +296,14 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                             (context) => GeneralScreen(
                               lessonId: lessonId,
                               onComplete: () async {
-                                await progressController.completeGeneralLesson(
-                                  lessonId: lessonId,
-                                  score:
-                                      progressController
-                                          .generalLessonScores[lessonId] ??
-                                      '0/0',
-                                );
-                                setState(() {}); // Refresh lock status
+                                // await progressController.completeGeneralLesson(
+                                //   lessonId: lessonId,
+                                //   score:
+                                //       progressController
+                                //           .generalLessonScores[lessonId] ??
+                                //       '0/0',
+                                // );
+                                // setState(() {}); // Refresh lock status
                               },
                             ),
                       ),

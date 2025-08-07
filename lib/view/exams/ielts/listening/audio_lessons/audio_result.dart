@@ -79,7 +79,7 @@ class _AudioResultScreenState extends State<AudioResultScreen>
         if (_isPassed) {
           widget.onComplete();
         }
-        // _navigateBackToLessons();
+        _navigateBackToLessons();
       }
     });
   }

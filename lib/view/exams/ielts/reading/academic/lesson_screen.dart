@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:get/get.dart';
-import 'package:langtest_pro/controller/reading_progress_provider.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/lessons/academic_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'lessons/academic_lesson_1.dart' as lesson1;
@@ -147,8 +145,8 @@ class _LessonScreenState extends State<LessonScreen> {
       final maxScroll = _scrollController.position.maxScrollExtent;
       final currentScroll = _scrollController.position.pixels;
       if (maxScroll > 0) {
-        final progress = (currentScroll / maxScroll).clamp(0.0, 1.0) * 0.5;
-        Get.find<ReadingProgressController>().updateProgress(progress);
+        // final progress = (currentScroll / maxScroll).clamp(0.0, 1.0) * 0.5;
+        // Get.find<ReadingProgressController>().updateProgress(progress);
       }
     });
   }
@@ -817,9 +815,7 @@ class _LessonScreenState extends State<LessonScreen> {
                               selectedQuestions
                                   .where((q) => q['selectedIndex'] != -1)
                                   .length;
-                          Get.find<ReadingProgressController>().updateProgress(
-                            0.5 + (answered / selectedQuestions.length) * 0.5,
-                          );
+                        
                         });
                       },
                       child: AnimatedContainer(
@@ -912,10 +908,10 @@ class _LessonScreenState extends State<LessonScreen> {
             ? 10
             : 13);
     if (correctAnswers >= requiredCorrect) {
-      Get.find<ReadingProgressController>().completeAcademicLesson(
-        lessonId: widget.lessonId,
-        score: '$correctAnswers/$totalQuestions',
-      );
+      // Get.find<ReadingProgressController>().completeAcademicLesson(
+      //   lessonId: widget.lessonId,
+      //   score: '$correctAnswers/$totalQuestions',
+      // );
       widget.onComplete();
     }
 
