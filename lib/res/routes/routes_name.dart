@@ -29,4 +29,5 @@ class RoutesName {
   static const String userDetailsScreen = "/user_details_screen";
   static const String audioScreen = "/audio_screen";
   static const String audioResultScreen = '/audioResultScreen';
+  static const String academicLessonsScreen = '/academicLessonsScreen';
 }

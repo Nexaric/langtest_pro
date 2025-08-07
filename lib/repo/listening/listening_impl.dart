@@ -33,6 +33,7 @@ class ListeningImpl implements ListeningFacade {
   }) async {
     try {
       await supabase.from(table).upsert(progressModel.toJson());
+      await updateLessonProgress(lessonProgress: LessonProgress(lesson: 1,isPassed: false,isLocked: false,progress: 0));
       return const Right(unit);
     } on SocketException catch (e) {
       return Left(InternetException("Network Error"));

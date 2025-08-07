@@ -34,10 +34,12 @@ class ReadingImpl extends ReadingFacade {
     try {
       
       await supabase.from(table).upsert(progressModel.toJson());
+      
       return const Right(unit);
     } on SocketException catch (e) {
       return Left(InternetException("Network Error"));
     } catch (e) {
+      print(e);
       return Left(AppExceptions('Failed to save progress: $e'));
     }
   }
@@ -59,6 +61,7 @@ class ReadingImpl extends ReadingFacade {
     } on SocketException {
       return left(InternetException());
     } catch (e) {
+      print(e);
       return left(AppExceptions("Some Unknown Error Occured"));
     }
   }

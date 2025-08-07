@@ -95,7 +95,7 @@ class ListeningController extends GetxController {
               "🧩 isLocked of 0: ${progressList.isNotEmpty ? progressList[0]['isLocked'] : 'Empty list'}",
             );
            
-            Get.offNamed(RoutesName.audioLessonsScreen);
+            Get.toNamed(RoutesName.audioLessonsScreen);
           } catch (e) {
             debugPrint("❌ Error decoding progress: $e");
             Utils.snakBar("Error", "Failed to parse progress data.");

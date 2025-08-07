@@ -82,14 +82,12 @@ class IeltsReadingScreen extends StatelessWidget {
                   children: [
                     FadeInUp(
                       child: GestureDetector(
-                        onTap:
-                            () async{
-
+                        onTap: () async {
                           final uid = await Utils.getString('userId');
                           final initialDataModel = ProgressModel(
                             uid: uid!,
                             progress: [
-                              for (int i = 1; i <= 50; i++)
+                              for (int i = 1; i <= 40; i++)
                                 LessonProgress(
                                   lesson: i,
                                   isPassed: false,
@@ -105,19 +103,8 @@ class IeltsReadingScreen extends StatelessWidget {
                               progressModel: initialDataModel,
                               context: context,
                             );
-                           
                           }
-
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder:
-                          //           (context) => const AcademicLessonsScreen(),
-                          //     ),
-                          //   ),
-
-               
-                            } ,
+                        },
                         child: _buildFeatureCard(
                           Icons.book_rounded,
                           "Academic Reading",
@@ -196,75 +183,73 @@ class IeltsReadingScreen extends StatelessWidget {
     // final progressController = Get.find<ReadingProgressController>();
     const totalLessons = 54; // 40 Academic + 14 General
 
-    
-      final progress =0.5;
+    final progress = 0.5;
 
-      return Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
-        ),
-        child: Column(
-          children: [
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: CircularProgressIndicator(
-                    value: progress.clamp(0.0, 1.0),
-                    strokeWidth: 8,
-                    backgroundColor: Colors.white.withOpacity(0.2),
-                    color: Colors.white,
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withOpacity(0.2)),
+      ),
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 100,
+                height: 100,
+                child: CircularProgressIndicator(
+                  value: progress.clamp(0.0, 1.0),
+                  strokeWidth: 8,
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  color: Colors.white,
+                ),
+              ),
+              Column(
+                children: [
+                  Text(
+                    "${(progress * 100).toStringAsFixed(0)}%",
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      "${(progress * 100).toStringAsFixed(0)}%",
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                  Text(
+                    "Complete",
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: Colors.white.withOpacity(0.8),
                     ),
-                    Text(
-                      "Complete",
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Master IELTS Reading",
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
+                  ),
+                ],
               ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Master IELTS Reading",
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
             ),
-            const SizedBox(height: 8),
-            Text(
-              "Practice makes perfect! Complete lessons and track your progress.",
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: Colors.white.withOpacity(0.8),
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Practice makes perfect! Complete lessons and track your progress.",
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Colors.white.withOpacity(0.8),
+              height: 1.4,
             ),
-          ],
-        ),
-      );
-    
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildFeatureCard(

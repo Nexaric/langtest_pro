@@ -7,6 +7,7 @@ import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_less
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_result.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/practice_tests/practice_test_screen.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/home/side_menu/about_us.dart';
 import 'package:langtest_pro/view/home/side_menu/rate_our_app.dart';
@@ -127,5 +128,10 @@ class AppRoutes {
         );
       },
     ),
+     GetPage(
+      name: RoutesName.academicLessonsScreen,
+      page: () => const AcademicLessonsScreen(),
+    ),
+
   ];
 }

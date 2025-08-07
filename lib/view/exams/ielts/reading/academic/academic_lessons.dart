@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:langtest_pro/controller/reading/reading_controller.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/lesson_screen.dart';
 
@@ -13,6 +15,7 @@ class AcademicLessonsScreen extends StatefulWidget {
 }
 
 class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
+  final readingProgressController = Get.find<ReadingController>();
   final Color _gradientStart = const Color(0xFF3E1E68);
   final Color _gradientEnd = const Color.fromARGB(255, 84, 65, 228);
   final Color _accentColor = const Color(0xFF00BFA6);
@@ -294,9 +297,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
   // Mock progress data
   int completedAcademicLessons = 1;
   double currentLessonProgress = 0.3;
-  Map<int, String> academicLessonScores = {
-    1: "8/10",
-  };
+  Map<int, String> academicLessonScores = {1: "8/10"};
 
   @override
   void initState() {
@@ -382,10 +383,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate((
-                    context,
-                    sectionIndex,
-                  ) {
+                  delegate: SliverChildBuilderDelegate((context, sectionIndex) {
                     final section = _sections[sectionIndex];
                     final startIndex = section["start"] - 1;
                     final endIndex = section["end"] - 1;
@@ -441,18 +439,27 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                           itemCount: endIndex - startIndex + 1,
                           itemBuilder: (context, index) {
                             final lessonIndex = startIndex + index;
-                            final lesson = lessons[lessonIndex];
 
-                            return FadeInUp(
-                              delay: Duration(milliseconds: 100 * index),
-                              child: _buildLessonCard(
-                                context,
-                                lesson: lesson,
-                                lessonIndex: lessonIndex,
-                              ),
-                            );
+                            final lessonAddress = lessons[lessonIndex];
+
+                            return Obx(() {
+                              final lesson =
+                                  readingProgressController
+                                      .progressList[lessonIndex];
+                                      // print(object)
+                              return FadeInUp(
+                                delay: Duration(milliseconds: 100 * index),
+                                child: _buildLessonCard(
+                                  context,
+                                  lessonLocal: lessonAddress,
+                                  lessonCloud:  lesson,
+                                  lessonIndex: lessonIndex,
+                                ),
+                              );
+                            });
                           },
                         ),
+
                         const SizedBox(height: 20),
                       ],
                     );
@@ -468,17 +475,14 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
 
   Widget _buildLessonCard(
     BuildContext context, {
-    required Map<String, dynamic> lesson,
+    required Map<String, dynamic> lessonLocal,
+    required Map<String, dynamic> lessonCloud,
     required int lessonIndex,
   }) {
     final lessonNumber = lessonIndex + 1;
-    final isLocked = lessonNumber > completedAcademicLessons + 1;
-    final progress = lessonNumber <= completedAcademicLessons
-        ? 1.0
-        : (lessonNumber == completedAcademicLessons + 1
-            ? currentLessonProgress
-            : 0.0);
-    final lessonId = lesson['lessonId'] as int?;
+    final isLocked = lessonCloud['isLocked'];
+    final progress = lessonCloud['progress']/100;
+    final lessonId = lessonLocal['lessonId'] as int?;
 
     return Material(
       elevation: 4,
@@ -526,7 +530,8 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                               onComplete: () {
                                 // Mock completion logic
                                 setState(() {
-                                  if (lessonNumber == completedAcademicLessons + 1) {
+                                  if (lessonNumber ==
+                                      completedAcademicLessons + 1) {
                                     completedAcademicLessons++;
                                     currentLessonProgress = 0.0;
                                     academicLessonScores[lessonId] = "8/10";
@@ -556,9 +561,9 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      lesson["title"].toString().split(":").length > 1
-                          ? lesson["title"].toString().split(":")[1].trim()
-                          : lesson["title"].toString(),
+                      lessonLocal["title"].toString().split(":").length > 1
+                          ? lessonLocal["title"].toString().split(":")[1].trim()
+                          : lessonLocal["title"].toString(),
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

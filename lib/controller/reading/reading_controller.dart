@@ -7,8 +7,9 @@ import 'package:langtest_pro/model/progress_model.dart';
 import 'package:langtest_pro/repo/reading/reading_impl.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/utils/utils.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 
-class ReadingController extends GetxController{
+class ReadingController extends GetxController {
   ReadingImpl progressRepo = ReadingImpl();
 
   RxBool isLoading = false.obs;
@@ -43,6 +44,25 @@ class ReadingController extends GetxController{
                       Utils.snakBar("Error", f.toString());
                     },
                     (s) async {
+                      // final lesson1 = LessonProgress(
+                      //   lesson: 1,
+                      //   isPassed: false,
+                      //   isLocked: false,
+                      //   progress: 0,
+                      // );
+                      // updateProgress(
+                      //   lessonProgress: lesson1,
+                      //   ctx: context,
+                      //   onSuccessNavigate: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder:
+                      //             (context) => const AcademicLessonsScreen(),
+                      //       ),
+                      //     );
+                      //   },
+                      // );
                       LoadingDialog.hide(context);
                       debugPrint("success 1");
                       getProgress(ctx: context);
@@ -51,6 +71,24 @@ class ReadingController extends GetxController{
                 });
           } else {
             LoadingDialog.hide(context);
+            // final lesson1 = LessonProgress(
+            //   lesson: 1,
+            //   isPassed: false,
+            //   isLocked: false,
+            //   progress: 0,
+            // );
+            // updateProgress(
+            //   lessonProgress: lesson1,
+            //   ctx: context,
+            //   onSuccessNavigate: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => const AcademicLessonsScreen(),
+            //       ),
+            //     );
+            //   },
+            // );
             debugPrint("else 1");
             getProgress(ctx: context);
           }
@@ -95,8 +133,9 @@ class ReadingController extends GetxController{
             debugPrint(
               "🧩 isLocked of 0: ${progressList.isNotEmpty ? progressList[0]['isLocked'] : 'Empty list'}",
             );
-           
-            Get.offNamed(RoutesName.audioLessonsScreen);
+
+             Get.toNamed(RoutesName.academicLessonsScreen);
+              
           } catch (e) {
             debugPrint("❌ Error decoding progress: $e");
             Utils.snakBar("Error", "Failed to parse progress data.");
