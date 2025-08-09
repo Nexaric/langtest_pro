@@ -76,12 +76,12 @@ class CustomBeveledBorder extends ShapeBorder {
 
 class LessonScreen extends StatefulWidget {
   final int lessonId;
-  final VoidCallback onComplete;
+
 
   const LessonScreen({
     super.key,
     required this.lessonId,
-    required this.onComplete,
+   
   });
 
   @override
@@ -912,7 +912,7 @@ class _LessonScreenState extends State<LessonScreen> {
       //   lessonId: widget.lessonId,
       //   score: '$correctAnswers/$totalQuestions',
       // );
-      widget.onComplete();
+      
     }
 
     Navigator.pushReplacement(
@@ -924,7 +924,7 @@ class _LessonScreenState extends State<LessonScreen> {
               correctAnswers: correctAnswers,
               selectedAnswers: selectedAnswers,
               questions: selectedQuestions,
-              onComplete: widget.onComplete,
+              
               lessonId: widget.lessonId,
             ),
       ),

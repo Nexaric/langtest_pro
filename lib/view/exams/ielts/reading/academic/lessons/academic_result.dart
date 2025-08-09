@@ -10,7 +10,7 @@ class AcademicResult extends StatefulWidget {
   final int correctAnswers;
   final List<int> selectedAnswers;
   final List<Map<String, dynamic>> questions;
-  final VoidCallback onComplete;
+  
   final int lessonId;
 
   const AcademicResult({
@@ -19,7 +19,7 @@ class AcademicResult extends StatefulWidget {
     required this.correctAnswers,
     required this.selectedAnswers,
     required this.questions,
-    required this.onComplete,
+
     required this.lessonId,
   });
 
@@ -91,7 +91,7 @@ class _AcademicResultState extends State<AcademicResult>
   }
 
   void _navigateBackToLessons() {
-    widget.onComplete();
+    
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const AcademicLessonsScreen()),
@@ -105,7 +105,7 @@ class _AcademicResultState extends State<AcademicResult>
         builder:
             (context) => LessonScreen(
               lessonId: widget.lessonId,
-              onComplete: widget.onComplete,
+              
             ),
       ),
     );

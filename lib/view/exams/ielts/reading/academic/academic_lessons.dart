@@ -527,17 +527,7 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
                         builder:
                             (context) => LessonScreen(
                               lessonId: lessonId,
-                              onComplete: () {
-                                // Mock completion logic
-                                setState(() {
-                                  if (lessonNumber ==
-                                      completedAcademicLessons + 1) {
-                                    completedAcademicLessons++;
-                                    currentLessonProgress = 0.0;
-                                    academicLessonScores[lessonId] = "8/10";
-                                  }
-                                });
-                              },
+                             
                             ),
                       ),
                     );

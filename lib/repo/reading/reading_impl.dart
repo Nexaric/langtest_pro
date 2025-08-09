@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:langtest_pro/model/progress_model.dart';
 import 'package:langtest_pro/repo/reading/reading_facade.dart';
 import 'package:langtest_pro/utils/app_exceptions.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dartz/dartz.dart';
 
-class ReadingImpl extends ReadingFacade {
+class ReadingImpl implements ReadingFacade {
   final supabase = Supabase.instance.client;
   final table = 'reading_progress';
 
@@ -32,14 +33,19 @@ class ReadingImpl extends ReadingFacade {
     required ProgressModel progressModel,
   }) async {
     try {
-      
       await supabase.from(table).upsert(progressModel.toJson());
-      
+      await updateLessonProgress(
+        lessonProgress: LessonProgress(
+          lesson: 1,
+          isPassed: false,
+          isLocked: false,
+          progress: 0,
+        ),
+      );
       return const Right(unit);
     } on SocketException catch (e) {
       return Left(InternetException("Network Error"));
     } catch (e) {
-      print(e);
       return Left(AppExceptions('Failed to save progress: $e'));
     }
   }
@@ -61,7 +67,6 @@ class ReadingImpl extends ReadingFacade {
     } on SocketException {
       return left(InternetException());
     } catch (e) {
-      print(e);
       return left(AppExceptions("Some Unknown Error Occured"));
     }
   }
@@ -70,16 +75,18 @@ class ReadingImpl extends ReadingFacade {
   Future<Either<AppExceptions, Unit>> updateLessonProgress({
     required LessonProgress lessonProgress,
   }) async {
+  debugPrint("hlleo reacherd");
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) {
+        print("yes user null");
         return Left(AppExceptions("User not authenticated."));
       }
 
       // Step 1: Fetch existing row
       final response =
           await supabase
-              .from('listening_progress')
+              .from(table)
               .select('progress')
               .eq('uid', userId)
               .single();
@@ -112,7 +119,7 @@ class ReadingImpl extends ReadingFacade {
       };
 
       // Step 4: Call Supabase function
-      await supabase.rpc('update_listening_lesson_progress', params: params);
+      await supabase.rpc('update_reading_lesson_progress', params: params);
       return const Right(unit);
     } on PostgrestException catch (e) {
       print(e);
