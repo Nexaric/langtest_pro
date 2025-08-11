@@ -1,14 +1,6 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
-import 'dart:convert';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/writing_result.dart';
-import 'letter_data.dart';
 
 class LetterScreen extends StatefulWidget {
   final Map<String, dynamic> lessonData;
@@ -19,14 +11,11 @@ class LetterScreen extends StatefulWidget {
   State<LetterScreen> createState() => _LetterScreenState();
 }
 
-class _LetterScreenState extends State<LetterScreen>
-    with TickerProviderStateMixin, WidgetsBindingObserver {
-  // Controllers
+class _LetterScreenState extends State<LetterScreen> with TickerProviderStateMixin {
+  // Text editing controller
   final TextEditingController _letterController = TextEditingController();
-  final WritingProgressController _progressController =
-      Get.find<WritingProgressController>();
 
-  // Animation Controllers
+  // Animation controller
   late final AnimationController _saveAnimationController;
   late final Animation<double> _saveScaleAnimation;
 
@@ -35,12 +24,7 @@ class _LetterScreenState extends State<LetterScreen>
   bool _showSample = false;
   bool _showTips = false;
   bool _isSubmitting = false;
-  bool _isLoading = true;
   bool _showSaveIndicator = false;
-
-  // Storage
-  late String _storagePath;
-  late File _letterFile;
 
   // Task content
   late Map<String, dynamic> _task;
@@ -48,12 +32,9 @@ class _LetterScreenState extends State<LetterScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
 
     // Initialize task data
-    _task = letterLessons.firstWhere(
-      (lesson) => lesson['id'] == widget.lessonData['id'],
-    );
+    _task = widget.lessonData;
 
     // Initialize animation controllers
     _saveAnimationController = AnimationController(
@@ -65,44 +46,8 @@ class _LetterScreenState extends State<LetterScreen>
       curve: Curves.elasticOut,
     );
 
-    // Initialize storage and load data
-    _initStorage().then((_) {
-      _loadSavedResponse().then((_) {
-        setState(() => _isLoading = false);
-      });
-    });
-
     // Setup text controller
     _setupController();
-  }
-
-  Future<void> _initStorage() async {
-    try {
-      final directory = await getApplicationDocumentsDirectory();
-      _storagePath = directory.path;
-      _letterFile = File('$_storagePath/${_task['id']}.json');
-    } catch (e) {
-      debugPrint('Error initializing storage: $e');
-    }
-  }
-
-  Future<void> _loadSavedResponse() async {
-    try {
-      if (await _letterFile.exists()) {
-        final content = await _letterFile.readAsString();
-        final data = jsonDecode(content);
-        final response = data['response'] ?? '';
-        if (_isValidInput(response)) {
-          _letterController.text = response;
-          _updateWordCount();
-        } else {
-          _letterController.text = '';
-          _updateWordCount();
-        }
-      }
-    } catch (e) {
-      debugPrint('Error loading saved response: $e');
-    }
   }
 
   void _setupController() {
@@ -113,62 +58,6 @@ class _LetterScreenState extends State<LetterScreen>
 
   bool _isValidInput(String input) {
     return RegExp(r'^[A-Za-z0-9 ,.\n\r!?]*$').hasMatch(input);
-  }
-
-  Future<void> _saveResponse() async {
-    try {
-      final response = _letterController.text;
-      if (!_isValidInput(response)) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                'Only letters, numbers, spaces, punctuation, and newlines are allowed.',
-              ),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
-        }
-        return;
-      }
-
-      final data = {
-        'response': response,
-        'lastSaved': DateTime.now().toIso8601String(),
-        'wordCount': _wordCount,
-      };
-      await _letterFile.writeAsString(jsonEncode(data));
-
-      // Show save indicator animation
-      setState(() => _showSaveIndicator = true);
-      _saveAnimationController.reset();
-      _saveAnimationController.forward();
-      await Future.delayed(const Duration(seconds: 1));
-      setState(() => _showSaveIndicator = false);
-    } catch (e) {
-      debugPrint('Error saving response: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving response: $e'),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      _saveResponse();
-    }
   }
 
   int _countWords(String text) {
@@ -187,165 +76,7 @@ class _LetterScreenState extends State<LetterScreen>
     });
   }
 
-  Future<void> _submitResponse() async {
-    setState(() => _isSubmitting = true);
-
-    try {
-      await _saveResponse();
-
-      final score = _calculateScore(_letterController.text);
-      if (_task['type'] == 'Formal') {
-        _progressController.completeLetterLesson(widget.lessonData['id']);
-      } else {
-        _progressController.completeLesson(
-          _parseLessonId(widget.lessonData['id']),
-        );
-      }
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 600),
-          pageBuilder:
-              (_, __, ___) => WritingResultScreen(
-                score: score,
-                feedback: _generateFeedback(score),
-                taskType: widget.lessonData['title'],
-                wordCount: _wordCount,
-                lessonData: widget.lessonData,
-              ),
-          transitionsBuilder: (_, animation, __, child) {
-            return FadeTransition(
-              opacity: animation,
-              child: SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0, 0.3),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutQuart,
-                  ),
-                ),
-                child: child,
-              ),
-            );
-          },
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to submit response: $e'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-      }
-    }
-  }
-
-  double _calculateScore(String text) {
-    final wordCount = _countWords(text);
-    final sentenceCount = text.split('.').length - 1;
-    final targetWords = _task['type'] == 'Formal' ? 100 : 80;
-    final wordScore = (wordCount / targetWords).clamp(0.0, 1.0) * 3;
-    final sentenceScore = (sentenceCount / 4).clamp(0.0, 1.0) * 2;
-    return 4.0 + wordScore + sentenceScore + (Random().nextDouble() * 1.5);
-  }
-
-  String _generateFeedback(double score) {
-    if (_task['type'] == 'Formal') {
-      if (score >= 8.0) {
-        return "Excellent formal letter! Your tone is professional, and the content is clear and well-structured.";
-      } else if (score >= 6.0) {
-        return "Good effort. Ensure a formal tone and include specific details for clarity.";
-      } else {
-        return "Needs improvement. Focus on formal language and detailed explanations.";
-      }
-    } else {
-      if (score >= 8.0) {
-        return "Excellent informal letter! Your tone is warm, engaging, and includes relevant details.";
-      } else if (score >= 6.0) {
-        return "Good effort. Add a more personal touch or include more specific details.";
-      } else {
-        return "Needs improvement. Use a friendlier tone and provide clear details.";
-      }
-    }
-  }
-
-  int _parseLessonId(dynamic id) {
-    if (id is int) return id;
-    if (id is String) {
-      final match = RegExp(r'\d+').firstMatch(id);
-      return match != null ? int.parse(match.group(0)!) : 8;
-    }
-    return 8;
-  }
-
-  Future<void> _deleteResponse() async {
-    try {
-      setState(() {
-        _letterController.clear();
-        _wordCount = 0;
-      });
-
-      await _letterFile.writeAsString(
-        jsonEncode({
-          'response': '',
-          'lastSaved': DateTime.now().toIso8601String(),
-          'wordCount': 0,
-        }),
-      );
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Response deleted'),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to delete response: $e'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
-
   Widget _buildTaskView() {
-    if (_isLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 20),
-            Text(
-              'Loading your saved work...',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
-            ),
-          ],
-        ),
-      );
-    }
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -444,25 +175,6 @@ class _LetterScreenState extends State<LetterScreen>
                     FilteringTextInputFormatter.allow(
                       RegExp(r'[A-Za-z0-9 ,.\n\r!?]*'),
                     ),
-                    TextInputFormatter.withFunction((oldValue, newValue) {
-                      if (!_isValidInput(newValue.text)) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                'Only letters, numbers, spaces, punctuation, and newlines are allowed.',
-                              ),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          );
-                        }
-                        return oldValue;
-                      }
-                      return newValue;
-                    }),
                   ],
                   decoration: InputDecoration(
                     hintText: 'Start typing your letter here...',
@@ -487,26 +199,21 @@ class _LetterScreenState extends State<LetterScreen>
                   child: Row(
                     children: [
                       Tooltip(
-                        message:
-                            'Word count: $_wordCount\nCharacters: ${_letterController.text.length}\nLast saved: ${_getLastModifiedTime()}',
+                        message: 'Word count: $_wordCount',
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color:
-                                _wordCount >=
-                                        (_task['type'] == 'Formal' ? 100 : 80)
-                                    ? Colors.green[50]
-                                    : Colors.orange[50],
+                            color: _wordCount >= (_task['type'] == 'Formal' ? 100 : 80)
+                                ? Colors.green[50]
+                                : Colors.orange[50],
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color:
-                                  _wordCount >=
-                                          (_task['type'] == 'Formal' ? 100 : 80)
-                                      ? Colors.green[100]!
-                                      : Colors.orange[100]!,
+                              color: _wordCount >= (_task['type'] == 'Formal' ? 100 : 80)
+                                  ? Colors.green[100]!
+                                  : Colors.orange[100]!,
                             ),
                           ),
                           child: Row(
@@ -515,38 +222,26 @@ class _LetterScreenState extends State<LetterScreen>
                               Icon(
                                 Icons.text_fields,
                                 size: 14,
-                                color:
-                                    _wordCount >=
-                                            (_task['type'] == 'Formal'
-                                                ? 100
-                                                : 80)
-                                        ? Colors.green[700]
-                                        : Colors.orange[700],
+                                color: _wordCount >= (_task['type'] == 'Formal' ? 100 : 80)
+                                    ? Colors.green[700]
+                                    : Colors.orange[700],
                               ),
                               const SizedBox(width: 6),
                               Text(
                                 '$_wordCount',
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.bold,
-                                  color:
-                                      _wordCount >=
-                                              (_task['type'] == 'Formal'
-                                                  ? 100
-                                                  : 80)
-                                          ? Colors.green[700]
-                                          : Colors.orange[700],
+                                  color: _wordCount >= (_task['type'] == 'Formal' ? 100 : 80)
+                                      ? Colors.green[700]
+                                      : Colors.orange[700],
                                 ),
                               ),
                               Text(
                                 '/${_task['type'] == 'Formal' ? '100' : '80'}',
                                 style: GoogleFonts.poppins(
-                                  color:
-                                      _wordCount >=
-                                              (_task['type'] == 'Formal'
-                                                  ? 100
-                                                  : 80)
-                                          ? Colors.green[700]
-                                          : Colors.orange[700],
+                                  color: _wordCount >= (_task['type'] == 'Formal' ? 100 : 80)
+                                      ? Colors.green[700]
+                                      : Colors.orange[700],
                                 ),
                               ),
                             ],
@@ -611,7 +306,7 @@ class _LetterScreenState extends State<LetterScreen>
                 },
               ),
               ElevatedButton(
-                onPressed: _isSubmitting ? null : _submitResponse,
+                onPressed: _isSubmitting ? null : () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[700],
                   foregroundColor: Colors.white,
@@ -625,24 +320,23 @@ class _LetterScreenState extends State<LetterScreen>
                   elevation: 0,
                   shadowColor: Colors.transparent,
                 ),
-                child:
-                    _isSubmitting
-                        ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                        : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.send, size: 18),
-                            const SizedBox(width: 6),
-                            Text('Submit', style: GoogleFonts.poppins()),
-                          ],
+                child: _isSubmitting
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
                         ),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.send, size: 18),
+                          const SizedBox(width: 6),
+                          Text('Submit', style: GoogleFonts.poppins()),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -695,23 +389,6 @@ class _LetterScreenState extends State<LetterScreen>
         ],
       ),
     );
-  }
-
-  String _getLastModifiedTime() {
-    try {
-      if (!_letterFile.existsSync()) return 'Not saved yet';
-      final stat = _letterFile.statSync();
-      final modified = stat.modified;
-      final now = DateTime.now();
-      final today = DateTime(now.year, now.month, now.day);
-      if (modified.isAfter(today)) {
-        return 'Today at ${modified.hour}:${modified.minute.toString().padLeft(2, '0')}';
-      } else {
-        return '${modified.day}/${modified.month}/${modified.year}';
-      }
-    } catch (e) {
-      return 'Unknown';
-    }
   }
 
   Widget _buildExpandableSection({
@@ -793,7 +470,7 @@ class _LetterScreenState extends State<LetterScreen>
           IconButton(
             icon: Icon(Icons.delete_outline, color: Colors.red[600]),
             tooltip: 'Delete letter',
-            onPressed: _deleteResponse,
+            onPressed: () {},
           ),
         ],
       ),
@@ -805,7 +482,6 @@ class _LetterScreenState extends State<LetterScreen>
   void dispose() {
     _saveAnimationController.dispose();
     _letterController.dispose();
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }

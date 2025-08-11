@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:langtest_pro/model/progress_model.dart';
 import 'package:langtest_pro/repo/reading/reading_facade.dart';
@@ -54,6 +53,7 @@ class ReadingImpl implements ReadingFacade {
   Future<Either<AppExceptions, bool>> checkifInitialized({
     required ProgressModel progressModel,
   }) async {
+    debugPrint(progressModel.uid);
     try {
       final data = await supabase
           .from(table)
@@ -75,7 +75,7 @@ class ReadingImpl implements ReadingFacade {
   Future<Either<AppExceptions, Unit>> updateLessonProgress({
     required LessonProgress lessonProgress,
   }) async {
-  debugPrint("hlleo reacherd");
+  // debugPrint("hlleo reacherd");
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) {
@@ -122,10 +122,10 @@ class ReadingImpl implements ReadingFacade {
       await supabase.rpc('update_reading_lesson_progress', params: params);
       return const Right(unit);
     } on PostgrestException catch (e) {
-      print(e);
+      debugPrint(e.toString());
       return Left(AppExceptions(e.message));
     } catch (e) {
-      print("⚠️ Unexpected error: $e");
+      debugPrint("⚠️ Unexpected error: $e");
       return Left(AppExceptions("An unexpected error occurred: $e"));
     }
   }

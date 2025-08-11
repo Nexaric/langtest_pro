@@ -120,7 +120,6 @@ class ListeningController extends GetxController {
         lessonProgress: LessonProgress(
           lesson: lessonProgress.lesson,
           isPassed: true,
-          isLocked: false,
           progress: 100,
         ),
       );
@@ -131,6 +130,7 @@ class ListeningController extends GetxController {
         ),
       );
       LoadingDialog.hide(ctx);
+      onSuccessNavigate();
       return;
     }
     LoadingDialog.show(ctx);
@@ -151,5 +151,9 @@ class ListeningController extends GetxController {
         },
       );
     });
+  }
+
+  void fetchPracticeTestAudio({required String lessonId}){
+    
   }
 }

@@ -8,6 +8,8 @@ import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_resu
 import 'package:langtest_pro/view/exams/ielts/listening/audio_lessons/audio_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/listening/practice_tests/practice_test_screen.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/academic/lesson_screen.dart';
+import 'package:langtest_pro/view/exams/ielts/reading/academic/lessons/academic_result.dart';
 import 'package:langtest_pro/view/home/home_screen.dart';
 import 'package:langtest_pro/view/home/side_menu/about_us.dart';
 import 'package:langtest_pro/view/home/side_menu/rate_our_app.dart';
@@ -88,7 +90,7 @@ class AppRoutes {
     ),
     GetPage(
       name: RoutesName.audioLessonsScreen,
-      page: () =>  AudioLessonsScreen(),
+      page: () => AudioLessonsScreen(),
     ),
     GetPage(
       name: RoutesName.practiceTestScreen,
@@ -128,10 +130,31 @@ class AppRoutes {
         );
       },
     ),
-     GetPage(
+    GetPage(
       name: RoutesName.academicLessonsScreen,
       page: () => const AcademicLessonsScreen(),
     ),
 
+    GetPage(
+      name: RoutesName.readingLessonScreen,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return LessonScreen(lessonId: args['lessonId']);
+      },
+    ),
+
+    GetPage(
+      name: RoutesName.readingAcademicResultScreen,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return AcademicResult(
+          totalQuestions: args['totalQuestions'],
+          correctAnswers: args['correctAnswers'],
+          selectedAnswers:args['selectedAnswers'],
+          questions: args['questions'],
+          lessonId: args['lessonId'],
+        );
+      },
+    ),
   ];
 }

@@ -7,7 +7,6 @@ import 'package:langtest_pro/controller/listening/listening_controller.dart';
 import 'package:langtest_pro/model/progress_model.dart';
 import 'package:langtest_pro/res/routes/routes_name.dart';
 
-
 class AudioLessonsScreen extends StatefulWidget {
   const AudioLessonsScreen({super.key});
 
@@ -26,7 +25,6 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
   final Color _unlockedEnd = const Color(0xFF9333EA);
   final progressController = Get.find<ListeningController>();
 
-  
   final List<Map<String, dynamic>> _sections = [
     {
       "title": "Introduction",
@@ -437,19 +435,19 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
           slivers: [
             SliverAppBar(
               title: InkWell(
-                onDoubleTap: (){
-                   Get.offNamed(
-              RoutesName.audioResultScreen,
-              arguments: {
-                "isPassed": false,
-                "score": 10,
-                "totalQuestions": 10,
-                "correctAnswers": 3,
-                "wrongAnswers": 7,
-                "lessonId": 2,
-                "onComplete": (){},
-              },
-            );
+                onDoubleTap: () {
+                  Get.offNamed(
+                    RoutesName.audioResultScreen,
+                    arguments: {
+                      "isPassed": false,
+                      "score": 10,
+                      "totalQuestions": 10,
+                      "correctAnswers": 3,
+                      "wrongAnswers": 7,
+                      "lessonId": 2,
+                      "onComplete": () {},
+                    },
+                  );
                 },
                 child: Text(
                   "IELTS Listening Lessons",
@@ -525,7 +523,6 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                           final lessonIndex = startIndex + index;
 
                           return Obx(() {
-                            
                             final lesson = audioLessons[lessonIndex];
                             final isLocked =
                                 progressController.progressList.length >
@@ -534,7 +531,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                                             .progressList[lessonIndex]['isLocked']
                                         as bool
                                     : true;
-                                    print("lessonINdex is $lessonIndex");
+                            print("lessonINdex is $lessonIndex");
 
                             final progress =
                                 progressController.progressList.length >
@@ -690,10 +687,9 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                         )
                         : InkWell(
                           onTap: () {
+                            debugPrint("yes printed");
                             final progressLesson = LessonProgress(
                               lesson: lesson['lessonId'],
-                              isPassed: false,
-                              isLocked: true,
                               progress: 50,
                             );
                             progressController.updateProgress(
@@ -702,12 +698,7 @@ class _AudioLessonsScreenState extends State<AudioLessonsScreen> {
                                   RoutesName.audioScreen,
                                   arguments: {
                                     'lesson': lesson,
-                                    'onComplete': () {
-                                      // final lessonProgress = LessonProgress(lesson: lesson['lessonId'], isPassed: false, isLocked: false, progress: 75);
-                                      // progressController.updateProgress(lessonProgress: lessonProgress, ctx: context, onSuccessNavigate: (){
-                                      //   Get.toNamed(RoutesName.audioResultScreen);
-                                      // });
-                                    },
+                                    'onComplete': () {},
                                   },
                                 );
                               },

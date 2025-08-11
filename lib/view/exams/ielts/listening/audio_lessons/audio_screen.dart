@@ -198,10 +198,7 @@ class _AudioScreenState extends State<AudioScreen> {
                 showQuestions = true;
                 _isPlaying = false;
                 _isTransitioning = false;
-                // _progressController.updateLessonProgress(
-                //   lessonId.toString(),
-                //   'question_opened',
-                // );
+                
               });
             }
           }

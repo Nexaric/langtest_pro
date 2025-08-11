@@ -120,6 +120,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             _lastnameController,
                           ),
                         ),
+                        SizedBox(height: 16.h),
                         FadeInLeft(
                           duration: const Duration(milliseconds: 600),
                           child: _buildTextField(
@@ -196,7 +197,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                           final isValidPhone = RegExp(
                                             r'^[0-9]{10}$',
                                           ).hasMatch(phone);
-
+      
                                           if (_firstnameController
                                                   .text
                                                   .isEmpty ||
@@ -213,7 +214,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                               errorMsg =
                                                   'Phone number must be 10 digits and numeric only';
                                             }
-
+      
                                             ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
@@ -227,7 +228,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             );
                                             return;
                                           }
-
+      
                                           final usrDataModel = UserData(
                                             phone: phone,
                                             uid: widget.usrModel.uid,
@@ -243,12 +244,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                             // Add phone if your UserData has it:
                                             // phone: phone,
                                           );
-
+      
                                           profileController.updateProfile(
                                             userDataModel: usrDataModel,
                                           );
                                         },
-
+      
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.white,
                                           padding: EdgeInsets.symmetric(

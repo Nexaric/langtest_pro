@@ -150,90 +150,83 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
               ),
               const SliverPadding(padding: EdgeInsets.only(top: 10)),
               SliverToBoxAdapter(
-                child: Obx(() {
-                  
-            
-                  
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: List.generate(_sections.length, (sectionIndex) {
+                      final section = _sections[sectionIndex];
+                      final startIndex = section["start"] - 1;
+                      final endIndex = section["end"] - 1;
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: List.generate(_sections.length, (sectionIndex) {
-                        final section = _sections[sectionIndex];
-                        final startIndex = section["start"] - 1;
-                        final endIndex = section["end"] - 1;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    section["title"],
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: _textLight,
-                                    ),
-                                  ),
-                                  Text(
-                                    section["description"],
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: _textLight.withOpacity(0.7),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (section["start"] > 3)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Text(
-                                  "Note: Lessons ${section["start"]}–${section["end"]} are under development and use placeholder content.",
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  section["title"],
                                   style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    color: _textLight.withOpacity(0.8),
-                                    fontStyle: FontStyle.italic,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: _textLight,
                                   ),
                                 ),
-                              ),
-                            GridView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    crossAxisSpacing: 20,
-                                    mainAxisSpacing: 20,
-                                    childAspectRatio: 0.85,
+                                Text(
+                                  section["description"],
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: _textLight.withOpacity(0.7),
                                   ),
-                              itemCount: endIndex - startIndex + 1,
-                              itemBuilder: (context, index) {
-                                final lessonIndex = startIndex + index;
-                                final lesson = lessons[lessonIndex];
-
-                                return FadeInUp(
-                                  delay: Duration(milliseconds: 100 * index),
-                                  child: _buildLessonCard(
-                                    context,
-                                    lesson: lesson,
-                                    lessonIndex: lessonIndex,
-                                    // progressController: progressController,
-                                  ),
-                                );
-                              },
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 20),
-                          ],
-                        );
-                      }),
-                    ),
-                  );
-                }),
+                          ),
+                          if (section["start"] > 3)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                "Note: Lessons ${section["start"]}–${section["end"]} are under development and use placeholder content.",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: _textLight.withOpacity(0.8),
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 20,
+                                  mainAxisSpacing: 20,
+                                  childAspectRatio: 0.85,
+                                ),
+                            itemCount: endIndex - startIndex + 1,
+                            itemBuilder: (context, index) {
+                              final lessonIndex = startIndex + index;
+                              final lesson = lessons[lessonIndex];
+
+                              return FadeInUp(
+                                delay: Duration(milliseconds: 100 * index),
+                                child: _buildLessonCard(
+                                  context,
+                                  lesson: lesson,
+                                  lessonIndex: lessonIndex,
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    }),
+                  ),
+                ),
               ),
             ],
           ),

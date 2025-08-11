@@ -1,5 +1,3 @@
-// lib/res/routes/routes_name.dart
-
 class RoutesName {
   static const String aboutUsScreen = "/about_us_screen";
   static const String audioLessonsScreen = "/audio_lessons";
@@ -30,4 +28,6 @@ class RoutesName {
   static const String audioScreen = "/audio_screen";
   static const String audioResultScreen = '/audioResultScreen';
   static const String academicLessonsScreen = '/academicLessonsScreen';
+  static const String readingLessonScreen = "/readingLessonScreen";
+  static const String readingAcademicResultScreen = "/readingAcademicResultScreen";
 }

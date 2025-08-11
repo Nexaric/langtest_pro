@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:langtest_pro/controller/reading/reading_controller.dart';
+import 'package:langtest_pro/model/progress_model.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/exams/ielts/ielts_reading.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/lesson_screen.dart';
 
@@ -520,17 +522,23 @@ class _AcademicLessonsScreenState extends State<AcademicLessonsScreen> {
               isLocked || lessonId == null
                   ? null
                   : () {
-                    // Keep your navigation logic exactly as is
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => LessonScreen(
-                              lessonId: lessonId,
-                             
-                            ),
-                      ),
-                    );
+                    final progressLesson = LessonProgress(
+                              lesson: lessonId,
+                              progress: 50,
+                            );
+                            readingProgressController.updateProgress(
+                              onSuccessNavigate: () {
+                                Get.toNamed(
+                                  RoutesName.readingLessonScreen,
+                                  arguments: {
+                                    'lessonId': lessonId,                          
+                                  },
+                                );
+                              },
+                              ctx: context,
+                              lessonProgress: progressLesson,
+                            );
+                   
                   },
           child: Padding(
             padding: const EdgeInsets.all(16),

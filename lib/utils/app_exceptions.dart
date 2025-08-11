@@ -25,3 +25,7 @@ class ServerException extends AppExceptions {
   ServerException([String? message]) : super(message, "Server Error");
 }
 
+class NoUserFound extends AppExceptions {
+  NoUserFound([String? message]) : super(message, "Server Error");
+}
+

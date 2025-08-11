@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   controller: pageController,
                   // physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (index) {
-                    notchController.index = index;
+                     notchController.jumpTo(index); 
                     appBarTitle.value = ['Home', 'Subscription', 'Profile'][index];
                   },
                   children: [

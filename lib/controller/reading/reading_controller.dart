@@ -33,6 +33,7 @@ class ReadingController extends GetxController {
         },
         (s) async {
           if (s == false) {
+            debugPrint("entered in false");
             LoadingDialog.hide(context);
             await progressRepo
                 .initializeProgress(progressModel: progressModel)
@@ -43,26 +44,7 @@ class ReadingController extends GetxController {
                       isLoading.value = false;
                       Utils.snakBar("Error", f.toString());
                     },
-                    (s) async {
-                      // final lesson1 = LessonProgress(
-                      //   lesson: 1,
-                      //   isPassed: false,
-                      //   isLocked: false,
-                      //   progress: 0,
-                      // );
-                      // updateProgress(
-                      //   lessonProgress: lesson1,
-                      //   ctx: context,
-                      //   onSuccessNavigate: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //         builder:
-                      //             (context) => const AcademicLessonsScreen(),
-                      //       ),
-                      //     );
-                      //   },
-                      // );
+                    (s) async {          
                       LoadingDialog.hide(context);
                       debugPrint("success 1");
                       getProgress(ctx: context);
@@ -70,25 +52,8 @@ class ReadingController extends GetxController {
                   );
                 });
           } else {
+            
             LoadingDialog.hide(context);
-            // final lesson1 = LessonProgress(
-            //   lesson: 1,
-            //   isPassed: false,
-            //   isLocked: false,
-            //   progress: 0,
-            // );
-            // updateProgress(
-            //   lessonProgress: lesson1,
-            //   ctx: context,
-            //   onSuccessNavigate: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => const AcademicLessonsScreen(),
-            //       ),
-            //     );
-            //   },
-            // );
             debugPrint("else 1");
             getProgress(ctx: context);
           }
@@ -149,30 +114,12 @@ class ReadingController extends GetxController {
     }
   }
 
-  void updateProgress({
+  Future<void> updateProgress({
     required LessonProgress lessonProgress,
     required BuildContext ctx,
     required VoidCallback onSuccessNavigate,
-  }) {
-    if (lessonProgress.lesson == 1) {
-      LoadingDialog.show(ctx);
-      progressRepo.updateLessonProgress(
-        lessonProgress: LessonProgress(
-          lesson: lessonProgress.lesson,
-          isPassed: true,
-          isLocked: false,
-          progress: 100,
-        ),
-      );
-      progressRepo.updateLessonProgress(
-        lessonProgress: LessonProgress(
-          lesson: lessonProgress.lesson + 1,
-          isLocked: false,
-        ),
-      );
-      LoadingDialog.hide(ctx);
-      return;
-    }
+  }) async {
+   
     LoadingDialog.show(ctx);
     debugPrint("Reached Update Progress");
     progressRepo.updateLessonProgress(lessonProgress: lessonProgress).then((

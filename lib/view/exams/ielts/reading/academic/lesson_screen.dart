@@ -1,8 +1,13 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/state_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:langtest_pro/controller/reading/reading_controller.dart';
+import 'package:langtest_pro/model/progress_model.dart';
+import 'package:langtest_pro/res/routes/routes_name.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/lessons/academic_result.dart';
 import 'package:langtest_pro/view/exams/ielts/reading/academic/academic_lessons.dart';
 import 'lessons/academic_lesson_1.dart' as lesson1;
@@ -77,18 +82,14 @@ class CustomBeveledBorder extends ShapeBorder {
 class LessonScreen extends StatefulWidget {
   final int lessonId;
 
-
-  const LessonScreen({
-    super.key,
-    required this.lessonId,
-   
-  });
+  const LessonScreen({super.key, required this.lessonId});
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
 }
 
 class _LessonScreenState extends State<LessonScreen> {
+  final readingProgressController = Get.find<ReadingController>();
   bool _isBold = false;
   int _fontSizeIndex = 0;
   final List<double> _fontSizes = [15.0, 18.0, 21.0];
@@ -352,12 +353,7 @@ class _LessonScreenState extends State<LessonScreen> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colors['accent']),
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AcademicLessonsScreen(),
-              ),
-            );
+          Get.back();
           },
         ),
         title: Text(
@@ -530,7 +526,19 @@ class _LessonScreenState extends State<LessonScreen> {
               duration: const Duration(milliseconds: 300),
               child: Center(
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    if (mounted) {
+                      final lessonId = widget.lessonId;
+
+                      await readingProgressController.updateProgress(
+                        ctx: context,
+                        lessonProgress: LessonProgress(
+                          lesson: lessonId,
+                          progress: 75,
+                        ),
+                        onSuccessNavigate: () {},
+                      );
+                    }
                     setState(() {
                       _isQuestionScreen = true;
                       _currentQuestionIndex = 0;
@@ -815,7 +823,6 @@ class _LessonScreenState extends State<LessonScreen> {
                               selectedQuestions
                                   .where((q) => q['selectedIndex'] != -1)
                                   .length;
-                        
                         });
                       },
                       child: AnimatedContainer(
@@ -892,8 +899,9 @@ class _LessonScreenState extends State<LessonScreen> {
     });
   }
 
-  void _submitAnswers() {
+  void _submitAnswers() async {
     int correctAnswers = _calculateScore();
+    // int correctAnswers = 10;
     int totalQuestions = selectedQuestions.length;
     List<int> selectedAnswers =
         selectedQuestions.map((q) => q['selectedIndex'] as int).toList();
@@ -907,28 +915,48 @@ class _LessonScreenState extends State<LessonScreen> {
             : widget.lessonId <= 30
             ? 10
             : 13);
+    //
     if (correctAnswers >= requiredCorrect) {
-      // Get.find<ReadingProgressController>().completeAcademicLesson(
-      //   lessonId: widget.lessonId,
-      //   score: '$correctAnswers/$totalQuestions',
-      // );
-      
-    }
+      debugPrint("if reached");
+      if (mounted) {
+        final lessonId = widget.lessonId;
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => AcademicResult(
-              totalQuestions: totalQuestions,
-              correctAnswers: correctAnswers,
-              selectedAnswers: selectedAnswers,
-              questions: selectedQuestions,
-              
-              lessonId: widget.lessonId,
-            ),
-      ),
-    );
+        await readingProgressController.updateProgress(
+          ctx: context,
+          lessonProgress: LessonProgress(lesson: lessonId, progress: 100),
+          onSuccessNavigate: () {},
+        );
+
+        await readingProgressController.updateProgress(
+          lessonProgress: LessonProgress(lesson: lessonId + 1, isLocked: false),
+          ctx: context,
+          onSuccessNavigate: () {
+            Get.offNamed(
+              RoutesName.readingAcademicResultScreen,
+              arguments: {
+                'totalQuestions': totalQuestions,
+                'correctAnswers': correctAnswers,
+                'selectedAnswers': selectedAnswers,
+                'questions': selectedQuestions,
+                'lessonId': widget.lessonId,
+              },
+            );
+          },
+        );
+      }
+    } else {
+      debugPrint("else reached");
+      Get.offNamed(
+        RoutesName.readingAcademicResultScreen,
+        arguments: {
+          'totalQuestions': totalQuestions,
+          'correctAnswers': correctAnswers,
+          'selectedAnswers': selectedAnswers,
+          'questions': selectedQuestions,
+          'lessonId': widget.lessonId,
+        },
+      );
+    }
   }
 
   int _calculateScore() {

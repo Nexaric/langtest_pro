@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/lesson_list_screen.dart';
-import 'package:langtest_pro/view/exams/ielts/writing/lessons/writing_screen.dart';
-import 'package:langtest_pro/controller/writing_progress_provider.dart';
 
 class LessonResult extends StatefulWidget {
   final int academicWordCount;
@@ -150,10 +146,9 @@ class _LessonResultState extends State<LessonResult>
                         height: 12,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors:
-                                wordCount >= 150
-                                    ? [Colors.teal[400]!, Colors.teal[600]!]
-                                    : [Colors.amber[400]!, Colors.amber[600]!],
+                            colors: wordCount >= 150
+                                ? [Colors.teal[400]!, Colors.teal[600]!]
+                                : [Colors.amber[400]!, Colors.amber[600]!],
                           ),
                           borderRadius: BorderRadius.circular(6),
                           boxShadow: [
@@ -276,26 +271,6 @@ class _LessonResultState extends State<LessonResult>
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _getLessonScreen(int lessonNumber) {
-    if (lessonNumber >= 1 && lessonNumber <= 40) {
-      return WritingScreen(lessonNumber: lessonNumber);
-    }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Lesson $lessonNumber",
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-      ),
-      body: Center(
-        child: Text(
-          "Lesson $lessonNumber content not found",
-          style: const TextStyle(fontSize: 18),
-        ),
       ),
     );
   }
@@ -493,19 +468,14 @@ class _LessonResultState extends State<LessonResult>
                   // Action Buttons
                   Row(
                     children: [
-                      // Review Button - Goes back to current lesson
+                      // Review Button
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () {
                             HapticFeedback.lightImpact();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        _getLessonScreen(widget.lessonNumber),
-                              ),
-                            );
+                            if (widget.onFinish != null) {
+                              widget.onFinish!();
+                            }
                           },
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -529,39 +499,13 @@ class _LessonResultState extends State<LessonResult>
                       ),
                       const SizedBox(width: 16),
 
-                      // Next Lesson Button - Goes to next lesson or lesson list
+                      // Next Lesson Button
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
                             HapticFeedback.lightImpact();
-                            final progressController =
-                                Get.find<WritingProgressController>();
-
-                            // Mark current lesson as completed
-                            progressController.completeLesson(
-                              widget.lessonNumber,
-                            );
-
-                            if (isLastLesson) {
-                              // If last lesson, go back to lesson list
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => const LessonListScreen(),
-                                ),
-                              );
-                            } else {
-                              // Go to next lesson
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => _getLessonScreen(
-                                        widget.lessonNumber + 1,
-                                      ),
-                                ),
-                              );
+                            if (widget.onFinish != null) {
+                              widget.onFinish!();
                             }
                           },
                           style: ElevatedButton.styleFrom(
