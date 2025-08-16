@@ -108,6 +108,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
       },
       child: Scaffold(
         body: Container(
+          
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -134,12 +135,7 @@ class _GeneralLessonsScreenState extends State<GeneralLessonsScreen> {
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const IeltsReadingScreen(),
-                      ),
-                    );
+                    Get.back();
                   },
                 ),
                 pinned: true,

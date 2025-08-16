@@ -93,15 +93,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                       ),
                     ),
-                    actions: [
-                      IconButton(
-                        icon: FadeInRight(
-                          duration: const Duration(milliseconds: 600),
-                          child: const Icon(Icons.notifications_none_rounded, color: Colors.white),
-                        ),
-                        onPressed: () => Get.to(() => const NotificationScreen()),
-                      ),
-                    ],
+                    // actions: [
+                    //   IconButton(
+                    //     icon: FadeInRight(
+                    //       duration: const Duration(milliseconds: 600),
+                    //       child: const Icon(Icons.notifications_none_rounded, color: Colors.white),
+                    //     ),
+                    //     onPressed: () => Get.to(() => const NotificationScreen()),
+                    //   ),
+                    // ],
                   );
                 },
               ),
